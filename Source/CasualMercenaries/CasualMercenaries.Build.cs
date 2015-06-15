@@ -8,9 +8,10 @@ public class CasualMercenaries : ModuleRules
 	{
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore",
             "OnlineSubsystem",
-			"OnlineSubsystemUtils", });
+			"OnlineSubsystemUtils", 
+            "Slate","SlateCore","UMG",
+        });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
         DynamicallyLoadedModuleNames.AddRange(
                  new string[] {
@@ -21,7 +22,7 @@ public class CasualMercenaries : ModuleRules
 			                    }
             );
 		// Uncomment if you are using Slate UI
-		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
 		// Uncomment if you are using online features
         PrivateDependencyModuleNames.Add("OnlineSubsystem");
