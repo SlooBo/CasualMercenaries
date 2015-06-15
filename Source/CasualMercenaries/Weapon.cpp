@@ -5,8 +5,14 @@
 
 
 // Sets default values
-AWeapon::AWeapon()
+AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+
+	weaponMesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("RocketLauncherMesh"));
+	weaponMesh->SetOnlyOwnerSee(false);
+	weaponMesh->bCastDynamicShadow = true;
+	weaponMesh->CastShadow = true;
+
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 

@@ -24,7 +24,7 @@ public:
 	TSubclassOf<class AProjectile> ProjectileClass;
 
 	// Sets default values for this actor's properties
-	AWeapon();
+	AWeapon(const FObjectInitializer& ObjectInitializer);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
