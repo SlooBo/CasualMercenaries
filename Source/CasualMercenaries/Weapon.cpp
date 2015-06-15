@@ -26,3 +26,23 @@ void AWeapon::Tick( float DeltaTime )
 
 }
 
+void AWeapon::PrimaryFunction(AActor user)
+{
+
+
+}
+
+void AWeapon::SecondaryFunction()
+{
+
+
+}
+
+void AWeapon::Reload()
+{
+	if (clips > 0)
+	{
+		ammo = ammoInClip;
+		clips--;
+	}
+}
