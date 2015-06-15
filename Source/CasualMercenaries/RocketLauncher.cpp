@@ -3,7 +3,7 @@
 #include "CasualMercenaries.h"
 #include "RocketLauncher.h"
 
-RocketLauncher::RocketLauncher(const FObjectInitializer& FOI)
+ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
 	reloadTime = 1.5;
 	maxAmmo = 6;
@@ -11,17 +11,23 @@ RocketLauncher::RocketLauncher(const FObjectInitializer& FOI)
 	ammo = 1;
 	ammoInClip = 1;
 
-	weaponMesh = FOI.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("RocketLauncherMesh"));
-	weaponMesh->SetOnlyOwnerSee(false);
-	weaponMesh->bCastDynamicShadow = true;
-	weaponMesh->CastShadow = true;
+	PrimaryActorTick.bCanEverTick = true;
 }
 
-RocketLauncher::~RocketLauncher()
+void ARocketLauncher::BeginPlay()
 {
+	Super::BeginPlay();
+
 }
 
-void RocketLauncher::PrimaryFunction(AActor* user)
+// Called every frame
+void ARocketLauncher::Tick(float DeltaTime)
+{
+	AWeapon::Tick(DeltaTime);
+
+}
+
+void ARocketLauncher::PrimaryFunction(AActor* user)
 {
 	ammo--;
 	FVector CameraLoc;
@@ -56,7 +62,7 @@ void RocketLauncher::PrimaryFunction(AActor* user)
 
 }
 
-void RocketLauncher::SecondaryFunction()
+void ARocketLauncher::SecondaryFunction()
 {
 
 }
