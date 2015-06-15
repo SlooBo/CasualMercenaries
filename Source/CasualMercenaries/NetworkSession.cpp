@@ -25,14 +25,9 @@ void ANetworkSession::BeginPlay()
 	testSettings.NumPublicConnections = 8;
 	testSettings.bShouldAdvertise = true;
 	testSettings.bAllowJoinViaPresence = true;
-	ULocalPlayer *player = nullptr;
-	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
-	{
-		player = Cast<ULocalPlayer>(Iterator->Get()->Player);
-	}
-
-	auto tt = player->GetPreferredUniqueNetId().Get();
-	bool succesfull = session->CreateSession(*tt, "TestSession", testSettings);
+	
+	auto tt = GetWorld()->GetUniqueID();
+	bool succesfull = session->CreateSession(tt, "TestSession", testSettings);
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Did we create session: " + FString::FromInt(succesfull));
 
 
@@ -42,7 +37,7 @@ void ANetworkSession::BeginPlay()
 	 SearchSettings->TimeoutInSeconds = 20;
 	TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SearchSettings.ToSharedRef();
 	OnFindSessionsCompleteDelegateHandle = session->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
-	auto hosted = session->FindSessions(*tt, SearchSettingsRef);
+	auto hosted = session->FindSessions(tt, SearchSettingsRef);
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "yay");
 	//IOnlineSubSystem *test = IOnlineSubSystem::Get();
 }
