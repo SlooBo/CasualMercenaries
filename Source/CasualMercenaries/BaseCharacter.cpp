@@ -11,11 +11,14 @@ ABaseCharacter::ABaseCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	/*health_Max = 100;
+	health_Max = 100;
 	health = health_Max;
 
 	stamina_Max = 100;
-	stamina = stamina_Max;*/
+	stamina = stamina_Max;
+
+	armor_Max = 100;
+	armor = 100;
 
 	/* Don't collide with camera checks to keep 3rd person camera at position when other players are standing behind player */
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
