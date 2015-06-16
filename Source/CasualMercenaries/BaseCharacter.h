@@ -29,6 +29,17 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		float GetHealth() const;
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		float GetHealthMax() const;
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		float GetStamina() const;
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		float GetStaminaMax() const;
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		float GetArmor() const;
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		float GetArmorMax() const;
+
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		bool IsAlive() const;

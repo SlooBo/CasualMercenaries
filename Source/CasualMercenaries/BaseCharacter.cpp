@@ -56,6 +56,31 @@ float ABaseCharacter::GetHealth() const
 	return health;
 }
 
+float ABaseCharacter::GetHealthMax() const
+{
+	return health_Max;
+}
+
+float ABaseCharacter::GetStamina() const
+{
+	return stamina;
+}
+
+float ABaseCharacter::GetStaminaMax() const
+{
+	return stamina_Max;
+}
+
+float ABaseCharacter::GetArmor() const
+{
+	return armor;
+}
+
+float ABaseCharacter::GetArmorMax() const
+{
+	return armor_Max;
+}
+
 bool ABaseCharacter::IsAlive() const
 {
 	return health > 0;
