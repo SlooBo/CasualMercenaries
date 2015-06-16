@@ -8,6 +8,7 @@
 class CASUALMERCENARIES_API Util
 {
 public:
-	static class APlayerCharacter *GetLocalPlayer();
-
+	static class APlayerCharacter* GetLocalPlayer(UWorld* world);
+	static class APlayerCharacter* GetPlayerCharacter(APlayerController* player);
+	static int32 GetNumPlayers(UWorld* world);
 };

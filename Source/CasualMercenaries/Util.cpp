@@ -3,7 +3,23 @@
 #include "CasualMercenaries.h"
 #include "Util.h"
 #include "PlayerCharacter.h"
-APlayerCharacter *Util::GetLocalPlayer()
+
+APlayerCharacter* Util::GetLocalPlayer(UWorld* world)
 {
-	return Cast<APlayerCharacter>(GEngine->GetWorld()->GetFirstPlayerController());
+	return Cast<APlayerCharacter>(world->GetFirstPlayerController());
+}
+
+APlayerCharacter* Util::GetPlayerCharacter(APlayerController* player)
+{
+	return static_cast<APlayerCharacter*>(player->GetPawn());
+}
+
+int32 Util::GetNumPlayers(UWorld* world)
+{
+	int32 numPlayers = 0;
+
+	for (FConstPlayerControllerIterator iter = world->GetPlayerControllerIterator(); iter; ++iter)
+		numPlayers++;
+
+	return numPlayers;
 }
