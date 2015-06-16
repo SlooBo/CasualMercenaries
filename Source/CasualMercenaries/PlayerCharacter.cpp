@@ -57,7 +57,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	InputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
-	InputComponent->BindAction("Jump", IE_Pressed, this, APlayerCharacter::OnStartJump);
+	InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::OnStartJump);
 	InputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::OnStopJump);
 
 
@@ -65,6 +65,14 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 }
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
+{
+
+}
+void APlayerCharacter::OnStartJump()
+{
+
+}
+void APlayerCharacter::OnStopJump()
 {
 
 }

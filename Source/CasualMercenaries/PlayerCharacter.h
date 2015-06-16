@@ -49,7 +49,6 @@ public:
 	void AddWeapon(AWeapon* _weapon);
 
 private:
-
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* springArmComp;
 

@@ -11,7 +11,7 @@ ABaseCharacter::ABaseCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	health_Max = 100;
-	healt = health_Max;
+	health = health_Max;
 
 	stamina_Max = 100;
 	stamina = stamina_Max;
