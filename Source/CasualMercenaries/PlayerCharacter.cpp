@@ -6,30 +6,30 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	//// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	//PrimaryActorTick.bCanEverTick = true;
 
-	UCharacterMovementComponent* tempMoveComp = GetCharacterMovement();
-	//Addjusting jump
-	//tempMoveComp->GravityScale = ;
-	//tempMoveComp->JumpZVelocity = ;
+	//UCharacterMovementComponent* tempMoveComp = GetCharacterMovement();
+	////Addjusting jump
+	////tempMoveComp->GravityScale = ;
+	////tempMoveComp->JumpZVelocity = ;
 
-	FObjectInitializer tempObjectInitializer;
-	springArmComp = tempObjectInitializer.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraSpring"));
-	//these 2 need finetuning
-	//springArmComp->SocketOffset = FVector(0, 35, 0);
-	//springArmComp->TargetOffset = FVector(0, 0, 55);
-	springArmComp->bUsePawnControlRotation = true;
-	springArmComp->AttachParent = GetRootComponent();
+	//FObjectInitializer tempObjectInitializer;
+	//springArmComp = tempObjectInitializer.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraSpring"));
+	////these 2 need finetuning
+	////springArmComp->SocketOffset = FVector(0, 35, 0);
+	////springArmComp->TargetOffset = FVector(0, 0, 55);
+	//springArmComp->bUsePawnControlRotation = true;
+	//springArmComp->AttachParent = GetRootComponent();
 
-	cameraComp = tempObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
-	cameraComp->AttachParent = springArmComp;
+	//cameraComp = tempObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
+	//cameraComp->AttachParent = springArmComp;
 
-	/*health_Max = 100;
-	health = health_Max;
+	///*health_Max = 100;
+	//health = health_Max;
 
-	stamina_Max = 100;
-	stamina = stamina_Max;*/
+	//stamina_Max = 100;
+	//stamina = stamina_Max;*/
 }
 
 // Called when the game starts or when spawned
