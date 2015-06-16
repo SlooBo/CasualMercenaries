@@ -3,7 +3,7 @@
 #include "CasualMercenaries.h"
 #include "UnrealNetwork.h"
 #include "PlayerCharacter.h"
-
+#include "PlayerHud.h"
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
@@ -25,11 +25,14 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	cameraComp = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
 	cameraComp->AttachParent = springArmComp;
 
-	health_Max = 100;
+	health_Max = 100.0f;
 	health = health_Max;
 
-	stamina_Max = 100;
+	stamina_Max = 100.0f;
 	stamina = stamina_Max;
+
+	armor_Max = 100.0f;
+	armor = armor_Max;
 }
 
 // Called when the game starts or when spawned
@@ -90,7 +93,7 @@ void APlayerCharacter::OnStopJump()
 
 void APlayerCharacter::MoveForward(float _val)
 {
-	if (Controller && _val != 0.f)
+	if (Controller && _val != 0.0f)
 	{
 		const FRotator tempRotation = GetActorRotation();
 		FVector tempDirection = FRotationMatrix(tempRotation).GetScaledAxis(EAxis::X);
@@ -100,10 +103,19 @@ void APlayerCharacter::MoveForward(float _val)
 
 void APlayerCharacter::MoveRight(float _val)
 {
-	if (_val != 0.f)
+	if (_val != 0.0f)
 	{
 		const FRotator tempRotation = GetActorRotation();
 		FVector tempDirection = FRotationMatrix(tempRotation).GetScaledAxis(EAxis::Y);
 		AddMovementInput(tempDirection, _val);
+	}
+}
+void APlayerCharacter::ChangeUITest()
+{
+	APlayerController* MyPC = Cast<APlayerController>(Controller);
+
+	if (MyPC)
+	{
+		Cast<APlayerHud>(MyPC->GetHUD())->changeUIElement(MenuType::GAME_UI);
 	}
 }

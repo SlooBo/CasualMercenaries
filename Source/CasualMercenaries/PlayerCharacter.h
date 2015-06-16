@@ -50,7 +50,7 @@ public:
 
 
 	void AddWeapon(AWeapon* _weapon);
-
+	void ChangeUITest();
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* springArmComp;
