@@ -6,7 +6,6 @@
 #include "Projectile.h"
 #include "RocketLauncher.generated.h"
 
-
 UCLASS()
 class CASUALMERCENARIES_API ARocketLauncher : public AWeapon
 {
@@ -14,10 +13,11 @@ class CASUALMERCENARIES_API ARocketLauncher : public AWeapon
 
 public:
 
+
+
 	ARocketLauncher(const FObjectInitializer& FOI);
 
-
-	void PrimaryFunction(AActor* user);
+	void PrimaryFunction(APlayerCharacter* user);
 
 	void SecondaryFunction();
 
@@ -26,4 +26,6 @@ public:
 	// Called every frame
 	void Tick(float DeltaSeconds);
 	void Reload() {};
+
+
 };

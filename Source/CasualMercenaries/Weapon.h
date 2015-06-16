@@ -6,6 +6,7 @@
 #include "Weapon.generated.h"
 
 
+class APlayerCharacter;
 
 UCLASS()
 class CASUALMERCENARIES_API AWeapon : public AActor
@@ -13,6 +14,8 @@ class CASUALMERCENARIES_API AWeapon : public AActor
 	GENERATED_BODY()
 
 public:	
+
+
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* weaponMesh;
@@ -32,13 +35,15 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	virtual void PrimaryFunction(AActor user);
+	virtual void PrimaryFunction(APlayerCharacter* user);
 
 	virtual void SecondaryFunction();
 
 	virtual void Reload();
 
+	
 protected:
+
 
 	int ammo;
 	int clips;

@@ -12,6 +12,7 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	weaponMesh->SetOnlyOwnerSee(false);
 	weaponMesh->bCastDynamicShadow = true;
 	weaponMesh->CastShadow = true;
+	//weaponMesh->SetSkeletalMesh(new USkeletalMesh(ObjectInitializer));
 
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -32,7 +33,7 @@ void AWeapon::Tick( float DeltaTime )
 
 }
 
-void AWeapon::PrimaryFunction(AActor user)
+void AWeapon::PrimaryFunction(APlayerCharacter* user)
 {
 
 

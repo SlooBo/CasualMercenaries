@@ -2,7 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "RocketLauncher.h"
-
+#include "PlayerCharacter.h"//this should not be working...
 ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
 	reloadTime = 1.5;
@@ -27,25 +27,21 @@ void ARocketLauncher::Tick(float DeltaTime)
 
 }
 
-void ARocketLauncher::PrimaryFunction(AActor* user)
+void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 {
 	ammo--;
 
+	FVector userLoc;
+	FRotator cameraRot;
 
-	FVector CameraLoc;
-	FRotator CameraRot;
+	user->GetActorEyesViewPoint(userLoc, cameraRot);
 
+	userLoc = user->GetActorLocation();
 
-	user->GetActorEyesViewPoint(CameraLoc, CameraRot);
+	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
 
-	FVector const MuzzleLocation = CameraLoc + FTransform(CameraRot).TransformVector(MuzzleOffset);
+	FRotator MuzzleRotation = cameraRot;
 
-	FRotator MuzzleRotation = CameraRot;
-	MuzzleRotation.Pitch += 10.0f;
-
-	FVector spawnLocation = user->GetActorLocation();
-
-	FRotator spawnRotation = user->GetActorRotation();
 
 	UWorld* const World = GetWorld();
 	if (World != NULL)
@@ -54,9 +50,9 @@ void ARocketLauncher::PrimaryFunction(AActor* user)
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = Instigator;
 
-
-		AProjectile* const projectile = World->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
 		// spawn the projectile at the muzzle
+		AProjectile* const projectile = World->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+
 		if (projectile)
 		{
 			FVector const LaunchDir = MuzzleRotation.Vector();

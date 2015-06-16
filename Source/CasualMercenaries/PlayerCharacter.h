@@ -15,6 +15,7 @@ class CASUALMERCENARIES_API APlayerCharacter : public ABaseCharacter
 	GENERATED_BODY()
 	
 public:
+
 	// Sets default values for this character's properties
 	APlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
