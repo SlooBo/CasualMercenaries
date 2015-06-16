@@ -10,11 +10,11 @@ ABaseCharacter::ABaseCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	health_Max = 100;
+	/*health_Max = 100;
 	health = health_Max;
 
 	stamina_Max = 100;
-	stamina = stamina_Max;
+	stamina = stamina_Max;*/
 
 	/* Don't collide with camera checks to keep 3rd person camera at position when other players are standing behind player */
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
@@ -41,43 +41,43 @@ void ABaseCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	Super::SetupPlayerInputComponent(InputComponent);
 
 }
-
-float ABaseCharacter::GetHealth() const
-{
-	return health;
-}
-
-bool ABaseCharacter::IsAlive() const
-{
-	return health > 0;
-}
-
-void ABaseCharacter::SetRagdollPhysics()
-{
-	bool tempInRagdoll = false;
-	USkeletalMeshComponent* tempMesh = GetMesh();
-
-	tempMesh->SetAllBodiesSimulatePhysics(true);
-	tempMesh->SetSimulatePhysics(true);
-	tempMesh->WakeAllRigidBodies();
-	tempMesh->bBlendPhysics = true;
-	tempInRagdoll = true;
-
-	UCharacterMovementComponent* tempCharComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	if (tempCharComp)
-	{
-		tempCharComp->StopMovementImmediately();
-		tempCharComp->DisableMovement();
-		tempCharComp->SetComponentTickEnabled(false);
-	}
-
-	if (!tempInRagdoll)
-	{
-		//Immediately hide the pawn
-		TurnOff();
-		SetActorHiddenInGame(true);
-		SetLifeSpan(1.0f);
-	}
-
-	SetLifeSpan(10.0f);
-}
+//
+//float ABaseCharacter::GetHealth() const
+//{
+//	return health;
+//}
+//
+//bool ABaseCharacter::IsAlive() const
+//{
+//	return health > 0;
+//}
+//
+//void ABaseCharacter::SetRagdollPhysics()
+//{
+//	//bool tempInRagdoll = false;
+//	//USkeletalMeshComponent* tempMesh = GetMesh();
+//
+//	//tempMesh->SetAllBodiesSimulatePhysics(true);
+//	//tempMesh->SetSimulatePhysics(true);
+//	//tempMesh->WakeAllRigidBodies();
+//	//tempMesh->bBlendPhysics = true;
+//	//tempInRagdoll = true;
+//
+//	//UCharacterMovementComponent* tempCharComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
+//	//if (tempCharComp)
+//	//{
+//	//	tempCharComp->StopMovementImmediately();
+//	//	tempCharComp->DisableMovement();
+//	//	tempCharComp->SetComponentTickEnabled(false);
+//	//}
+//
+//	//if (!tempInRagdoll)
+//	//{
+//	//	//Immediately hide the pawn
+//	//	TurnOff();
+//	//	SetActorHiddenInGame(true);
+//	//	SetLifeSpan(1.0f);
+//	//}
+//
+//	//SetLifeSpan(10.0f);
+//}

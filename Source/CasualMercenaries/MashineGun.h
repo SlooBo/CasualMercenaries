@@ -16,5 +16,6 @@ public:
 
 	AMashineGun(const FObjectInitializer& FOI);
 	~AMashineGun();
+	void PrimaryFunction(AActor* user);
 
 };

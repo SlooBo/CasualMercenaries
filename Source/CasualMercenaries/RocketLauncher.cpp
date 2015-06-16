@@ -30,8 +30,12 @@ void ARocketLauncher::Tick(float DeltaTime)
 void ARocketLauncher::PrimaryFunction(AActor* user)
 {
 	ammo--;
+
+
 	FVector CameraLoc;
 	FRotator CameraRot;
+
+
 	user->GetActorEyesViewPoint(CameraLoc, CameraRot);
 
 	FVector const MuzzleLocation = CameraLoc + FTransform(CameraRot).TransformVector(MuzzleOffset);

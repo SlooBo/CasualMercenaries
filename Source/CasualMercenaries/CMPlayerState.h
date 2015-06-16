@@ -16,6 +16,8 @@ class CASUALMERCENARIES_API ACMPlayerState : public APlayerState
 public:
 	ACMPlayerState(const FObjectInitializer& objectInitializer);
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Team Number"), Category = "Gameplay")
 	int32 GetTeam();
 
@@ -43,18 +45,18 @@ public:
 protected:
 
 	// 0 = Everyone/Deathmatch, 1-4 = Teams
-	UPROPERTY(Replicated, EditAnywhere, Meta = (DisplayName = "Team Number"))
+	//UPROPERTY(Replicated, EditAnywhere, Meta = (DisplayName = "Team Number"))
 	int32 team;
 
 	// Hunt Target
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Meta = (DisplayName = "Hunt Target"))
+	//UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Meta = (DisplayName = "Hunt Target"))
 	APawn* huntTarget;
 
 	// Player Frags
-	UPROPERTY(Replicated, Meta = (DisplayName = "Player Frags"))
+	//UPROPERTY(Replicated, Meta = (DisplayName = "Player Frags"))
 	int32 frags;
 
 	// Player Deaths
-	UPROPERTY(Replicated, Meta = (DisplayName = "Player Deaths"))
+	//UPROPERTY(Replicated, Meta = (DisplayName = "Player Deaths"))
 	int32 deaths;
 };

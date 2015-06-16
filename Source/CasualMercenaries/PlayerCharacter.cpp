@@ -25,11 +25,11 @@ APlayerCharacter::APlayerCharacter()
 	cameraComp = tempObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
 	cameraComp->AttachParent = springArmComp;
 
-	health_Max = 100;
+	/*health_Max = 100;
 	health = health_Max;
 
 	stamina_Max = 100;
-	stamina = stamina_Max;
+	stamina = stamina_Max;*/
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +64,11 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 
 }
 
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+};
+
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 {
 
@@ -73,6 +78,15 @@ void APlayerCharacter::OnStartJump()
 
 }
 void APlayerCharacter::OnStopJump()
+{
+
+}
+void APlayerCharacter::MoveForward(float Val)
+{
+
+}
+
+void APlayerCharacter::MoveRight(float Val)
 {
 
 }

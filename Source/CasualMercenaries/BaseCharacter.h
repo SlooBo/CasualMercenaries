@@ -25,20 +25,20 @@ public:
 
 	//Health
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		float GetHealth() const;
+	//UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+	//	float GetHealth() const;
 
-	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		bool IsAlive() const;
+	//UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+	//	bool IsAlive() const;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
+	/*UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
 	float health;
 	float health_Max;
 
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
 	float stamina;
-	float stamina_Max;
+	float stamina_Max;*/
 
 
 	/************************************************************************/
