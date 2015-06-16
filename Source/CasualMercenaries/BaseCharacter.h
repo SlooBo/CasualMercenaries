@@ -23,23 +23,42 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	//Health
+	//Character condition
 
-	//UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-	//	float GetHealth() const;
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		float GetHealth() const;
 
-	//UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-	//	bool IsAlive() const;
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		bool IsAlive() const;
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		void AddHealth(float _health);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		void TakeDamage(float _damage);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		void AddStamina(float _stamina);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		void LoseStamina(float _fatigue);
+
 
 protected:
-	/*UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
 	float health;
+	UPROPERTY(VisibleAnywhere, Category = "PlayerCondition")
 	float health_Max;
 
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
 	float stamina;
-	float stamina_Max;*/
+	UPROPERTY(VisibleAnywhere, Category = "PlayerCondition")
+	float stamina_Max;
 
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
+	float armor;
+	UPROPERTY(VisibleAnywhere, Category = "PlayerCondition")
+	float armor_Max;
 
 	/************************************************************************/
 	/* Damage & Death                                                       */

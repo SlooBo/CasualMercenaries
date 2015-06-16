@@ -16,7 +16,7 @@ class CASUALMERCENARIES_API APlayerCharacter : public ABaseCharacter
 	
 public:
 	// Sets default values for this character's properties
-	APlayerCharacter();
+	APlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

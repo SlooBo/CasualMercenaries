@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CasualMercenaries.h"
+#include "UnrealNetwork.h"
 #include "BaseCharacter.h"
 
 
@@ -41,43 +42,63 @@ void ABaseCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompo
 	Super::SetupPlayerInputComponent(InputComponent);
 
 }
-//
-//float ABaseCharacter::GetHealth() const
-//{
-//	return health;
-//}
-//
-//bool ABaseCharacter::IsAlive() const
-//{
-//	return health > 0;
-//}
-//
-//void ABaseCharacter::SetRagdollPhysics()
-//{
-//	//bool tempInRagdoll = false;
-//	//USkeletalMeshComponent* tempMesh = GetMesh();
-//
-//	//tempMesh->SetAllBodiesSimulatePhysics(true);
-//	//tempMesh->SetSimulatePhysics(true);
-//	//tempMesh->WakeAllRigidBodies();
-//	//tempMesh->bBlendPhysics = true;
-//	//tempInRagdoll = true;
-//
-//	//UCharacterMovementComponent* tempCharComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
-//	//if (tempCharComp)
-//	//{
-//	//	tempCharComp->StopMovementImmediately();
-//	//	tempCharComp->DisableMovement();
-//	//	tempCharComp->SetComponentTickEnabled(false);
-//	//}
-//
-//	//if (!tempInRagdoll)
-//	//{
-//	//	//Immediately hide the pawn
-//	//	TurnOff();
-//	//	SetActorHiddenInGame(true);
-//	//	SetLifeSpan(1.0f);
-//	//}
-//
-//	//SetLifeSpan(10.0f);
-//}
+
+void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ABaseCharacter, health);
+	DOREPLIFETIME(ABaseCharacter, stamina);
+	DOREPLIFETIME(ABaseCharacter, armor);
+}
+
+float ABaseCharacter::GetHealth() const
+{
+	return health;
+}
+
+bool ABaseCharacter::IsAlive() const
+{
+	return health > 0;
+}
+
+void ABaseCharacter::AddHealth(float _health)
+{}
+
+void ABaseCharacter::TakeDamage(float _health)
+{}
+
+void ABaseCharacter::AddStamina(float _health)
+{}
+
+void ABaseCharacter::LoseStamina(float _health)
+{}
+
+void ABaseCharacter::SetRagdollPhysics()
+{
+	bool tempInRagdoll = false;
+	USkeletalMeshComponent* tempMesh = GetMesh();
+
+	tempMesh->SetAllBodiesSimulatePhysics(true);
+	tempMesh->SetSimulatePhysics(true);
+	tempMesh->WakeAllRigidBodies();
+	tempMesh->bBlendPhysics = true;
+	tempInRagdoll = true;
+
+	UCharacterMovementComponent* tempCharComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
+	if (tempCharComp)
+	{
+		tempCharComp->StopMovementImmediately();
+		tempCharComp->DisableMovement();
+		tempCharComp->SetComponentTickEnabled(false);
+	}
+
+	if (!tempInRagdoll)
+	{
+		//Immediately hide the pawn
+		TurnOff();
+		SetActorHiddenInGame(true);
+		SetLifeSpan(1.0f);
+	}
+
+	SetLifeSpan(10.0f);
+}
