@@ -3,11 +3,12 @@
 #include "CasualMercenaries.h"
 #include "CMGameMode_Hunt.h"
 #include "CMPlayerState.h"
+#include "Util.h"
 
 ACMGameMode_Hunt::ACMGameMode_Hunt(const class FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
 {
-	huntMinPlayers = 3;
+	minPlayersToStart = 3;
 }
 
 void ACMGameMode_Hunt::StartMatch()
@@ -15,34 +16,30 @@ void ACMGameMode_Hunt::StartMatch()
 	Super::StartMatch();
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("GameMode: Hunt"));
 
-	int32 numPlayers = 0;
+	TArray<APlayerController*> players;
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-		numPlayers++;
-
-	if (numPlayers >= huntMinPlayers)
 	{
-		TArray<APlayerController*> players;
-		for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-		{
+		if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
 			SetRandomPlayerHuntTarget(*iter);
-		}
 	}
-	else
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Hunt: Not enough players to start hunt (min: ") + FString::FromInt(huntMinPlayers) + TEXT(")"));
 }
 
 void ACMGameMode_Hunt::HandleMatchIsWaitingToStart()
 {
-	FTimerHandle startTimer;
-	GetWorld()->GetTimerManager().SetTimer(startTimer, this, &ACMGameMode_Hunt::StartMatch, 1.0f);
+	Super::HandleMatchIsWaitingToStart();
 }
 
 void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer)
 {
 	Super::OnPlayerDeath_Implementation(player, killer);
 
-	SetRandomPlayerHuntTarget(player);
-	SetRandomPlayerHuntTarget(killer);
+	if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
+	{
+		SetRandomPlayerHuntTarget(player);
+
+		if (killer != NULL)
+			SetRandomPlayerHuntTarget(killer);
+	}
 }
 
 void ACMGameMode_Hunt::SetPlayerHuntTarget(APlayerController* player, APlayerController* killer)
@@ -53,6 +50,7 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(APlayerController* player, APlayerCon
 	ACMPlayerState* killerState = (killer != NULL) ? static_cast<ACMPlayerState*>(killer->PlayerState) : NULL;
 
 	playerState->SetHuntTarget(killer->GetPawn());
+	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killer->GetName());
 }
 
 void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(APlayerController* player)
@@ -72,6 +70,4 @@ void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(APlayerController* player)
 	} while (player == target);
 
 	SetPlayerHuntTarget(player, target);
-
-	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + target->GetName());
 }

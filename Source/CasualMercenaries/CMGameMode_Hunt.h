@@ -16,15 +16,12 @@ class CASUALMERCENARIES_API ACMGameMode_Hunt : public ACMGameMode
 public:
 	ACMGameMode_Hunt(const class FObjectInitializer& objectInitializer);
 
-	virtual void StartMatch() override;
 	virtual void HandleMatchIsWaitingToStart() override;
+	virtual void StartMatch() override;
 
 	// Event when player dies or is killed by other player
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
 
 	void SetRandomPlayerHuntTarget(APlayerController* player);
 	void SetPlayerHuntTarget(APlayerController* player, APlayerController* target);
-
-protected:
-	int32 huntMinPlayers;
 };

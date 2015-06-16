@@ -5,6 +5,13 @@
 #include "GameFramework/GameMode.h"
 #include "CMGameMode.generated.h"
 
+enum class InGameState
+{
+	Started = 0,
+	WaitingForPlayers,
+	Running,
+};
+
 /**
  * 
  */
@@ -16,11 +23,13 @@ class CASUALMERCENARIES_API ACMGameMode : public AGameMode
 public:
 	ACMGameMode(const class FObjectInitializer& objectInitializer);
 
+	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void StartMatch() override;
 
 	virtual bool ShouldSpawnAtStartSpot(AController* player) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* player) override;
 
+	void WaitTickSecond();
 	void MapTickSecond();
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Left"), Category = "Gameplay|Level")
@@ -48,12 +57,16 @@ public:
 
 protected:
 
-	class APlayerCharacter* GetPlayerCharacter(APlayerController* player);
-
 	// Timelimit in minutes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit"))
 	int32 mapTimelimit;
 
 	int32 mapTimeElapsed;
-	FTimerHandle mapTimerHandle;
+	int32 waitElapsed;
+
+	FTimerHandle mapTimerHandle;	// Ticks once every second when the main game mode is running
+	FTimerHandle waitTimer;			// Wait for players timer before game starts
+	InGameState inGameState;		// Internal game state of the game mode
+	
+	int32 minPlayersToStart;		// Start the game mode when at least this many players has joined
 };

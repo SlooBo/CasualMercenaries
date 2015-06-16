@@ -18,11 +18,8 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	//GameStateClass = ACMGameState::StaticClass();
 
 	DefaultPlayerName = FText::FromString("OfficeRat");
-}
 
-APlayerCharacter* ACMGameMode::GetPlayerCharacter(APlayerController* player)
-{
-	return static_cast<APlayerCharacter*>(player->GetPawn());
+	bDelayedStart = true;
 }
 
 bool ACMGameMode::ShouldSpawnAtStartSpot(AController* player)
@@ -52,14 +49,53 @@ AActor* ACMGameMode::ChoosePlayerStart_Implementation(AController* player)
 	return (AActor*)best;
 }
 
+void ACMGameMode::HandleMatchIsWaitingToStart()
+{
+	Super::HandleMatchIsWaitingToStart();
+
+	waitElapsed = -1;
+
+	GetWorld()->GetTimerManager().SetTimer(waitTimer, this, &ACMGameMode::WaitTickSecond, 1.0f, true);
+}
+
 void ACMGameMode::StartMatch()
 {
 	Super::StartMatch();
 
-	GetWorld()->GetTimerManager().ClearTimer(mapTimerHandle);
-	GetWorld()->GetTimerManager().SetTimer(mapTimerHandle, this, &ACMGameMode::MapTickSecond, 1.0f, true);
+	GetWorld()->GetTimerManager().ClearTimer(waitTimer);
+	GetWorld()->GetTimerManager().SetTimer(mapTimerHandle, this, &ACMGameMode::MapTickSecond, 1.0f, true, 0.0f);
 
 	OnStartMatch();
+}
+
+void ACMGameMode::WaitTickSecond()
+{
+	waitElapsed++;
+
+	int32 numPlayers = GetNumPlayers();
+
+	if (numPlayers >= minPlayersToStart)
+	{
+		if (inGameState != InGameState::WaitingForPlayers)
+		{
+			waitElapsed = 0;
+			inGameState = InGameState::WaitingForPlayers;
+		}
+
+		const int32 startTime = 1;
+		if (waitElapsed >= startTime)
+		{
+			inGameState = InGameState::Running;
+			StartMatch();
+		}
+		else
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Game starting in... ") + FString::FromInt(startTime-waitElapsed));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Waiting for more players... ") + FString::FromInt(waitElapsed)
+			+ TEXT(" ( ") + FString::FromInt(numPlayers) + TEXT("/") + FString::FromInt(minPlayersToStart) + TEXT(" )"));
+	}
 }
 
 void ACMGameMode::MapTickSecond()
