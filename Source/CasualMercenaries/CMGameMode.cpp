@@ -10,9 +10,7 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 {
 	// defaults for game mode, use blueprints to override
 
-	static ConstructorHelpers::FClassFinder<APawn> playerPawn(TEXT("/Game/Game/Blueprints/BP_PlayerTest"));
-	DefaultPawnClass = playerPawn.Class;//APlayerCharacter::StaticClass();
-
+	DefaultPawnClass = APlayerCharacter::StaticClass();
 	//HUDClass = ACMHUD::StaticClass();
 	//PlayerControllerClass = ACMPlayerController::StaticClass();
 	PlayerStateClass = ACMPlayerState::StaticClass();
@@ -20,6 +18,11 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	//GameStateClass = ACMGameState::StaticClass();
 
 	DefaultPlayerName = FText::FromString("OfficeRat");
+}
+
+APlayerCharacter* ACMGameMode::GetPlayerCharacter(APlayerController* player)
+{
+	return static_cast<APlayerCharacter*>(player->GetPawn());
 }
 
 bool ACMGameMode::ShouldSpawnAtStartSpot(AController* player)
@@ -80,12 +83,12 @@ void ACMGameMode::MapTickSecond()
 	}
 }
 
-float ACMGameMode::MapTimeleft()
+int32 ACMGameMode::MapTimeleft()
 {
 	return (mapTimelimit > 0) ? (mapTimelimit - mapTimeElapsed) : 0;
 }
 
-float ACMGameMode::MapTimeElapsed()
+int32 ACMGameMode::MapTimeElapsed()
 {
 	return mapTimeElapsed;
 }
@@ -105,6 +108,7 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 
 	playerState->AddDeaths(-1);
 	
+	// TODO: broadcast death for every player
 
 	if (killer != NULL)
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, player->GetName() + TEXT(" killed ") + killer->GetName());

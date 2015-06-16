@@ -24,11 +24,11 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Team Number"), Category = "Gameplay")
 	void SetTeam(int32 newTeam);
 
-	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Hunt Target"), Category = "Gameplay|Hunt")
-	void SetHuntTarget(APawn* target);
-
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Hunt Target"), Category = "Gameplay|Hunt")
 	APawn* GetHuntTarget();
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Hunt Target"), Category = "Gameplay|Hunt")
+	void SetHuntTarget(APawn* target);
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Frags"), Category = "Gameplay")
 	int32 GetFrags();
@@ -45,18 +45,19 @@ public:
 protected:
 
 	// 0 = Everyone/Deathmatch, 1-4 = Teams
-	//UPROPERTY(Replicated, EditAnywhere, Meta = (DisplayName = "Team Number"))
+	UPROPERTY(Replicated, EditAnywhere, Meta = (DisplayName = "Team Number"))
 	int32 team;
 
+	// TODO: move huntTarget to PlayerCharacter in order to prevent cheating (every player can read these)
 	// Hunt Target
-	//UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Meta = (DisplayName = "Hunt Target"))
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Meta = (DisplayName = "Hunt Target"))
 	APawn* huntTarget;
 
 	// Player Frags
-	//UPROPERTY(Replicated, Meta = (DisplayName = "Player Frags"))
+	UPROPERTY(Replicated, Meta = (DisplayName = "Player Frags"))
 	int32 frags;
 
 	// Player Deaths
-	//UPROPERTY(Replicated, Meta = (DisplayName = "Player Deaths"))
+	UPROPERTY(Replicated, Meta = (DisplayName = "Player Deaths"))
 	int32 deaths;
 };

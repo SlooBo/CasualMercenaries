@@ -24,11 +24,12 @@ public:
 	void MapTickSecond();
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Left"), Category = "Gameplay|Level")
-	float MapTimeleft();
+	int32 MapTimeleft();
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Elapsed"), Category = "Gameplay|Level")
-	float MapTimeElapsed();
+	int32 MapTimeElapsed();
 
+	// Called when player dies
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Player Death"), Category = "Gameplay|Player")
 	void PlayerDeath(APlayerController* player, APlayerController* killer = NULL);
 
@@ -46,10 +47,13 @@ public:
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
 
 protected:
+
+	class APlayerCharacter* GetPlayerCharacter(APlayerController* player);
+
 	// Timelimit in minutes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit"))
 	int32 mapTimelimit;
 
-	FTimerHandle mapTimerHandle;
 	int32 mapTimeElapsed;
+	FTimerHandle mapTimerHandle;
 };
