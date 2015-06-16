@@ -62,16 +62,49 @@ bool ABaseCharacter::IsAlive() const
 }
 
 void ABaseCharacter::AddHealth(float _health)
-{}
+{
+	if (health + _health >= health_Max)
+		health = health_Max;
+	else
+		health = health + _health;
+}
 
 void ABaseCharacter::TakeDamage(float _health)
-{}
+{
+	health = health - _health;
+}
 
-void ABaseCharacter::AddStamina(float _health)
-{}
+void ABaseCharacter::AddStamina(float _stamina)
+{
+	if (stamina + _stamina >= stamina_Max)
+		stamina = stamina_Max;
+	else
+		stamina = stamina + _stamina;
+}
 
-void ABaseCharacter::LoseStamina(float _health)
-{}
+void ABaseCharacter::LoseStamina(float _stamina)
+{
+	if (stamina - _stamina <= 0)
+		stamina = 0;
+	else
+		stamina = stamina - _stamina;
+}
+
+void ABaseCharacter::AddArmor(float _armor)
+{
+	if (armor + _armor >= armor_Max)
+		armor = armor_Max;
+	else
+		armor = armor + _armor;
+}
+
+void ABaseCharacter::LoseArmor(float _damage)
+{
+	if (armor - _damage <= 0)
+		armor = 0;
+	else
+		armor = armor - _damage;
+}
 
 void ABaseCharacter::SetRagdollPhysics()
 {

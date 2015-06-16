@@ -23,7 +23,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	//Character condition
+	/************************************************************************/
+	/* Character condition                                                  */
+	/************************************************************************/
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		float GetHealth() const;
@@ -43,6 +45,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		void LoseStamina(float _fatigue);
 
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		void AddArmor(float _armor);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		void LoseArmor(float _damage);
 
 protected:
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")

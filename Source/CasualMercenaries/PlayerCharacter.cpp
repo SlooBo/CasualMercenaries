@@ -60,8 +60,6 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::OnStartJump);
 	InputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::OnStopJump);
 
-
-
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -89,12 +87,23 @@ void APlayerCharacter::OnStopJump()
 {
 
 }
-void APlayerCharacter::MoveForward(float Val)
-{
 
+void APlayerCharacter::MoveForward(float _val)
+{
+	if (Controller && _val != 0.f)
+	{
+		const FRotator tempRotation = GetActorRotation();
+		FVector tempDirection = FRotationMatrix(tempRotation).GetScaledAxis(EAxis::X);
+		AddMovementInput(tempDirection, _val);
+	}
 }
 
-void APlayerCharacter::MoveRight(float Val)
+void APlayerCharacter::MoveRight(float _val)
 {
-
+	if (_val != 0.f)
+	{
+		const FRotator tempRotation = GetActorRotation();
+		FVector tempDirection = FRotationMatrix(tempRotation).GetScaledAxis(EAxis::Y);
+		AddMovementInput(tempDirection, _val);
+	}
 }

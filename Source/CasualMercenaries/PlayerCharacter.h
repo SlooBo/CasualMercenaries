@@ -34,9 +34,9 @@ public:
 	/* Movement                                                             */
 	/************************************************************************/
 
-	virtual void MoveForward(float Val);
+	virtual void MoveForward(float _val);
 
-	virtual void MoveRight(float Val);
+	virtual void MoveRight(float _val);
 
 	/* Client mapped to Input */
 	void OnStartJump();
