@@ -15,8 +15,6 @@ class CASUALMERCENARIES_API AWeapon : public AActor
 
 public:	
 
-
-
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* weaponMesh;
 

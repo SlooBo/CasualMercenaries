@@ -7,9 +7,11 @@
 
 enum class InGameState
 {
-	Started = 0,
 	WaitingForPlayers,
+	Warmup,
+	Starting,
 	Running,
+	End,
 };
 
 /**
@@ -38,9 +40,8 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Elapsed"), Category = "Gameplay|Level")
 	int32 MapTimeElapsed();
 
-	// Called when player dies
-	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Player Death"), Category = "Gameplay|Player")
-	void PlayerDeath(APlayerController* player, APlayerController* killer = NULL);
+	// Called when warmup starts
+	virtual void WarmupStart();
 
 	// Event when match has started
 	UFUNCTION(BlueprintImplementableEvent, Meta = (DisplayName = "On Start Match"), Category = "Gameplay")
@@ -50,7 +51,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Meta = (DisplayName = "On Map Timeout"), Category = "Gameplay|Level")
 	virtual void OnMapTimeout();
 
-	// Event when player dies or is killed by other player
+	// Event when player dies or is killed by other player, called by the player
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Player Death"), Category = "Gameplay|Player")
 	void OnPlayerDeath(APlayerController* player, APlayerController* killer = NULL);
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
@@ -58,7 +59,7 @@ public:
 protected:
 
 	// Timelimit in minutes
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit"), Category = "Gameplay|Level")
 	int32 mapTimelimit;
 
 	int32 mapTimeElapsed;
@@ -68,5 +69,15 @@ protected:
 	FTimerHandle waitTimer;			// Wait for players timer before game starts
 	InGameState inGameState;		// Internal game state of the game mode
 	
-	int32 minPlayersToStart;		// Start the game mode when at least this many players has joined
+	// Start the game mode when at least this many players has joined
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Minimum Players To Start"), Category = "Gameplay|Level")
+	int32 minPlayersToStart;
+
+	// Time to wait before game mode starts
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Start Delay Time"), Category = "Gameplay|Level")
+	int32 startTime;
+
+	// Length of warmup after minimum number of players has joined the level
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Warmup Time"), Category = "Gameplay|Level")
+	int32 warmupTime;
 };

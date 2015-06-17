@@ -6,6 +6,13 @@
 
 AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/ToasterGun/MESH_Toaster_gun.MESH_Toaster_gun'"));
+	weaponMesh->SetSkeletalMesh(MeshObj.Object);
+	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
+	weaponMesh->SetMaterial(0, MateriaObj.Object);
+
+
+	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
 }
 
 void AMashineGun::BeginPlay()

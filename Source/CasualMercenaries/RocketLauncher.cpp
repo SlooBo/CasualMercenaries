@@ -5,6 +5,9 @@
 #include "PlayerCharacter.h"//this should not be working...
 ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/RocketLauncher/RocketLauncher.RocketLauncher'"));
+	weaponMesh->SetSkeletalMesh(MeshObj.Object);
+
 	reloadTime = 1.5;
 	maxAmmo = 6;
 	clips = 5;
@@ -12,19 +15,19 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 	ammoInClip = 1;
 
 	PrimaryActorTick.bCanEverTick = true;
+
+
 }
 
 void ARocketLauncher::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
 void ARocketLauncher::Tick(float DeltaTime)
 {
 	AWeapon::Tick(DeltaTime);
-
 }
 
 void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
@@ -51,7 +54,7 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 		SpawnParams.Instigator = Instigator;
 
 		// spawn the projectile at the muzzle
-		AProjectile* const projectile = World->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+		ARocket* const projectile = World->SpawnActor<ARocket>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
 
 		if (projectile)
 		{
