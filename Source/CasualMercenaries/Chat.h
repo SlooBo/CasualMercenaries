@@ -31,7 +31,7 @@ private:
 	UClass *chatText;
 	UUserWidget *chatWidget;
 	UScrollBox *textBox;
-	
+	UEditableTextBox *textInput;
 	void SetInputModeGameAndUI();
 	
 };

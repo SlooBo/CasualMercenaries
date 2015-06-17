@@ -6,7 +6,7 @@
 
 APlayerCharacter* Util::GetLocalPlayer(UWorld* world)
 {
-	return Cast<APlayerCharacter>(world->GetFirstPlayerController());
+	return Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(world,0));
 }
 
 APlayerCharacter* Util::GetPlayerCharacter(APlayerController* player)

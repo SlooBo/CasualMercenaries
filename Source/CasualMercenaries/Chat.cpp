@@ -27,8 +27,11 @@ void UChat::Initialize(UUserWidget *chatWidget,UWorld *world)
 	UWidgetTree *widgetTree = chatWidget->WidgetTree;
 	TArray<UWidget*> children;
 	widgetTree->GetAllWidgets(children);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child count: " +FString::FromInt(children.Num()));
+	textInput = Cast<UEditableTextBox>(children[11]);
 	for (int i = 0; i < children.Num(); i++)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child name: " + children[i]->GetName() +","+FString::FromInt(i));
 		UScrollBox *scrollbox = Cast<UScrollBox>(children[i]);
 		if (scrollbox != nullptr)
 		{
@@ -55,7 +58,7 @@ void UChat::OpenAllChat()
 	textBox->SetVisibility(ESlateVisibility::Visible);
 	world->GetFirstPlayerController()->bShowMouseCursor = true;
 	isInputVisible = true;
-	//SetInputModeGameAndUI();
+	SetInputModeGameAndUI();
 	//TODO merge these
 }
 void UChat::OpenTeamChat()
@@ -64,7 +67,7 @@ void UChat::OpenTeamChat()
 	textBox->SetVisibility(ESlateVisibility::Visible);
 	world->GetFirstPlayerController()->bShowMouseCursor = true;
 	isInputVisible = true;
-	//SetInputModeGameAndUI();
+	SetInputModeGameAndUI();
 	//TODO merge these
 }
 void UChat::ChangePlayerInputVisibility()
@@ -93,7 +96,7 @@ void UChat::SetInputModeGameAndUI()
 
 		if (chatWidget != nullptr)
 		{
-			InputMode.SetWidgetToFocus(chatWidget->GetCachedWidget());
+			InputMode.SetWidgetToFocus(textInput->TakeWidget());
 		}
 		controller->SetInputMode(InputMode);
 	}
