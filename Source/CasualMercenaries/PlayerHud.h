@@ -24,7 +24,7 @@ class CASUALMERCENARIES_API APlayerHud : public AHUD
 
 public:
 	// Sets default values for this actor's properties
-	APlayerHud(const class FPostConstructInitializeProperties& PCIP);
+	APlayerHud(const FObjectInitializer& PCIP);
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
@@ -37,7 +37,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void AddText(FString text);
-	class Chat *GetChat();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	class UChat *GetChat();
 private:
 	UPROPERTY()
 	TArray<UUserWidget*> widgets;
@@ -46,7 +47,7 @@ private:
 	UClass *mainMenuClass;
 	UPROPERTY()
 	UClass *gameUIClass;
-	class Chat *chat;
+	class UChat *chat;
 	void ClearAllWidgets();
 	void SetUpChat();
 	UUserWidget* widgetInstance;

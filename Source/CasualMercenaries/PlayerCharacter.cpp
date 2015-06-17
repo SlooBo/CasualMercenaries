@@ -247,7 +247,7 @@ void APlayerCharacter::OpenTeamChat()
 {
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
 	APlayerHud *playerhud = Cast<APlayerHud>(hud);
-	Chat *chat = playerhud->GetChat();
+	UChat *chat = playerhud->GetChat();
 	chat->OpenTeamChat();
 
 }
@@ -255,6 +255,6 @@ void APlayerCharacter::OpenAllChat()
 {
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
 	APlayerHud *playerhud = Cast<APlayerHud>(hud);
-	Chat *chat = playerhud->GetChat();
+	UChat *chat = playerhud->GetChat();
 	chat->OpenAllChat();
 }

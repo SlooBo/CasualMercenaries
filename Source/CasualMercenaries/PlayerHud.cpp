@@ -7,7 +7,7 @@
 
 
 
-APlayerHud::APlayerHud(const class FPostConstructInitializeProperties& PCIP) :Super()
+APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
 	static ConstructorHelpers::FObjectFinder<UBlueprint> MainMenuBP(TEXT("WidgetBlueprint'/Game/Game/UI/PhoneUITest.PhoneUITest'"));
 	if (MainMenuBP.Object){
@@ -19,11 +19,12 @@ APlayerHud::APlayerHud(const class FPostConstructInitializeProperties& PCIP) :Su
 		gameUIClass = (UClass*)GameUIBP.Object->GeneratedClass;
 	}
 	
-	static ConstructorHelpers::FObjectFinder<UBlueprint> ChatTextBP(TEXT("WidgetBlueprint'/Game/Game/UI/TextWidget.TextWidget'"));
-	if (ChatTextBP.Object){
-		UClass *chatText = (UClass*)ChatTextBP.Object->GeneratedClass;
-		chat = new Chat(chatText,this->GetWorld());
-	}
+		//static ConstructorHelpers::FObjectFinder<UClass> ChatClass(TEXT("Class'/Script/CasualMercenaries.Chat'"));
+		//if (ChatClass.Object){
+	chat = CreateDefaultSubobject<UChat>("chat");
+	//}
+	//chat = UChat::StaticClass();
+	//chat = new UChat(PCIP);
 
 	
 }
@@ -67,6 +68,7 @@ void APlayerHud::changeUIElement(UClass *uitype)
 	widgetInstance->AddToViewport();
 	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 	widgets.Add(widgetInstance);
+	
 }
 void APlayerHud::ClearAllWidgets()
 {
@@ -78,13 +80,13 @@ void APlayerHud::ClearAllWidgets()
 }
 void APlayerHud::SetUpChat()
 {
-	chat->Initialize(widgetInstance);
+	chat->Initialize(widgetInstance,GetWorld());
 }
 void APlayerHud::AddText(FString text)
 {
 	chat->AddText(text);
 }
-Chat *APlayerHud::GetChat()
+UChat *APlayerHud::GetChat()
 {
 	return chat;
 }

@@ -2,26 +2,36 @@
 
 #pragma once
 
+#include "Object.h"
+#include "Chat.generated.h"
+
 /**
  * 
  */
-
-class CASUALMERCENARIES_API Chat
+UCLASS()
+class CASUALMERCENARIES_API UChat : public UObject
 {
+	GENERATED_BODY()
 public:
-	Chat(UClass *chatText,  UWorld *world);
-	~Chat();
-	void Initialize(UUserWidget *chatWidget);
+	UChat(const FObjectInitializer& PCIP);
+	~UChat();
+	void Initialize(UUserWidget *chatWidget, UWorld *world);
 	void AddText(FString text);
 
 	void OpenAllChat();
 	void OpenTeamChat();
+	void ChangePlayerInputVisibility();
+	UFUNCTION(BlueprintCallable, Category = "Chat")
+	bool GetIsInputVisible();
+	UFUNCTION(BlueprintCallable, Category = "Chat")
+	void SetIsInputVisible(bool value);
 private:
+	bool isInputVisible;
 	UWorld *world;
 	UClass *chatText;
 	UUserWidget *chatWidget;
-	bool isBeingUpdated;
-
 	UScrollBox *textBox;
-
+	
+	void SetInputModeGameAndUI();
+	
 };
