@@ -39,7 +39,7 @@ public:
 	virtual void MoveRight(float _val);
 	//UFUNCTION(BlueprintCallable)
 	void WallJump();
-	UFUNCTION(BlueprintCallable, Category = "Player movement action")
+	//UFUNCTION(BlueprintCallable, Category = "Player movement action")
 	void Dash(float _inputForward, float _inputRight);
 
 	/* Client mapped to Input */
@@ -65,6 +65,7 @@ private:
 	UCameraComponent* cameraComp;
 
 	void WallCheck();
+	void InputDash();
 
 	bool wallTouch;
 	float dash_Multiplier;
