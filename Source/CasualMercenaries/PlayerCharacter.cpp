@@ -13,9 +13,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	UCharacterMovementComponent* tempMoveComp = GetCharacterMovement();
 	//Addjusting jump
-	//tempMoveComp->GravityScale = ;
-	//tempMoveComp->JumpZVelocity = ;
-
+	tempMoveComp->GravityScale = 1.0;
+	tempMoveComp->JumpZVelocity = 600;
+	tempMoveComp->AirControl = 0.5f;
 	springArmComp = ObjectInitializer.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraSpring"));
 	//these 2 need finetuning
 	springArmComp->SocketOffset = FVector(0, 35, 0);
@@ -66,6 +66,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
 	InputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	InputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+
+	InputComponent->BindAction("LeftShift", IE_Pressed, this, &APlayerCharacter::InputDash);
 
 	InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::OnStartJump);
 	InputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::OnStopJump);
@@ -147,11 +149,13 @@ void APlayerCharacter::WallCheck()
 		ForwardCheckVector,//end of line trace
 		ECC_Pawn,//collision channel, maybe wrong
 		TraceParams);
-	if (RV_Hit.bBlockingHit == true)
+	if (RV_Hit.bBlockingHit)
 	{
 		wallTouch = true;
 		wallJumpNormal = RV_Hit.ImpactNormal;
+		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
 		return;
+		
 	}
 
 	FVector RightCheckVector = tempForwardVector.RotateAngleAxis(90, FVector(0, 1, 0));
@@ -164,10 +168,11 @@ void APlayerCharacter::WallCheck()
 		ECC_Pawn,//collision channel, maybe wrong
 		TraceParams);
 
-	if (RV_Hit.bBlockingHit == true)
+	if (RV_Hit.bBlockingHit)
 	{
 		wallTouch = true;
 		wallJumpNormal = RV_Hit.ImpactNormal;
+		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
 		return;
 	}
 
@@ -181,10 +186,11 @@ void APlayerCharacter::WallCheck()
 		ECC_Pawn,//collision channel, maybe wrong
 		TraceParams);
 
-	if (RV_Hit.bBlockingHit == true)
+	if (RV_Hit.bBlockingHit)
 	{
 		wallTouch = true;
 		wallJumpNormal = RV_Hit.ImpactNormal;
+		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
 		return;
 	}
 	else
@@ -195,7 +201,7 @@ void APlayerCharacter::WallJump()
 {
 	if (wallTouch == true)
 	{
-		if (this->CharacterMovement->IsFalling() == true)
+		if (this->CharacterMovement->IsFalling())
 		{
 			//To disable ever increasing falling speed
 			this->CharacterMovement->Velocity = FVector(0, 0, 0);
@@ -212,6 +218,12 @@ void APlayerCharacter::WallJump()
 			LoseStamina(25.0f);
 		}
 	}
+}
+
+void APlayerCharacter::InputDash()
+{
+	FVector temp = GetLastMovementInputVector();
+	Dash(500, temp.Y);
 }
 
 void APlayerCharacter::Dash(float _inputForward, float _inputRight)
