@@ -33,5 +33,5 @@ private:
 	UScrollBox *textBox;
 	UEditableTextBox *textInput;
 	void SetInputModeGameAndUI();
-	
+	void OpenChatWithText(FString text);
 };

@@ -29,7 +29,8 @@ void UChat::Initialize(UUserWidget *chatWidget,UWorld *world)
 	widgetTree->GetAllWidgets(children);
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child count: " +FString::FromInt(children.Num()));
 	textInput = Cast<UEditableTextBox>(children[11]);
-	for (int i = 0; i < children.Num(); i++)
+	int childcount = children.Num();
+	for (int i = 0; i < childcount; i++)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child name: " + children[i]->GetName() +","+FString::FromInt(i));
 		UScrollBox *scrollbox = Cast<UScrollBox>(children[i]);
@@ -45,30 +46,24 @@ void UChat::Initialize(UUserWidget *chatWidget,UWorld *world)
 }
 void UChat::AddText(FString text)
 {
-	UWidget *widgetInstance = CreateWidget<UUserWidget>(world, chatText);
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child count: " + FString::FromInt(textBox->GetChildrenCount()));
+	UUserWidget *widgetInstance = CreateWidget<UUserWidget>(world, chatText);
 	textBox->AddChild(widgetInstance);
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child count: " + FString::FromInt(textBox->GetChildrenCount()));
 
+	UWidgetTree *widgetTree = widgetInstance->WidgetTree;
+	TArray<UWidget*> children;
+	widgetTree->GetAllWidgets(children);
+	UWidget *last = children[1];
+	UTextBlock *textblock = Cast<UTextBlock>(last);
+	textblock->SetText(FText::FromString(text));
 }
 
 void UChat::OpenAllChat()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Allchat!");
-	textBox->SetVisibility(ESlateVisibility::Visible);
-	world->GetFirstPlayerController()->bShowMouseCursor = true;
-	isInputVisible = true;
-	SetInputModeGameAndUI();
-	//TODO merge these
+	OpenChatWithText("/all ");
 }
 void UChat::OpenTeamChat()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "TeamChat!");
-	textBox->SetVisibility(ESlateVisibility::Visible);
-	world->GetFirstPlayerController()->bShowMouseCursor = true;
-	isInputVisible = true;
-	SetInputModeGameAndUI();
-	//TODO merge these
+	OpenChatWithText("/team ");
 }
 void UChat::ChangePlayerInputVisibility()
 {
@@ -100,4 +95,12 @@ void UChat::SetInputModeGameAndUI()
 		}
 		controller->SetInputMode(InputMode);
 	}
+}
+void UChat::OpenChatWithText(FString text)
+{
+	textBox->SetVisibility(ESlateVisibility::Visible);
+	world->GetFirstPlayerController()->bShowMouseCursor = true;
+	isInputVisible = true;
+	SetInputModeGameAndUI();
+	textInput->SetText(FText::FromString(text));
 }
