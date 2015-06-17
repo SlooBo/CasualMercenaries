@@ -168,14 +168,14 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 	if (killerState != NULL)
 		killerState->AddFrags(1);
 
-	playerState->AddDeaths(-1);
+	playerState->AddDeaths(1);
 	
 	// TODO: broadcast death for every player
 
 	if (killer != NULL)
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, player->GetName() + TEXT(" killed ") + killer->GetName());
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, playerState->PlayerName + TEXT(" killed ") + killerState->PlayerName);
 	else
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, player->GetName() + TEXT(" died"));
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, playerState->PlayerName + TEXT(" died"));
 
 	// reset character state to defaults
 	player->GetPawn()->Reset();
