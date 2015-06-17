@@ -13,11 +13,13 @@ class CASUALMERCENARIES_API AProjectile : public AActor
 public:	
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-	USphereComponent* CollisionComp;
+		USphereComponent* CollisionComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
-	UProjectileMovementComponent* ProjectileMovement;
+		UProjectileMovementComponent* ProjectileMovement;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+		UStaticMeshComponent* Mesh;
 
 	// Sets default values for this actor's properties
 	AProjectile(const FObjectInitializer& ObjectInitializer);
