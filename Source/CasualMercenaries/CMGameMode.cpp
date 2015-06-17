@@ -20,6 +20,9 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	DefaultPlayerName = FText::FromString("OfficeRat");
 
 	bDelayedStart = true;
+
+	startTime = 5;
+	warmupTime = 10;
 }
 
 bool ACMGameMode::ShouldSpawnAtStartSpot(AController* player)
@@ -55,15 +58,27 @@ void ACMGameMode::HandleMatchIsWaitingToStart()
 
 	waitElapsed = -1;
 
-	GetWorld()->GetTimerManager().SetTimer(waitTimer, this, &ACMGameMode::WaitTickSecond, 1.0f, true);
+	GetWorld()->GetTimerManager().SetTimer(waitTimer, this, &ACMGameMode::WaitTickSecond, 1.0f, true, 0.0f);
 }
 
 void ACMGameMode::StartMatch()
 {
 	Super::StartMatch();
 
-	GetWorld()->GetTimerManager().ClearTimer(waitTimer);
-	GetWorld()->GetTimerManager().SetTimer(mapTimerHandle, this, &ACMGameMode::MapTickSecond, 1.0f, true, 0.0f);
+	if (inGameState != InGameState::Warmup)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(waitTimer);
+	
+		// match needs restarting, move players back to spawn
+		for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+		{
+			(*iter)->GetPawn()->Reset();
+			Super::RestartPlayer((*iter));
+		}
+	}
+
+	mapTimeElapsed = 0;
+	GetWorld()->GetTimerManager().SetTimer(mapTimerHandle, this, &ACMGameMode::MapTickSecond, 1.0f, true);
 
 	OnStartMatch();
 }
@@ -74,27 +89,38 @@ void ACMGameMode::WaitTickSecond()
 
 	int32 numPlayers = GetNumPlayers();
 
-	if (numPlayers >= minPlayersToStart)
+	if (numPlayers >= minPlayersToStart && inGameState == InGameState::WaitingForPlayers)
 	{
-		if (inGameState != InGameState::WaitingForPlayers)
-		{
-			waitElapsed = 0;
-			inGameState = InGameState::WaitingForPlayers;
-		}
+		// ready to start the match or warmup
 
-		const int32 startTime = 1;
-		if (waitElapsed >= startTime)
+		waitElapsed = 0;
+		if (warmupTime > 0)
+		{
+			inGameState = InGameState::Warmup;
+			WarmupStart();
+		}
+		else
+			inGameState = InGameState::Starting;
+	}
+
+	if (inGameState == InGameState::WaitingForPlayers)
+	{
+		inGameState = InGameState::WaitingForPlayers;
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Waiting for more players... ") + FString::FromInt(waitElapsed)
+			+ TEXT(" ( ") + FString::FromInt(numPlayers) + TEXT("/") + FString::FromInt(minPlayersToStart) + TEXT(" )"));
+	}
+	else
+	{
+		const int32 timeToWait = (inGameState == InGameState::Warmup) ? warmupTime : startTime;
+		if (waitElapsed >= timeToWait)
 		{
 			inGameState = InGameState::Running;
 			StartMatch();
 		}
-		else
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Game starting in... ") + FString::FromInt(startTime-waitElapsed));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Waiting for more players... ") + FString::FromInt(waitElapsed)
-			+ TEXT(" ( ") + FString::FromInt(numPlayers) + TEXT("/") + FString::FromInt(minPlayersToStart) + TEXT(" )"));
+		else if (inGameState == InGameState::Warmup)
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Warmup, Game starting in... ") + FString::FromInt(warmupTime - waitElapsed));
+		else if (inGameState == InGameState::Starting)
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Game starting in... ") + FString::FromInt(startTime - waitElapsed));
 	}
 }
 
@@ -102,7 +128,7 @@ void ACMGameMode::MapTickSecond()
 {
 	mapTimeElapsed++;
 	
-	if (mapTimelimit > 0)
+	if (mapTimelimit > 0 && inGameState != InGameState::Warmup)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::White, TEXT("Timeleft: ") + FString::FromInt((int32)MapTimeleft()));
 		if (mapTimeElapsed >= mapTimelimit)
@@ -114,7 +140,7 @@ void ACMGameMode::MapTickSecond()
 		}
 		else
 		{
-			// TODO: notify players to display timeleft messages
+			// TODO: notify players to display timeleft messages?
 		}
 	}
 }
@@ -129,9 +155,9 @@ int32 ACMGameMode::MapTimeElapsed()
 	return mapTimeElapsed;
 }
 
-void ACMGameMode::PlayerDeath(APlayerController* player, APlayerController* killer)
+void ACMGameMode::WarmupStart()
 {
-	OnPlayerDeath(player, killer);
+	StartMatch();
 }
 
 void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer)
@@ -153,6 +179,6 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 
 	// reset character state to defaults
 	player->GetPawn()->Reset();
-
+	
 	Super::RestartPlayer(player);
 }

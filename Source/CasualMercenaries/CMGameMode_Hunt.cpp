@@ -8,12 +8,21 @@
 ACMGameMode_Hunt::ACMGameMode_Hunt(const class FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
 {
-	minPlayersToStart = 3;
+	minPlayersToStart = 1;
+
+	huntRounds = 2;
+	huntRoundTime = 5;
+	huntRoundFreezeTime = 2;
+	huntIntermissionTime = 3;
 }
 
 void ACMGameMode_Hunt::StartMatch()
 {
 	Super::StartMatch();
+
+	if (inGameState == InGameState::Warmup)
+		return;
+
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("GameMode: Hunt"));
 
 	TArray<APlayerController*> players;
@@ -22,11 +31,129 @@ void ACMGameMode_Hunt::StartMatch()
 		if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
 			SetRandomPlayerHuntTarget(*iter);
 	}
+
+	huntElapsed = -1;
+	GetWorld()->GetTimerManager().SetTimer(huntTimerHandle, this, &ACMGameMode_Hunt::HuntTickSecond, 1.0f, true, 0.0f);
 }
 
 void ACMGameMode_Hunt::HandleMatchIsWaitingToStart()
 {
 	Super::HandleMatchIsWaitingToStart();
+}
+
+void ACMGameMode_Hunt::HuntTickSecond()
+{
+	huntElapsed++;
+	if (GetHuntTimeLeft() <= 0)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("End"));
+		huntState = HuntState::End;
+		huntElapsed = 0;
+	}
+
+	int32 rounds = huntElapsed / (huntRoundFreezeTime + huntRoundTime + huntIntermissionTime);
+	int32 roundFreezeStart = rounds * (huntRoundFreezeTime + huntRoundTime + huntIntermissionTime);
+	int32 roundStartTime = roundFreezeStart + huntRoundFreezeTime;
+	int32 roundEndTime = roundStartTime + huntRoundTime;
+	int32 intermissionStartTime = roundEndTime;
+	int32 intermissionEndTime = intermissionStartTime + huntIntermissionTime;
+	
+	if (huntElapsed < roundStartTime && huntRoundFreezeTime != 0 && huntState != HuntState::RoundStarting)
+	{
+		// freeze time started
+		huntState = HuntState::RoundStarting;	
+		RoundFreezeStart();
+	}
+	else if (huntElapsed >= roundStartTime && huntElapsed < roundEndTime && huntState != HuntState::Round)
+	{
+		// round started
+		huntState = HuntState::Round;		
+		RoundStart();
+	}
+	else if (huntElapsed >= intermissionStartTime && huntElapsed < intermissionEndTime && huntState != HuntState::Intermission)
+	{
+		// intermission started
+		huntState = HuntState::Intermission;	
+		IntermissionStart();
+	}
+}
+
+int32 ACMGameMode_Hunt::GetHuntTimeElapsed()
+{
+	return huntElapsed;
+}
+
+int32 ACMGameMode_Hunt::GetHuntRoundTimeElapsed()
+{
+	int32 rounds = huntElapsed / (huntRoundTime + huntIntermissionTime);
+	int32 roundStartTime = rounds * (huntRoundTime + huntIntermissionTime);
+	int32 roundEndTime = roundStartTime + huntRoundTime;
+	int32 roundElapsed = huntElapsed - roundStartTime;
+
+	if (huntElapsed < roundStartTime)
+		return -1;
+
+	return huntElapsed - roundStartTime;
+}
+
+int32 ACMGameMode_Hunt::GetHuntIntermissionTimeElapsed()
+{
+	int32 rounds = huntElapsed / (huntRoundTime + huntIntermissionTime);
+	int32 intermissionEndTime = (rounds + 1) * (huntRoundTime + huntIntermissionTime);
+	int32 intermissionStartTime = intermissionEndTime - huntIntermissionTime;
+	int32 intermissionElapsed = huntElapsed - intermissionStartTime;
+
+	if (huntElapsed < intermissionStartTime)
+		return -1;
+
+	return huntElapsed - intermissionStartTime;
+}
+
+int32 ACMGameMode_Hunt::GetHuntTimeLeft()
+{
+	int32 huntLength = (huntRoundTime * huntRounds) + (huntIntermissionTime * (huntRounds - 1));
+	return huntLength - huntElapsed;
+}
+
+int32 ACMGameMode_Hunt::GetHuntRoundTimeLeft()
+{
+	int32 rounds = huntElapsed / (huntRoundTime + huntIntermissionTime);
+	int32 roundStartTime = rounds * (huntRoundTime + huntIntermissionTime);
+	int32 roundEndTime = roundStartTime + huntRoundTime;
+	int32 roundElapsed = huntElapsed - roundStartTime;
+
+	if (huntElapsed < roundStartTime)
+		return -1;
+
+	return roundEndTime - huntElapsed;
+}
+
+int32 ACMGameMode_Hunt::GetHuntIntermissionTimeLeft()
+{
+	int32 rounds = huntElapsed / (huntRoundTime + huntIntermissionTime);
+	int32 intermissionEndTime = (rounds + 1) * (huntRoundTime + huntIntermissionTime);
+	int32 intermissionStartTime = intermissionEndTime - huntIntermissionTime;
+	int32 intermissionElapsed = huntElapsed - intermissionStartTime;
+
+	if (huntElapsed < intermissionStartTime)
+		return -1;
+
+	return intermissionEndTime - huntElapsed;
+}
+
+void ACMGameMode_Hunt::RoundFreezeStart()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("FREEZE TIME"));
+}
+
+void ACMGameMode_Hunt::RoundStart()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Round start"));
+}
+
+void ACMGameMode_Hunt::IntermissionStart()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Intermission start"));
 }
 
 void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer)
@@ -55,6 +182,9 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(APlayerController* player, APlayerCon
 
 void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(APlayerController* player)
 {
+	if (GetNumPlayers() < 2)
+		return;
+
 	TArray<APlayerController*> players;
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 		players.Add(*iter);
