@@ -23,13 +23,6 @@ class CASUALMERCENARIES_API APlayerHud : public AHUD
 	GENERATED_BODY()
 
 public:
-	/*UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = PlayerMusicSkill)
-	enum UI_TYPE
-	{
-		MAIN_MENU,
-		GAME_UI,
-		NO_UI,
-	};*/
 	// Sets default values for this actor's properties
 	APlayerHud(const class FPostConstructInitializeProperties& PCIP);
 	// Called when the game starts or when spawned
@@ -42,13 +35,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void changeUIElement(MenuType menu);
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void AddText(FString text);
+	class Chat *GetChat();
 private:
 	UPROPERTY()
 	TArray<UUserWidget*> widgets;
 	void changeUIElement(UClass *uitype);
+	UPROPERTY()
 	UClass *mainMenuClass;
 	UPROPERTY()
 	UClass *gameUIClass;
-	
+	class Chat *chat;
+	void ClearAllWidgets();
+	void SetUpChat();
+	UUserWidget* widgetInstance;
 	
 };

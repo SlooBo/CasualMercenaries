@@ -3,7 +3,7 @@
 #include "CasualMercenaries.h"
 #include "PlayerHud.h"
 //#include "Util.h"
-
+#include "Chat.h"
 
 
 
@@ -18,6 +18,13 @@ APlayerHud::APlayerHud(const class FPostConstructInitializeProperties& PCIP) :Su
 	if (GameUIBP.Object){
 		gameUIClass = (UClass*)GameUIBP.Object->GeneratedClass;
 	}
+	
+	static ConstructorHelpers::FObjectFinder<UBlueprint> ChatTextBP(TEXT("WidgetBlueprint'/Game/Game/UI/TextWidget.TextWidget'"));
+	if (ChatTextBP.Object){
+		UClass *chatText = (UClass*)ChatTextBP.Object->GeneratedClass;
+		chat = new Chat(chatText,this->GetWorld());
+	}
+
 	
 }
 void APlayerHud::DrawHud()
@@ -45,6 +52,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 		break;
 	case MenuType::GAME_UI:
 		changeUIElement(gameUIClass);
+		SetUpChat();
 		break;
 	case MenuType::NO_UI:
 	default:
@@ -53,14 +61,30 @@ void APlayerHud::changeUIElement(MenuType menu)
 }
 void APlayerHud::changeUIElement(UClass *uitype)
 {
+	ClearAllWidgets();
+
+	widgetInstance = CreateWidget<UUserWidget>(GetWorld(), uitype);
+	widgetInstance->AddToViewport();
+	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+	widgets.Add(widgetInstance);
+}
+void APlayerHud::ClearAllWidgets()
+{
 	for (int32 i = 0; i < widgets.Num(); i++)
 	{
 		widgets[i]->RemoveFromViewport();
 	}
 	widgets.Empty();
-	UUserWidget* widgetInstance;
-	widgetInstance = CreateWidget<UUserWidget>(GetWorld(), uitype);
-	widgetInstance->AddToViewport();
-	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
-	widgets.Add(widgetInstance);
+}
+void APlayerHud::SetUpChat()
+{
+	chat->Initialize(widgetInstance);
+}
+void APlayerHud::AddText(FString text)
+{
+	chat->AddText(text);
+}
+Chat *APlayerHud::GetChat()
+{
+	return chat;
 }

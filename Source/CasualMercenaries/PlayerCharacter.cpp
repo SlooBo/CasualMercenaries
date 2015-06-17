@@ -4,6 +4,7 @@
 #include "UnrealNetwork.h"
 #include "PlayerCharacter.h"
 #include "PlayerHud.h"
+#include "Chat.h"
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
@@ -69,8 +70,10 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::OnStartJump);
 	InputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::OnStopJump);
 
-	//InputComponent->BindAction("WallJump", IE_Pressed, this &APlayerCharacter::WallJump);
+	InputComponent->BindAction("WallJump", IE_Pressed, this, &APlayerCharacter::WallJump);
 
+	InputComponent->BindAction("AllChat", IE_Pressed, this, &APlayerCharacter::OpenAllChat);
+	InputComponent->BindAction("TeamChat", IE_Pressed, this, &APlayerCharacter::OpenTeamChat);
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -239,4 +242,19 @@ void APlayerCharacter::ChangeUITest()
 	{
 		Cast<APlayerHud>(MyPC->GetHUD())->changeUIElement(MenuType::GAME_UI);
 	}
+}
+void APlayerCharacter::OpenTeamChat()
+{
+	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
+	APlayerHud *playerhud = Cast<APlayerHud>(hud);
+	Chat *chat = playerhud->GetChat();
+	chat->OpenTeamChat();
+
+}
+void APlayerCharacter::OpenAllChat()
+{
+	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
+	APlayerHud *playerhud = Cast<APlayerHud>(hud);
+	Chat *chat = playerhud->GetChat();
+	chat->OpenAllChat();
 }

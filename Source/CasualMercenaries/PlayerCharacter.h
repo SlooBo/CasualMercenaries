@@ -69,4 +69,7 @@ private:
 	bool wallTouch;
 	float dash_Multiplier;
 	FVector wallJumpNormal;
+
+	void OpenTeamChat();
+	void OpenAllChat();
 };
