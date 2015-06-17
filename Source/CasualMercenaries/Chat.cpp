@@ -46,8 +46,12 @@ void Chat::AddText(FString text)
 void Chat::OpenAllChat()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Allchat!" );
+	textBox->SetVisibility(ESlateVisibility::Visible);
+	world->GetFirstPlayerController()->bShowMouseCursor = true;
 }
 void Chat::OpenTeamChat()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "TeamChat!");
+	textBox->SetVisibility(ESlateVisibility::Visible);
+	world->GetFirstPlayerController()->bShowMouseCursor = true;
 }

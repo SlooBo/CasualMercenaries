@@ -5,6 +5,7 @@
 /**
  * 
  */
+
 class CASUALMERCENARIES_API Chat
 {
 public:
