@@ -33,6 +33,11 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	armor_Max = 100.0f;
 	armor = armor_Max;
+
+	wallTouch = false;
+	dash_Multiplier = 0;
+
+	nickName = "Noob";
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +52,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	WallCheck();
 }
 
 // Called to bind functionality to input
@@ -62,6 +68,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 
 	InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::OnStartJump);
 	InputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::OnStopJump);
+
+	//InputComponent->BindAction("WallJump", IE_Pressed, this &APlayerCharacter::WallJump);
 
 }
 
@@ -110,6 +118,119 @@ void APlayerCharacter::MoveRight(float _val)
 		AddMovementInput(tempDirection, _val);
 	}
 }
+
+void APlayerCharacter::WallCheck()
+{
+	FRotator tempActorRotation = this->GetActorRotation();
+	FRotator tempActorYaw(0, tempActorRotation.Yaw, 0);
+	//This line needs checking!!!
+	FVector tempForwardVector = tempActorYaw.Vector();
+	FVector tempActorLocation = this->GetActorLocation();
+
+	FVector ForwardCheckVector = tempForwardVector * 100;
+	ForwardCheckVector = tempActorLocation + ForwardCheckVector;
+
+	//https://goo.gl/pN6vYF
+	FCollisionQueryParams  TraceParams = FCollisionQueryParams(FName(TEXT("RV_TRACE")), false, this);
+	TraceParams.bTraceComplex = false;
+	TraceParams.bTraceAsyncScene = false;
+	TraceParams.bReturnPhysicalMaterial = false;
+
+	FHitResult RV_Hit(ForceInit);
+	//Forward check
+	GetWorld()->LineTraceSingle(
+		RV_Hit,//result
+		tempActorLocation,//start of line trace
+		ForwardCheckVector,//end of line trace
+		ECC_Pawn,//collision channel, maybe wrong
+		TraceParams);
+	if (RV_Hit.bBlockingHit == true)
+	{
+		wallTouch = true;
+		wallJumpNormal = RV_Hit.ImpactNormal;
+		return;
+	}
+
+	FVector RightCheckVector = tempForwardVector.RotateAngleAxis(90, FVector(0, 1, 0));
+	RightCheckVector = RightCheckVector * 100;
+	//Right check
+	GetWorld()->LineTraceSingle(
+		RV_Hit,//result
+		tempActorLocation,//start of line trace
+		RightCheckVector,//end of line trace
+		ECC_Pawn,//collision channel, maybe wrong
+		TraceParams);
+
+	if (RV_Hit.bBlockingHit == true)
+	{
+		wallTouch = true;
+		wallJumpNormal = RV_Hit.ImpactNormal;
+		return;
+	}
+
+	FVector LeftCheckVector = LeftCheckVector.RotateAngleAxis(270, FVector(0, 1, 0));
+	LeftCheckVector = LeftCheckVector * 100;
+	//Left check
+	GetWorld()->LineTraceSingle(
+		RV_Hit,//result
+		tempActorLocation,//start of line trace
+		LeftCheckVector,//end of line trace
+		ECC_Pawn,//collision channel, maybe wrong
+		TraceParams);
+
+	if (RV_Hit.bBlockingHit == true)
+	{
+		wallTouch = true;
+		wallJumpNormal = RV_Hit.ImpactNormal;
+		return;
+	}
+	else
+		wallTouch = false;
+}
+
+void APlayerCharacter::WallJump()
+{
+	if (wallTouch == true)
+	{
+		if (this->CharacterMovement->IsFalling() == true)
+		{
+			//To disable ever increasing falling speed
+			this->CharacterMovement->Velocity = FVector(0, 0, 0);
+
+			FRotator tempControllerRotation = GetControlRotation();
+			FRotator tempControllerYaw(0, tempControllerRotation.Yaw, 0);
+			//This line need checking!!!
+			FVector tempForwardVector = tempControllerYaw.Vector();
+			FVector tempResult = tempForwardVector.MirrorByVector(wallJumpNormal);
+			tempResult = tempResult + FVector(0, 0, 1000);
+
+			LaunchCharacter(tempResult, false, false);
+			//Hox!
+			LoseStamina(25.0f);
+		}
+	}
+}
+
+void APlayerCharacter::Dash(float _inputForward, float _inputRight)
+{
+	if (this->CharacterMovement->IsFalling())
+	{
+		dash_Multiplier = 1000;
+	}
+	else
+		dash_Multiplier = 5000;
+
+	FVector tempForward = this->GetActorForwardVector();
+	FVector tempRight = this->GetActorRightVector();
+	FVector tempForwardResult = tempForward + _inputForward;
+	FVector tempRightResult = tempRight + _inputRight;
+	FVector tempResult = tempForwardResult + tempRightResult;
+	tempResult.Normalize();
+	tempResult = tempResult * dash_Multiplier;
+	LaunchCharacter(tempResult, false, false);
+	LoseStamina(20.0f);
+}
+
 void APlayerCharacter::ChangeUITest()
 {
 	APlayerController* MyPC = Cast<APlayerController>(Controller);

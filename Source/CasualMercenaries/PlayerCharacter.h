@@ -37,6 +37,10 @@ public:
 	virtual void MoveForward(float _val);
 
 	virtual void MoveRight(float _val);
+	//UFUNCTION(BlueprintCallable)
+	void WallJump();
+	UFUNCTION(BlueprintCallable, Category = "Player movement action")
+	void Dash(float _inputForward, float _inputRight);
 
 	/* Client mapped to Input */
 	void OnStartJump();
@@ -52,9 +56,17 @@ public:
 	void AddWeapon(AWeapon* _weapon);
 	void ChangeUITest();
 private:
+	FString nickName;
+
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* springArmComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* cameraComp;
+
+	void WallCheck();
+
+	bool wallTouch;
+	float dash_Multiplier;
+	FVector wallJumpNormal;
 };
