@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Weapon.h"
+#include "Grenade.h"
 #include "PomegranateLauncher.generated.h"
 
 /**
