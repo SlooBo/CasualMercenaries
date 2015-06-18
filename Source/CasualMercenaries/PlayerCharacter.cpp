@@ -74,7 +74,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::OnStartJump);
 	InputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::OnStopJump);
 
-	InputComponent->BindAction("WallJump", IE_Pressed, this, &APlayerCharacter::WallJump);
+	InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::WallJump);
 
 	InputComponent->BindAction("AllChat", IE_Pressed, this, &APlayerCharacter::OpenAllChat);
 	InputComponent->BindAction("TeamChat", IE_Pressed, this, &APlayerCharacter::OpenTeamChat);
@@ -168,7 +168,7 @@ void APlayerCharacter::WallCheck()
 		RV_Hit,//result
 		tempActorLocation,//start of line trace
 		ForwardCheckVector,//end of line trace
-		ECC_Pawn,//collision channel, maybe wrong
+		ECC_Visibility,//collision channel, maybe wrong
 		TraceParams);
 	if (RV_Hit.bBlockingHit)
 	{
@@ -179,14 +179,14 @@ void APlayerCharacter::WallCheck()
 		
 	}
 
-	FVector RightCheckVector = tempForwardVector.RotateAngleAxis(90, FVector(0, 1, 0));
+	FVector RightCheckVector = tempForwardVector.RotateAngleAxis(90, FVector(1, 0, 0));
 	RightCheckVector = RightCheckVector * 100;
 	//Right check
 	GetWorld()->LineTraceSingle(
 		RV_Hit,//result
 		tempActorLocation,//start of line trace
 		RightCheckVector,//end of line trace
-		ECC_Pawn,//collision channel, maybe wrong
+		ECC_Visibility,//collision channel, maybe wrong
 		TraceParams);
 
 	if (RV_Hit.bBlockingHit)
@@ -197,14 +197,14 @@ void APlayerCharacter::WallCheck()
 		return;
 	}
 
-	FVector LeftCheckVector = LeftCheckVector.RotateAngleAxis(270, FVector(0, 1, 0));
+	FVector LeftCheckVector = LeftCheckVector.RotateAngleAxis(270, FVector(1, 0, 0));
 	LeftCheckVector = LeftCheckVector * 100;
 	//Left check
 	GetWorld()->LineTraceSingle(
 		RV_Hit,//result
 		tempActorLocation,//start of line trace
 		LeftCheckVector,//end of line trace
-		ECC_Pawn,//collision channel, maybe wrong
+		ECC_Visibility,//collision channel, maybe wrong
 		TraceParams);
 
 	if (RV_Hit.bBlockingHit)
@@ -227,7 +227,8 @@ void APlayerCharacter::WallJump()
 			//To disable ever increasing falling speed
 			this->CharacterMovement->Velocity = FVector(0, 0, 0);
 
-			FRotator tempControllerRotation = GetControlRotation();
+			FRotator temp = GetActorRotation();
+			FRotator tempControllerRotation = GetActorRotation(); //GetControlRotation();
 			FRotator tempControllerYaw(0, tempControllerRotation.Yaw, 0);
 			//This line need checking!!!
 			FVector tempForwardVector = tempControllerYaw.Vector();
@@ -243,8 +244,7 @@ void APlayerCharacter::WallJump()
 
 void APlayerCharacter::InputDash()
 {
-	FVector temp = GetLastMovementInputVector();
-	Dash(500, temp.Y);
+	Dash(GetInputAxisValue("MoveForward") , GetInputAxisValue("MoveRight"));
 }
 
 void APlayerCharacter::Dash(float _inputForward, float _inputRight)
