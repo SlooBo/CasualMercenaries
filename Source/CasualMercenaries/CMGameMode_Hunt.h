@@ -32,6 +32,8 @@ public:
 	// Event when player dies or is killed by other player
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
 
+	virtual void PlayerRespawn(APlayerController* player);
+
 	void HuntTickSecond();
 
 	void SetRandomPlayerHuntTarget(APlayerController* player);

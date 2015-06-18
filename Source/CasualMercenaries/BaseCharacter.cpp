@@ -100,9 +100,12 @@ void ABaseCharacter::AddHealth(float _health)
 
 void ABaseCharacter::TakeDamage(float _health)
 {
+	if (!IsAlive())
+		return;
+
 	health = health - _health;
 	
-	if (health <= 0.0f)
+	if (!IsAlive())
 	{
 		if (IsLocallyControlled())
 		{
