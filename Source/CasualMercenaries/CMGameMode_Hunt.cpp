@@ -169,6 +169,11 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, A
 	}
 }
 
+void ACMGameMode_Hunt::PlayerRespawn(APlayerController* player)
+{
+	Super::PlayerRespawn(player);
+}
+
 void ACMGameMode_Hunt::SetPlayerHuntTarget(APlayerController* player, APlayerController* killer)
 {
 	// TODO: move huntTarget to PlayerCharacter in order to prevent cheating (every player can read PlayerState)

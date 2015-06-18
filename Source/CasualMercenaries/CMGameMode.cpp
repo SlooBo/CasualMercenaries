@@ -21,8 +21,10 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 
 	bDelayedStart = true;
 
-	startTime = 5;
-	warmupTime = 10;
+	startTime = 1;
+	warmupTime = 0;
+
+	playerRespawnTime = 2;
 }
 
 bool ACMGameMode::ShouldSpawnAtStartSpot(AController* player)
@@ -165,20 +167,50 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
 	ACMPlayerState* killerState = (killer != NULL) ? static_cast<ACMPlayerState*>(killer->PlayerState) : NULL;
 
+	if (killer != NULL)
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" killed ") + killerState->PlayerName);
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" died"));
+
 	if (killerState != NULL)
 		killerState->AddFrags(1);
-
 	playerState->AddDeaths(1);
-	
+
 	// TODO: broadcast death for every player
 
-	if (killer != NULL)
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, playerState->PlayerName + TEXT(" killed ") + killerState->PlayerName);
+	if (inGameState == InGameState::Warmup)
+	{
+		// respawn player instantly during warmup
+		PlayerRespawn(player);
+	}
 	else
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, playerState->PlayerName + TEXT(" died"));
+	{
+		// handle player respawn timers
+		if (playerRespawnTime > 0)
+		{
+			FTimerDelegate respawnDelegate(FTimerDelegate::CreateUObject<ACMGameMode, APlayerController*>(this, &ACMGameMode::PlayerRespawn, player));
+			GetWorld()->GetTimerManager().SetTimer(respawnDelegate, (float)playerRespawnTime, false);
+		}
+		else if (playerRespawnTime == 0)
+			PlayerRespawn(player);
+	}
+}
 
+void ACMGameMode::PlayerRespawn(APlayerController* player)
+{
 	// reset character state to defaults
 	player->GetPawn()->Reset();
-	
 	Super::RestartPlayer(player);
+}
+
+void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
+{
+	APlayerCharacter* playerCharacter = static_cast<APlayerCharacter*>(playerPawn);
+	if (playerCharacter == NULL)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: SetPlayerDefaults player pawn is not PlayerCharacter"));
+		return;
+	}
+
+	// TODO: setup player character here after respawning
 }

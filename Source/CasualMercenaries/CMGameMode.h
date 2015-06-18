@@ -30,9 +30,12 @@ public:
 
 	virtual bool ShouldSpawnAtStartSpot(AController* player) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* player) override;
+	virtual void SetPlayerDefaults(APawn* playerPawn) override;
 
 	void WaitTickSecond();
 	void MapTickSecond();
+
+	virtual void PlayerRespawn(APlayerController* player);
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Left"), Category = "Gameplay|Level")
 	int32 MapTimeleft();
@@ -80,4 +83,8 @@ protected:
 	// Length of warmup after minimum number of players has joined the level
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Warmup Time"), Category = "Gameplay|Level")
 	int32 warmupTime;
+
+	// Player respawn time after death (negative values: respawning disabled)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Respawn Time"), Category = "Gameplay|Level")
+	int32 playerRespawnTime;
 };
