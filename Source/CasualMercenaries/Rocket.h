@@ -18,7 +18,10 @@ class CASUALMERCENARIES_API ARocket : public AProjectile
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
-		TSubobjectPtr<class UParticleSystemComponent> particleSystem;
+		UParticleSystemComponent* particleSystem;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
+		UParticleSystemComponent* particleSystem2;
 
 	ARocket(const FObjectInitializer& ObjectInitializer);
 
@@ -26,6 +29,8 @@ public:
 	
 	void Tick(float DeltaSeconds);
 	void BeginPlay();
+
+	void Explode(const FObjectInitializer& ObjectInitializer);
 
 
 protected:

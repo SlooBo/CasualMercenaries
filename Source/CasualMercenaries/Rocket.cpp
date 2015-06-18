@@ -22,6 +22,8 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	particleSystem->AttachTo(Mesh, "ExhaustSocket");
 
 	particleSystem->Activate();
+
+
 }
 
 ARocket::~ARocket()
@@ -33,7 +35,19 @@ void ARocket::Tick(float DeltaSeconds)
 {
 
 }
+
 void ARocket::BeginPlay()
 {
 	particleSystem->BeginPlay();
-};
+}
+
+void ARocket::Explode(const FObjectInitializer& ObjectInitializer)
+{
+	particleSystem2 = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle2"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+
+	particleSystem2->Template = ParticleObj2.Object;
+
+	particleSystem2->AttachTo(Mesh, "ExplosionStartSocket");
+	particleSystem2->Deactivate();
+}
