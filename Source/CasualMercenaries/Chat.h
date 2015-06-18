@@ -25,6 +25,9 @@ public:
 	bool GetIsInputVisible();
 	UFUNCTION(BlueprintCallable, Category = "Chat")
 	void SetIsInputVisible(bool value);
+	UFUNCTION()
+	void OnTextInputTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	
 private:
 	bool isInputVisible;
 	UWorld *world;
@@ -34,4 +37,7 @@ private:
 	UEditableTextBox *textInput;
 	void SetInputModeGameAndUI();
 	void OpenChatWithText(FString text);
+	UFUNCTION()
+	void SetInputModeGameOnly();
+	
 };
