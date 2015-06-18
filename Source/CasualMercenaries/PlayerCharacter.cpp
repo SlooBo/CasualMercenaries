@@ -5,6 +5,8 @@
 #include "PlayerCharacter.h"
 #include "PlayerHud.h"
 #include "Chat.h"
+#include "CMGameMode.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
@@ -102,6 +104,25 @@ void APlayerCharacter::OnStartJump()
 void APlayerCharacter::OnStopJump()
 {
 
+}
+
+void APlayerCharacter::OnDeath()
+{
+	ServerOnDeath();
+}
+
+bool APlayerCharacter::ServerOnDeath_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerOnDeath_Implementation()
+{
+	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
+	APlayerController* playerController = static_cast<APlayerController*>(GetController());
+
+	if (gameMode != NULL && playerController != NULL)
+		gameMode->OnPlayerDeath(playerController);
 }
 
 void APlayerCharacter::MoveForward(float _val)
@@ -237,8 +258,8 @@ void APlayerCharacter::Dash(float _inputForward, float _inputRight)
 
 	FVector tempForward = this->GetActorForwardVector();
 	FVector tempRight = this->GetActorRightVector();
-	FVector tempForwardResult = tempForward + _inputForward;
-	FVector tempRightResult = tempRight + _inputRight;
+	FVector tempForwardResult = tempForward * _inputForward;
+	FVector tempRightResult = tempRight * _inputRight;
 	FVector tempResult = tempForwardResult + tempRightResult;
 	tempResult.Normalize();
 	tempResult = tempResult * dash_Multiplier;

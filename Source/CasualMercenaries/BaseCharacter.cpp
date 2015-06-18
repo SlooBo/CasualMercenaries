@@ -3,7 +3,6 @@
 #include "CasualMercenaries.h"
 #include "UnrealNetwork.h"
 #include "BaseCharacter.h"
-#include "CMGameMode.h"
 
 
 // Sets default values
@@ -103,19 +102,11 @@ void ABaseCharacter::TakeDamage(float _health)
 	if (!IsAlive())
 		return;
 
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, "dmg");
 	health = health - _health;
 	
 	if (!IsAlive())
-	{
-		if (IsLocallyControlled())
-		{
-			ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
-			APlayerController* playerController = static_cast<APlayerController*>(GetController());
-
-			if (gameMode != NULL && playerController != NULL)
-				gameMode->OnPlayerDeath(playerController);
-		}
-	}
+		OnDeath();
 }
 
 void ABaseCharacter::AddStamina(float _stamina)

@@ -48,10 +48,14 @@ public:
 	/* Client mapped to Input */
 	void OnStopJump();
 
+	virtual void OnDeath() override;
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerOnDeath();
+
 	/* Is character currently performing a jump action. Resets on landed.  */
 	UPROPERTY(Transient, Replicated)
 		bool bIsJumping;
-
 
 	void AddWeapon(AWeapon* _weapon);
 	void ChangeUITest();
