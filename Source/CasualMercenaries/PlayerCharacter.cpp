@@ -60,11 +60,15 @@ void APlayerCharacter::BeginPlay()
 	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy3);
 
+	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AddWeapon(pyssy2);
+
 	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy);
 
-	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
-	AddWeapon(pyssy2);
+
+
+
 
 }
 
@@ -73,8 +77,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	inventory.GetWeapon(currentWeapon)->SetActorLocation(this->GetActorLocation());
-	inventory.GetWeapon(currentWeapon)->SetActorRotation(FRotator(-cameraComp->GetComponentRotation().Pitch, cameraComp->GetComponentRotation().Yaw + 180, cameraComp->GetComponentRotation().Roll ));
+	//inventory.GetWeapon(currentWeapon)->SetActorLocation(this->GetActorLocation());
+	//inventory.GetWeapon(currentWeapon)->SetActorRotation(FRotator(-cameraComp->GetComponentRotation().Pitch, cameraComp->GetComponentRotation().Yaw + 180, cameraComp->GetComponentRotation().Roll ));
 	//inventory.GetWeapon(currentWeapon)->GetActorRotation().Pitch += 180.0f;
 	WallCheck();
 
