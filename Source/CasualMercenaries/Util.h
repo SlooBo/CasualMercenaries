@@ -2,6 +2,8 @@
 
 #pragma once
 
+#define STRINGIFY(str) L#str
+
 /**
  * 
  */

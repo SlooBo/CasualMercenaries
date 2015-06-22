@@ -4,6 +4,7 @@
 #include "CMGameMode.h"
 #include "CMPlayerState.h"
 #include "PlayerCharacter.h"
+#include "Util.h"
 
 ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
@@ -25,6 +26,14 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	warmupTime = 0;
 
 	playerRespawnTime = 2;
+}
+
+FString ACMGameMode::GetInGameStateAsString(InGameState state)
+{
+	const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, STRINGIFY(InGameState), true);
+	if (enumPtr == NULL)
+		return FString("Invalid");
+	return enumPtr->GetEnumName((uint8)state);
 }
 
 bool ACMGameMode::ShouldSpawnAtStartSpot(AController* player)
@@ -167,7 +176,7 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
 	ACMPlayerState* killerState = (killer != NULL) ? static_cast<ACMPlayerState*>(killer->PlayerState) : NULL;
 
-	if (killer != NULL)
+	if (killerState != NULL)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" killed ") + killerState->PlayerName);
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" died"));
@@ -177,30 +186,43 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 	playerState->AddDeaths(1);
 
 	// TODO: broadcast death for every player
+	
+	// destroy player pawn
+	if (player->GetPawn() != NULL)
+		player->GetPawn()->Destroy();
 
-	if (inGameState == InGameState::Warmup)
+	if (inGameState != InGameState::Warmup && playerRespawnTime != 0)
 	{
-		// respawn player instantly during warmup
-		PlayerRespawn(player);
-	}
-	else
-	{
-		// handle player respawn timers
+		// delayed player respawn
 		if (playerRespawnTime > 0)
 		{
-			FTimerDelegate respawnDelegate(FTimerDelegate::CreateUObject<ACMGameMode, APlayerController*>(this, &ACMGameMode::PlayerRespawn, player));
+			FTimerDelegate respawnDelegate(FTimerDelegate::CreateUObject<ACMGameMode, AController*>(this, &ACMGameMode::RestartPlayer, player));
 			GetWorld()->GetTimerManager().SetTimer(respawnDelegate, (float)playerRespawnTime, false);
 		}
-		else if (playerRespawnTime == 0)
-			PlayerRespawn(player);
+
+		// set player to spectator while waiting to respawn
+		player->PlayerState->bIsSpectator = true;
+		player->ChangeState(NAME_Spectating);
+		player->ClientGotoState(NAME_Spectating);
 	}
+	else	// restart immediately
+		RestartPlayer(player);
 }
 
-void ACMGameMode::PlayerRespawn(APlayerController* player)
+void ACMGameMode::RestartPlayer(AController* controller)
 {
-	// reset character state to defaults
-	player->GetPawn()->Reset();
-	Super::RestartPlayer(player);
+	APlayerController* player = controller->CastToPlayerController();
+	if (player == NULL)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer controller is not PlayerController"));
+		return;
+	}
+	
+	player->PlayerState->bIsSpectator = false;
+	player->ChangeState(NAME_Playing);
+	player->ClientGotoState(NAME_Playing);
+
+	Super::RestartPlayer(controller);
 }
 
 void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
