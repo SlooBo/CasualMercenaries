@@ -62,6 +62,8 @@ public:
 	void OnPlayerDeath(APlayerController* player, APlayerController* killer = NULL);
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
 
+	void AddChat(const FString message);
+
 protected:
 
 	// Timelimit in minutes

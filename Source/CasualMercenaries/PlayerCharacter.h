@@ -54,6 +54,12 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerOnDeath();
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerAddChat(const FString& message);
+
+	UFUNCTION(Reliable, Client)
+	void ReceiveChat(const FString& message);
+
 	/* Is character currently performing a jump action. Resets on landed.  */
 	UPROPERTY(Transient, Replicated)
 		bool bIsJumping;

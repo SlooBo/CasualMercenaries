@@ -29,7 +29,7 @@ public:
 	void OnTextInputTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 	
 private:
-	class AChatData* chatData;
+	//class AChatData* chatData;
 	bool isInputVisible;
 	UWorld *world;
 	UClass *chatText;
