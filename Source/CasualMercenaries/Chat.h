@@ -29,6 +29,7 @@ public:
 	void OnTextInputTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 	
 private:
+	class AChatData* chatData;
 	bool isInputVisible;
 	UWorld *world;
 	UClass *chatText;
@@ -39,5 +40,8 @@ private:
 	void OpenChatWithText(FString text);
 	UFUNCTION()
 	void SetInputModeGameOnly();
-	
+	UPROPERTY()
+	TArray <UUserWidget*> chatWidgets;
+	UFUNCTION()
+	void UpdateTextBox();
 };

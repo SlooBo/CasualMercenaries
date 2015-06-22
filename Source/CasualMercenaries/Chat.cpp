@@ -4,6 +4,7 @@
 #include "Chat.h"
 #include "Util.h"
 #include "PlayerCharacter.h"
+#include "ChatData.h"
 UChat::UChat(const FObjectInitializer& PCIP) :Super()
 {
 	this->chatText = chatText;
@@ -27,13 +28,11 @@ void UChat::Initialize(UUserWidget *chatWidget,UWorld *world)
 	UWidgetTree *widgetTree = chatWidget->WidgetTree;
 	TArray<UWidget*> children;
 	widgetTree->GetAllWidgets(children);
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child count: " +FString::FromInt(children.Num()));
 	
 	
 	int childcount = children.Num();
 	for (int i = 0; i < childcount; i++)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child name: " + children[i]->GetName() +","+FString::FromInt(i));
 		UScrollBox *scrollbox = Cast<UScrollBox>(children[i]);
 		if (scrollbox != nullptr)
 		{
@@ -46,20 +45,14 @@ void UChat::Initialize(UUserWidget *chatWidget,UWorld *world)
 
 	}
 	textInput->OnTextCommitted.AddDynamic(this, &UChat::OnTextInputTextCommitted);
-	for (int i = 0; i < 1; i++)
-		AddText("test" + i);
-
+	ChangePlayerInputVisibility();
+	chatData = Util::GetChatData(world);
 }
 void UChat::AddText(FString text)
 {
 	UUserWidget *widgetInstance = CreateWidget<UUserWidget>(world, chatText);
-	if (textBox->GetChildrenCount() == 0)
-	textBox->AddChild(widgetInstance);
-	else
-	textBox->InsertChildAt(textBox->GetChildrenCount()-1, widgetInstance);
-	//widgetInstance->RemoveFromParent();
-	
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "COUNT::" + FString::FromInt(textBox->GetChildIndex(widgetInstance)));
+	chatWidgets.Insert(widgetInstance, 0);
+	//UpdateTextBox();
 	UWidgetTree *widgetTree = widgetInstance->WidgetTree;
 	TArray<UWidget*> children;
 	widgetTree->GetAllWidgets(children);
@@ -130,13 +123,17 @@ void UChat::OpenChatWithText(FString text)
 }
 void UChat::OnTextInputTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	//Is being called when player does something like move out of focus or presses enter to send text
 	switch (CommitMethod)
 	{
 	case ETextCommit::OnEnter:
+		Util::GetChatData(world)->ServerAddText(textInput->GetText().ToString());
 		AddText(textInput->GetText().ToString());
+		UpdateTextBox();
 		ChangePlayerInputVisibility();
 		break;
 	case ETextCommit::OnUserMovedFocus:
+		//hides player input box
 		ChangePlayerInputVisibility();
 		break;
 	default:
@@ -145,6 +142,7 @@ void UChat::OnTextInputTextCommitted(const FText& Text, ETextCommit::Type Commit
 }
 void UChat::SetInputModeGameOnly()
 {
+	//Makes player's focus into game from chatbox
 	APlayerCharacter *localPlayer = Util::GetLocalPlayer(world);
 	APlayerController *controller = Cast<APlayerController>(localPlayer->Controller);
 	if (controller != nullptr)
@@ -152,4 +150,22 @@ void UChat::SetInputModeGameOnly()
 		FInputModeGameOnly InputMode;
 		controller->SetInputMode(InputMode);
 	}
+}
+void UChat::UpdateTextBox()
+{
+	//First clears chatbox from all messages
+	for (int i = 0; i < chatWidgets.Num(); i++)
+	{
+		chatWidgets[i]->RemoveFromParent();
+	}
+	TArray<FString> messages = Util::GetChatData(world)->getChatMessages();
+	chatWidgets.Empty();
+	for (int i = 0; i < messages.Num(); i++)
+		AddText(messages[i]);
+	//then adds all messages to chatbox again, this time in right order.
+	for (int i = 0; i < chatWidgets.Num(); i++)
+	{
+		textBox->AddChild(chatWidgets[i]);
+	}
+
 }
