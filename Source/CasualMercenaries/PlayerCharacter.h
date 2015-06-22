@@ -4,6 +4,7 @@
 
 #include "BaseCharacter.h"
 #include "Weapon.h"
+#include "Inventory.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -59,7 +60,14 @@ public:
 
 	void AddWeapon(AWeapon* _weapon);
 	void ChangeUITest();
+
+	void UseWeapon1();
+
 private:
+
+	Inventory inventory;
+	int currentWeapon;
+
 	FString nickName;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")

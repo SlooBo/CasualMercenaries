@@ -28,6 +28,9 @@ void ARocketLauncher::BeginPlay()
 void ARocketLauncher::Tick(float DeltaTime)
 {
 	AWeapon::Tick(DeltaTime);
+
+
+
 }
 
 void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
@@ -45,16 +48,17 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 
 	FRotator MuzzleRotation = cameraRot;
 
-
 	UWorld* const World = GetWorld();
 	if (World != NULL)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = Instigator;
+		SpawnParams.bNoCollisionFail = true;
+
 
 		// spawn the projectile at the muzzle
-		ARocket* const projectile = World->SpawnActor<ARocket>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+		ARocket* const projectile = World->SpawnActor<ARocket>(ARocket::StaticClass(), MuzzleLocation, MuzzleRotation, SpawnParams);
 
 		if (projectile)
 		{

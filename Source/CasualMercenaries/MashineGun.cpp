@@ -24,7 +24,10 @@ void AMashineGun::BeginPlay()
 void AMashineGun::Tick(float DeltaTime)
 {
 	AWeapon::Tick(DeltaTime);
+}
 
+void AMashineGun::PrimaryFunction(APlayerCharacter* user)
+{
 	FVector userLoc;
 	FVector userLoc2;
 	FRotator cameraRot;
@@ -34,7 +37,7 @@ void AMashineGun::Tick(float DeltaTime)
 
 	const FVector startTrace = userLoc;
 	const FVector shootDir = cameraRot.Vector();
-	const FVector endTrace = startTrace - shootDir * 500;
+	const FVector endTrace = startTrace - shootDir * 1000;
 
 	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
 	traceParams.bTraceAsyncScene = true;
@@ -44,30 +47,7 @@ void AMashineGun::Tick(float DeltaTime)
 
 	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	DrawDebugLine(GetWorld(), startTrace, endTrace, FColor(1.0f, 1.f, 0.f, 1.f), false, 100.f);
-}
-
-void AMashineGun::PrimaryFunction(APlayerCharacter* user)
-{
-	FVector userLoc;
-	FRotator cameraRot;
-
-	userLoc = user->GetActorLocation();
-	user->GetActorEyesViewPoint(userLoc, cameraRot);
-
-	const FVector startTrace = userLoc;
-	const FVector shootDir = cameraRot.Vector();
-	const FVector endTrace = startTrace + shootDir * 200;
-
-	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
-	traceParams.bTraceAsyncScene = true;
-	traceParams.bReturnPhysicalMaterial = true;
-
-	FHitResult hit(ForceInit);
-
-	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
-
-	DrawDebugLine(GetWorld(), startTrace, endTrace, FColor(1.0f, 0.f, 0.f, 1.f), false, 10.f);
+	DrawDebugLine(GetWorld(), startTrace, endTrace, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
 
 	//oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi
 }

@@ -6,6 +6,9 @@
 #include "PlayerHud.h"
 #include "Chat.h"
 #include "CMGameMode.h"
+#include "UberWeihmacher.h"
+#include "MashineGun.h"
+#include "RocketLauncher.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
@@ -41,12 +44,27 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	dash_Multiplier = 0;
 
 	nickName = "Noob";
+
+	currentWeapon = 0;
+
+
+
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	UWorld* const World = GetWorld();
+
+	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AddWeapon(pyssy3);
+
+	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AddWeapon(pyssy);
+
+	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AddWeapon(pyssy2);
 
 }
 
@@ -55,7 +73,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	inventory.GetWeapon(currentWeapon)->SetActorLocation(this->GetActorLocation());
+	inventory.GetWeapon(currentWeapon)->SetActorRotation(FRotator(-cameraComp->GetComponentRotation().Pitch, cameraComp->GetComponentRotation().Yaw + 180, cameraComp->GetComponentRotation().Roll ));
+	//inventory.GetWeapon(currentWeapon)->GetActorRotation().Pitch += 180.0f;
 	WallCheck();
+
+	//cameraComp->GetComponentRotation()
 }
 
 // Called to bind functionality to input
@@ -78,6 +101,18 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 
 	InputComponent->BindAction("AllChat", IE_Pressed, this, &APlayerCharacter::OpenAllChat);
 	InputComponent->BindAction("TeamChat", IE_Pressed, this, &APlayerCharacter::OpenTeamChat);
+
+	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon1);
+}
+
+void APlayerCharacter::AddWeapon(AWeapon* _weapon)
+{
+	inventory.AddWeaponToInventory(_weapon);
+}
+
+void APlayerCharacter::UseWeapon1()
+{
+	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -91,10 +126,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	//DOREPLIFETIME(APlayerCharacter, value);
 };
 
-void APlayerCharacter::AddWeapon(AWeapon* _weapon)
-{
-
-}
 void APlayerCharacter::OnStartJump()
 {
 	bPressedJump = true;
@@ -110,6 +141,7 @@ void APlayerCharacter::OnDeath()
 {
 	ServerOnDeath();
 }
+
 
 bool APlayerCharacter::ServerOnDeath_Validate()
 {
