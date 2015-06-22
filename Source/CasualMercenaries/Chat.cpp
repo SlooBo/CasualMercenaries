@@ -4,7 +4,6 @@
 #include "Chat.h"
 #include "Util.h"
 #include "PlayerCharacter.h"
-#include "ChatData.h"
 UChat::UChat(const FObjectInitializer& PCIP) :Super()
 {
 	this->chatText = chatText;
@@ -159,10 +158,10 @@ void UChat::UpdateTextBox()
 	{
 		chatWidgets[i]->RemoveFromParent();
 	}
-	TArray<FString> messages = Util::GetChatData(world)->getChatMessages();
+//	TArray<FString> messages = Util::GetChatData(world)->getChatMessages();
 	chatWidgets.Empty();
-	for (int i = 0; i < messages.Num(); i++)
-		AddText(messages[i]);
+//	for (int i = 0; i < messages.Num(); i++)
+//		AddText(messages[i]);
 	//then adds all messages to chatbox again, this time in right order.
 	for (int i = 0; i < chatWidgets.Num(); i++)
 	{

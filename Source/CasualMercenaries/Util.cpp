@@ -3,7 +3,6 @@
 #include "CasualMercenaries.h"
 #include "Util.h"
 #include "PlayerCharacter.h"
-#include "ChatData.h"
 APlayerCharacter* Util::GetLocalPlayer(UWorld* world)
 {
 	return Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(world,0));
@@ -23,7 +22,7 @@ int32 Util::GetNumPlayers(UWorld* world)
 
 	return numPlayers;
 }
-AChatData* Util::GetChatData(UWorld* world)
+/*AChatData* Util::GetChatData(UWorld* world)
 {
 	AChatData* chatData = nullptr;
 	for (TActorIterator<AActor> ActorItr(world); ActorItr; ++ActorItr)
@@ -33,4 +32,4 @@ AChatData* Util::GetChatData(UWorld* world)
 			return chatData;
 	}
 	return chatData;
-}
+}*/

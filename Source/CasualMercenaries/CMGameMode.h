@@ -65,7 +65,8 @@ public:
 	void AddChat(const FString message);
 
 protected:
-
+	//Chat
+	class UChatBroadcaster* chatBroadcaster;
 	// Timelimit in minutes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit"), Category = "Gameplay|Level")
 	int32 mapTimelimit;
