@@ -23,6 +23,9 @@ ABaseCharacter::ABaseCharacter()
 	/* Don't collide with camera checks to keep 3rd person camera at position when other players are standing behind player */
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+
+	// show collision capture in game, temporary until proper mesh gets added
+	GetCapsuleComponent()->SetHiddenInGame(false);
 }
 
 // Called when the game starts or when spawned
@@ -102,7 +105,6 @@ void ABaseCharacter::TakeDamage(float _health)
 	if (!IsAlive())
 		return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, "dmg");
 	health = health - _health;
 	
 	if (!IsAlive())

@@ -4,7 +4,6 @@
 #include "Chat.h"
 #include "Util.h"
 #include "PlayerCharacter.h"
-#include "ChatData.h"
 UChat::UChat(const FObjectInitializer& PCIP) :Super()
 {
 	this->chatText = chatText;
@@ -46,7 +45,7 @@ void UChat::Initialize(UUserWidget *chatWidget,UWorld *world)
 	}
 	textInput->OnTextCommitted.AddDynamic(this, &UChat::OnTextInputTextCommitted);
 	ChangePlayerInputVisibility();
-	chatData = Util::GetChatData(world);
+	//chatData = Util::GetChatData(world);
 }
 void UChat::AddText(FString text)
 {
@@ -127,9 +126,10 @@ void UChat::OnTextInputTextCommitted(const FText& Text, ETextCommit::Type Commit
 	switch (CommitMethod)
 	{
 	case ETextCommit::OnEnter:
-		Util::GetChatData(world)->ServerAddText(textInput->GetText().ToString());
-		AddText(textInput->GetText().ToString());
-		UpdateTextBox();
+		//Util::GetChatData(world)->ServerAddText(textInput->GetText().ToString());
+		static_cast<APlayerCharacter*>(world->GetFirstPlayerController()->GetPawn())->ServerAddChat(textInput->GetText().ToString());
+		//AddText(textInput->GetText().ToString());
+		//UpdateTextBox();
 		ChangePlayerInputVisibility();
 		break;
 	case ETextCommit::OnUserMovedFocus:
@@ -158,10 +158,10 @@ void UChat::UpdateTextBox()
 	{
 		chatWidgets[i]->RemoveFromParent();
 	}
-	TArray<FString> messages = Util::GetChatData(world)->getChatMessages();
+//	TArray<FString> messages = Util::GetChatData(world)->getChatMessages();
 	chatWidgets.Empty();
-	for (int i = 0; i < messages.Num(); i++)
-		AddText(messages[i]);
+//	for (int i = 0; i < messages.Num(); i++)
+//		AddText(messages[i]);
 	//then adds all messages to chatbox again, this time in right order.
 	for (int i = 0; i < chatWidgets.Num(); i++)
 	{

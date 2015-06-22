@@ -5,7 +5,8 @@
 #include "GameFramework/GameMode.h"
 #include "CMGameMode.generated.h"
 
-enum class InGameState
+UENUM(BlueprintType)
+enum class InGameState : uint8
 {
 	WaitingForPlayers,
 	Warmup,
@@ -25,6 +26,8 @@ class CASUALMERCENARIES_API ACMGameMode : public AGameMode
 public:
 	ACMGameMode(const class FObjectInitializer& objectInitializer);
 
+	static FString GetInGameStateAsString(InGameState state);
+
 	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void StartMatch() override;
 
@@ -35,7 +38,7 @@ public:
 	void WaitTickSecond();
 	void MapTickSecond();
 
-	virtual void PlayerRespawn(APlayerController* player);
+	virtual void RestartPlayer(AController* controller) override;
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Left"), Category = "Gameplay|Level")
 	int32 MapTimeleft();
@@ -59,8 +62,11 @@ public:
 	void OnPlayerDeath(APlayerController* player, APlayerController* killer = NULL);
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
 
-protected:
+	void AddChat(const FString message);
 
+protected:
+	//Chat
+	class UChatBroadcaster* chatBroadcaster;
 	// Timelimit in minutes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit"), Category = "Gameplay|Level")
 	int32 mapTimelimit;
@@ -70,7 +76,10 @@ protected:
 
 	FTimerHandle mapTimerHandle;	// Ticks once every second when the main game mode is running
 	FTimerHandle waitTimer;			// Wait for players timer before game starts
-	InGameState inGameState;		// Internal game state of the game mode
+
+	// Internal game state of the game mode
+	UPROPERTY(BlueprintReadOnly, Category = Enum)
+	InGameState inGameState;
 	
 	// Start the game mode when at least this many players has joined
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Minimum Players To Start"), Category = "Gameplay|Level")
