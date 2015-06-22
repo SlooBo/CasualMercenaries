@@ -17,19 +17,23 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	PrimaryActorTick.bCanEverTick = true;
 
 	UCharacterMovementComponent* tempMoveComp = GetCharacterMovement();
-	//Addjusting jump
+	//Addjusting jump and movement
 	tempMoveComp->GravityScale = 1.0;
 	tempMoveComp->JumpZVelocity = 600;
-	tempMoveComp->AirControl = 0.5f;
+	tempMoveComp->AirControl = 0.8f;
+	tempMoveComp->MaxWalkSpeed = 1500;
 	springArmComp = ObjectInitializer.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraSpring"));
 	//these 2 need finetuning
-	springArmComp->SocketOffset = FVector(0, 35, 0);
+	springArmComp->SocketOffset = FVector(0, -100, 20);
 	springArmComp->TargetOffset = FVector(0, 0, 55);
 	springArmComp->bUsePawnControlRotation = true;
+	springArmComp->TargetArmLength = 800;
 	springArmComp->AttachParent = GetRootComponent();
 
 	cameraComp = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
 	cameraComp->AttachParent = springArmComp;
+
+	rightShoulder = false;
 
 	health_Max = 100.0f;
 	health = health_Max;
@@ -98,6 +102,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::OnStopJump);
 
 	InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::WallJump);
+
+	InputComponent->BindAction("SwitchShoulder", IE_Pressed, this, &APlayerCharacter::SwitchShoulder);
 
 	InputComponent->BindAction("AllChat", IE_Pressed, this, &APlayerCharacter::OpenAllChat);
 	InputComponent->BindAction("TeamChat", IE_Pressed, this, &APlayerCharacter::OpenTeamChat);
@@ -174,6 +180,22 @@ void APlayerCharacter::MoveRight(float _val)
 		const FRotator tempRotation = GetActorRotation();
 		FVector tempDirection = FRotationMatrix(tempRotation).GetScaledAxis(EAxis::Y);
 		AddMovementInput(tempDirection, _val);
+	}
+}
+
+void APlayerCharacter::SwitchShoulder()
+{
+	if (rightShoulder)
+	{
+		springArmComp->SocketOffset = FVector(0, 100, 20);
+		springArmComp->TargetOffset = FVector(0, 0, 55);
+		rightShoulder = false;
+	}
+	else
+	{
+		springArmComp->SocketOffset = FVector(0, -100, 20);
+		springArmComp->TargetOffset = FVector(0, 0, 55);
+		rightShoulder = true;
 	}
 }
 
@@ -260,12 +282,12 @@ void APlayerCharacter::WallJump()
 			this->CharacterMovement->Velocity = FVector(0, 0, 0);
 
 			FRotator temp = GetActorRotation();
-			FRotator tempControllerRotation = GetActorRotation(); //GetControlRotation();
+			FRotator tempControllerRotation = GetActorRotation();
 			FRotator tempControllerYaw(0, tempControllerRotation.Yaw, 0);
-			//This line need checking!!!
-			FVector tempForwardVector = tempControllerYaw.Vector();
-			FVector tempResult = tempForwardVector.MirrorByVector(wallJumpNormal);
-			tempResult = tempResult + FVector(0, 0, 1000);
+			//Wall jump is adjusted using these 3
+			FVector tempForwardVector = tempControllerYaw.Vector() * 500.0f;
+			FVector tempResult = tempForwardVector.MirrorByVector(wallJumpNormal) * 2.5f;
+			tempResult = tempResult + FVector(0.0f, 0.0f, 800.0f);
 
 			LaunchCharacter(tempResult, false, false);
 			//Hox!

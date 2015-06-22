@@ -76,6 +76,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* cameraComp;
 
+	bool rightShoulder;
+	void SwitchShoulder();
+
 	void WallCheck();
 	void InputDash();
 
