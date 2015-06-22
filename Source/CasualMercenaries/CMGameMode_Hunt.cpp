@@ -16,6 +16,14 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const class FObjectInitializer& objectInitial
 	huntIntermissionTime = 3;
 }
 
+FString ACMGameMode_Hunt::GetHuntStateAsString(HuntState state)
+{
+	const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, STRINGIFY(HuntState), true);
+	if (enumPtr == NULL)
+		return FString("Invalid");
+	return enumPtr->GetEnumName((uint8)state);
+}
+
 void ACMGameMode_Hunt::StartMatch()
 {
 	Super::StartMatch();
@@ -58,17 +66,24 @@ void ACMGameMode_Hunt::HuntTickSecond()
 	int32 intermissionStartTime = roundEndTime;
 	int32 intermissionEndTime = intermissionStartTime + huntIntermissionTime;
 	
-	if (huntElapsed < roundStartTime && huntRoundFreezeTime != 0 && huntState != HuntState::RoundStarting)
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState));
+
+	if (huntElapsed < roundStartTime && huntRoundFreezeTime > 0 && huntState != HuntState::RoundStarting)
 	{
 		// freeze time started
-		huntState = HuntState::RoundStarting;	
+		huntState = HuntState::RoundStarting;
 		RoundFreezeStart();
+		RoundStart();
 	}
 	else if (huntElapsed >= roundStartTime && huntElapsed < roundEndTime && huntState != HuntState::Round)
 	{
 		// round started
-		huntState = HuntState::Round;		
-		RoundStart();
+		huntState = HuntState::Round;
+
+		if (huntRoundFreezeTime > 0)
+			RoundFreezeEnd();
+		else
+			RoundStart();
 	}
 	else if (huntElapsed >= intermissionStartTime && huntElapsed < intermissionEndTime && huntState != HuntState::Intermission)
 	{
@@ -143,17 +158,22 @@ int32 ACMGameMode_Hunt::GetHuntIntermissionTimeLeft()
 
 void ACMGameMode_Hunt::RoundFreezeStart()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("FREEZE TIME"));
+	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Freeze time!"));
+}
+
+void ACMGameMode_Hunt::RoundFreezeEnd()
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Freeze time over"));
 }
 
 void ACMGameMode_Hunt::RoundStart()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Round start"));
+	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Round start"));
 }
 
 void ACMGameMode_Hunt::IntermissionStart()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Intermission start"));
+	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Intermission start"));
 }
 
 void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer)
@@ -167,11 +187,6 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, A
 		if (killer != NULL)
 			SetRandomPlayerHuntTarget(killer);
 	}
-}
-
-void ACMGameMode_Hunt::PlayerRespawn(APlayerController* player)
-{
-	Super::PlayerRespawn(player);
 }
 
 void ACMGameMode_Hunt::SetPlayerHuntTarget(APlayerController* player, APlayerController* killer)

@@ -5,7 +5,8 @@
 #include "CMGameMode.h"
 #include "CMGameMode_Hunt.generated.h"
 
-enum class HuntState
+UENUM(BlueprintType)
+enum class HuntState : uint8
 {
 	Start = 0,
 	RoundStarting,	// during freeze time
@@ -26,13 +27,13 @@ class CASUALMERCENARIES_API ACMGameMode_Hunt : public ACMGameMode
 public:
 	ACMGameMode_Hunt(const class FObjectInitializer& objectInitializer);
 
+	static FString GetHuntStateAsString(HuntState state);
+
 	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void StartMatch() override;
 
 	// Event when player dies or is killed by other player
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
-
-	virtual void PlayerRespawn(APlayerController* player);
 
 	void HuntTickSecond();
 
@@ -47,15 +48,19 @@ public:
 	int32 GetHuntRoundTimeLeft();
 	int32 GetHuntIntermissionTimeLeft();
 
-	void RoundFreezeStart();
-	void RoundStart();
-	void IntermissionStart();
+	void RoundFreezeStart();		// Called when round freeze period starts
+	void RoundFreezeEnd();			// Called when round freeze period ends
+	void RoundStart();				// Called when round starts
+	void IntermissionStart();		// Called after round ends
 
 protected:
 	FTimerHandle huntTimerHandle;	// Ticks once every second during hunt
 	int32 huntElapsed;
 
-	HuntState huntState;			// Internal game state of hunt mode
+	// Internal game state of hunt mode
+	UPROPERTY(BlueprintReadOnly, Category=Enum)
+	HuntState huntState;
+
 	int32 huntRounds;				// Count of hunt rounds (intermissions = rounds-1)
 	int32 huntRoundTime;			// Length of one hunt round
 	int32 huntRoundFreezeTime;		// Freeze time at the beginning of a rounds

@@ -46,7 +46,7 @@ void UChat::Initialize(UUserWidget *chatWidget,UWorld *world)
 	}
 	textInput->OnTextCommitted.AddDynamic(this, &UChat::OnTextInputTextCommitted);
 	ChangePlayerInputVisibility();
-	chatData = Util::GetChatData(world);
+	//chatData = Util::GetChatData(world);
 }
 void UChat::AddText(FString text)
 {
@@ -127,9 +127,10 @@ void UChat::OnTextInputTextCommitted(const FText& Text, ETextCommit::Type Commit
 	switch (CommitMethod)
 	{
 	case ETextCommit::OnEnter:
-		Util::GetChatData(world)->ServerAddText(textInput->GetText().ToString());
-		AddText(textInput->GetText().ToString());
-		UpdateTextBox();
+		//Util::GetChatData(world)->ServerAddText(textInput->GetText().ToString());
+		static_cast<APlayerCharacter*>(world->GetFirstPlayerController()->GetPawn())->ServerAddChat(textInput->GetText().ToString());
+		//AddText(textInput->GetText().ToString());
+		//UpdateTextBox();
 		ChangePlayerInputVisibility();
 		break;
 	case ETextCommit::OnUserMovedFocus:
