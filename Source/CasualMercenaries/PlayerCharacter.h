@@ -70,6 +70,8 @@ public:
 	void UseWeapon1();
 	void UseWeapon1Release();
 	void UseWeapon2();
+	void SwitchWeaponUp();
+	void SwitchWeaponDown();
 
 private:
 

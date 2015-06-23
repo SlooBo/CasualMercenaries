@@ -20,7 +20,7 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	Mesh->SetSimulatePhysics(true);
 
 	ProjectileMovement->ProjectileGravityScale = 1.0;
-
+	ProjectileMovement->InitialSpeed = 600.f;
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 
 	particleSystem->Deactivate();
