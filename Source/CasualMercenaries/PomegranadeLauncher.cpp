@@ -22,9 +22,8 @@ void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
 	userLoc = user->GetActorLocation();
 
 	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
-
+	MuzzleOffset.X = 100;
 	FRotator MuzzleRotation = cameraRot;
-	//MuzzleRotation.Pitch += 10;
 
 	UWorld* const World = GetWorld();
 	if (World != NULL)
@@ -40,7 +39,7 @@ void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
 		if (projectile)
 		{
 			FVector const LaunchDir = MuzzleRotation.Vector();
-			projectile->InitVelocity(LaunchDir * 5);
+			projectile->InitVelocity(LaunchDir);
 		}
 	}
 }

@@ -5,6 +5,7 @@
 #include "PlayerCharacter.h"
 #include "PlayerHud.h"
 #include "Chat.h"
+#include "ChatBroadcaster.h"
 #include "CMGameMode.h"
 #include "UberWeihmacher.h"
 #include "MashineGun.h"
@@ -14,6 +15,9 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
+
+
+
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -65,7 +69,7 @@ void APlayerCharacter::BeginPlay()
 	APomeGranadeLauncher* pyssy4 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy4);
 
-	APomeGranadeLauncher* pyssy3 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy3);
 
 	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
@@ -127,20 +131,24 @@ void APlayerCharacter::UseWeapon1()
 {
 	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
+
 void APlayerCharacter::UseWeapon1Release()
 {
 	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
+
 void APlayerCharacter::UseWeapon2()
 {
-
+	inventory.GetWeapon(currentWeapon)->SecondaryFunction();
 }
+
 void APlayerCharacter::SwitchWeaponUp()
 {
 	currentWeapon++;
 	if (currentWeapon > 3)
 		currentWeapon = 0;
 }
+
 void APlayerCharacter::SwitchWeaponDown()
 {
 	currentWeapon--;
@@ -201,6 +209,11 @@ void APlayerCharacter::ServerAddChat_Implementation(const FString& message)
 
 	if (gameMode != NULL)
 		gameMode->AddChat(message);
+	{
+		UChatBroadcaster* chat = gameMode->getServerChat();
+		if (chat != NULL)
+			chat->HandleMessage(message);
+	}
 }
 
 void APlayerCharacter::ReceiveChat_Implementation(const FString& message)
