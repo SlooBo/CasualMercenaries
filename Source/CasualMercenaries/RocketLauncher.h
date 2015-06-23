@@ -20,6 +20,9 @@ public:
 
 	void SecondaryFunction();
 
+	//UFUNCTION(Reliable, Server, WithValidation)
+	//void ServerPrimaryFunction(APlayerCharacter* user);
+
 	void BeginPlay();
 
 	// Called every frame

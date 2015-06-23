@@ -73,6 +73,16 @@ public:
 	void SwitchWeaponUp();
 	void SwitchWeaponDown();
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerUseWeapon1();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerSwitchWeaponUp();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerSwitchWeaponDown();
+
+
 private:
 
 	Inventory inventory;

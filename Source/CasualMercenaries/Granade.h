@@ -28,6 +28,14 @@ public:
 	void Tick(float DeltaSeconds);
 	void BeginPlay();
 
+	//UFUNCTION(Reliable, Server, WithValidation)
+	//void ServerTick(float DeltaSeconds);
+
+
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+		void Explode();
+
+
 private:
 
 	float lifeTime, livedTime;

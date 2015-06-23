@@ -28,7 +28,8 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
 
 	part = ParticleObj.Object;
-
+	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 AGranade::~AGranade()
@@ -42,12 +43,38 @@ void AGranade::Tick(float DeltaSeconds)
 	livedTime += DeltaSeconds;
 	if (livedTime >= lifeTime)
 	{
-		UParticleSystemComponent *particle=  UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
+		if (HasAuthority())
+		Explode();
+	}
+}
+/*
+bool AGranade::ServerTick_Validate(float DeltaSeconds)
+{
+	return true;
+}
+
+void AGranade::ServerTick_Implementation(float DeltaSeconds)
+{
+	livedTime += DeltaSeconds;
+	if (livedTime >= lifeTime)
+	{
+		UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
 		FVector scale = particle->GetComponentScale();
 		Destroy();
 	}
-}
+}*/
 
+
+bool AGranade::Explode_Validate()
+{
+	return true;
+}
+void AGranade::Explode_Implementation()
+{
+
+	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
+	Destroy();
+}
 void AGranade::BeginPlay()
 {
 

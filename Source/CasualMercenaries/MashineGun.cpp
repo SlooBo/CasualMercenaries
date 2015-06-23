@@ -37,7 +37,7 @@ void AMashineGun::PrimaryFunction(APlayerCharacter* user)
 
 	const FVector startTrace = userLoc;
 	const FVector shootDir = cameraRot.Vector();
-	const FVector endTrace = startTrace - shootDir * 1000;
+	const FVector endTrace = startTrace + shootDir * 1000;
 
 	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
 	traceParams.bTraceAsyncScene = true;

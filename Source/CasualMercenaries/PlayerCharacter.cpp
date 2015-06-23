@@ -66,11 +66,11 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	UWorld* const World = GetWorld();
 
-	APomeGranadeLauncher* pyssy4 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
-	AddWeapon(pyssy4);
-
 	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy3);
+
+	APomeGranadeLauncher* pyssy4 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AddWeapon(pyssy4);
 
 	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy2);
@@ -129,6 +129,17 @@ void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 
 void APlayerCharacter::UseWeapon1()
 {
+	//inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
+	ServerUseWeapon1();
+}
+
+bool APlayerCharacter::ServerUseWeapon1_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerUseWeapon1_Implementation()
+{
 	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
 
@@ -142,7 +153,22 @@ void APlayerCharacter::UseWeapon2()
 	inventory.GetWeapon(currentWeapon)->SecondaryFunction();
 }
 
+
+
 void APlayerCharacter::SwitchWeaponUp()
+{
+	currentWeapon++;
+	if (currentWeapon > 3)
+		currentWeapon = 0;
+	ServerSwitchWeaponUp();
+}
+
+bool APlayerCharacter::ServerSwitchWeaponUp_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerSwitchWeaponUp_Implementation()
 {
 	currentWeapon++;
 	if (currentWeapon > 3)
@@ -154,6 +180,20 @@ void APlayerCharacter::SwitchWeaponDown()
 	currentWeapon--;
 	if (currentWeapon < 0)
 		currentWeapon = 3;
+	ServerSwitchWeaponDown();
+}
+
+bool APlayerCharacter::ServerSwitchWeaponDown_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerSwitchWeaponDown_Implementation()
+{
+	currentWeapon--;
+	if (currentWeapon < 0)
+		currentWeapon = 3;
+	
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
