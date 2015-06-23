@@ -208,7 +208,6 @@ void APlayerCharacter::ServerAddChat_Implementation(const FString& message)
 	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	if (gameMode != NULL)
-		gameMode->AddChat(message);
 	{
 		UChatBroadcaster* chat = gameMode->getServerChat();
 		if (chat != NULL)
