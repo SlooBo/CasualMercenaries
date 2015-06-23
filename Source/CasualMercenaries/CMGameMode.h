@@ -62,8 +62,9 @@ public:
 	void OnPlayerDeath(APlayerController* player, APlayerController* killer = NULL);
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
 
-	void AddChat(const FString message);
 
+	//gets server's chat
+	class UChatBroadcaster* getServerChat();
 protected:
 	//Chat
 	class UChatBroadcaster* chatBroadcaster;

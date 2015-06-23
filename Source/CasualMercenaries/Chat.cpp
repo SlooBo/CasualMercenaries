@@ -51,7 +51,7 @@ void UChat::AddText(FString text)
 {
 	UUserWidget *widgetInstance = CreateWidget<UUserWidget>(world, chatText);
 	chatWidgets.Insert(widgetInstance, 0);
-	//UpdateTextBox();
+	UpdateTextBox();
 	UWidgetTree *widgetTree = widgetInstance->WidgetTree;
 	TArray<UWidget*> children;
 	widgetTree->GetAllWidgets(children);
@@ -159,7 +159,7 @@ void UChat::UpdateTextBox()
 		chatWidgets[i]->RemoveFromParent();
 	}
 //	TArray<FString> messages = Util::GetChatData(world)->getChatMessages();
-	chatWidgets.Empty();
+	//chatWidgets.Empty();
 //	for (int i = 0; i < messages.Num(); i++)
 //		AddText(messages[i]);
 	//then adds all messages to chatbox again, this time in right order.

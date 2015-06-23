@@ -29,15 +29,6 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	playerRespawnTime = 2;
 }
 
-void ACMGameMode::AddChat(const FString message)
-{
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-	{
-		APlayerCharacter* playerCharacter = static_cast<APlayerCharacter*>((*iter)->GetPawn());
-		if (playerCharacter != NULL)
-			playerCharacter->ReceiveChat(message);
-	}
-}
 
 FString ACMGameMode::GetInGameStateAsString(InGameState state)
 {
@@ -246,4 +237,8 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 	}
 
 	// TODO: setup player character here after respawning
+}
+UChatBroadcaster* ACMGameMode::getServerChat()
+{
+	return chatBroadcaster;
 }

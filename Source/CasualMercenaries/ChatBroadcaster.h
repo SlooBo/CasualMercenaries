@@ -16,6 +16,8 @@ class CASUALMERCENARIES_API UChatBroadcaster : public UObject
 public:
 	UChatBroadcaster(const FObjectInitializer& PCIP);
 	~UChatBroadcaster();
-	
+	void HandleMessage(const FString message);
+	void SendAllChat(const FString message);
+	void SendTeamChat(const FString message,uint32 teamId);
 	
 };

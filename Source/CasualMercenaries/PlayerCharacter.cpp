@@ -9,7 +9,7 @@
 #include "UberWeihmacher.h"
 #include "MashineGun.h"
 #include "RocketLauncher.h"
-
+#include "ChatBroadcaster.h"
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
@@ -187,7 +187,11 @@ void APlayerCharacter::ServerAddChat_Implementation(const FString& message)
 	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	if (gameMode != NULL)
-		gameMode->AddChat(message);
+	{
+		UChatBroadcaster* chat = gameMode->getServerChat();
+		if (chat != NULL)
+			chat->HandleMessage(message);
+	}
 }
 
 void APlayerCharacter::ReceiveChat_Implementation(const FString& message)
