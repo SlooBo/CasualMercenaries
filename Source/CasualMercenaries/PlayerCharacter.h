@@ -77,7 +77,7 @@ private:
 
 	Inventory inventory;
 	int currentWeapon;
-
+	FVector fuckthisshit;
 	FString nickName;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")

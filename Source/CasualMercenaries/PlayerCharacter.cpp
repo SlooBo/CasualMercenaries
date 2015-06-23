@@ -52,7 +52,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	currentWeapon = 0;
 
-
+	fuckthisshit = FVector();
 
 }
 
@@ -286,8 +286,9 @@ void APlayerCharacter::WallCheck()
 		
 	}
 
-	FVector RightCheckVector = tempForwardVector.RotateAngleAxis(90, FVector(1, 0, 0));
+	FVector RightCheckVector = tempForwardVector.RotateAngleAxis(90, FVector(0, 0, 1));
 	RightCheckVector = RightCheckVector * 100;
+	RightCheckVector = tempActorLocation + RightCheckVector;
 	//Right check
 	GetWorld()->LineTraceSingle(
 		RV_Hit,//result
@@ -304,8 +305,9 @@ void APlayerCharacter::WallCheck()
 		return;
 	}
 
-	FVector LeftCheckVector = LeftCheckVector.RotateAngleAxis(270, FVector(1, 0, 0));
+	FVector LeftCheckVector = tempForwardVector.RotateAngleAxis(270, FVector(0, 0, 1));
 	LeftCheckVector = LeftCheckVector * 100;
+	LeftCheckVector = tempActorLocation + LeftCheckVector;
 	//Left check
 	GetWorld()->LineTraceSingle(
 		RV_Hit,//result
@@ -323,6 +325,7 @@ void APlayerCharacter::WallCheck()
 	}
 	else
 		wallTouch = false;
+	UE_LOG(LogTemp, Warning, TEXT("Did not find hit"));
 }
 
 void APlayerCharacter::WallJump()
