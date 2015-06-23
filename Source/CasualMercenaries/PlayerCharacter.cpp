@@ -10,6 +10,8 @@
 #include "MashineGun.h"
 #include "RocketLauncher.h"
 #include "ChatBroadcaster.h"
+#include "PomegranadeLauncher.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
@@ -61,7 +63,10 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	UWorld* const World = GetWorld();
 
-	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	APomeGranadeLauncher* pyssy4 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AddWeapon(pyssy4);
+
+	APomeGranadeLauncher* pyssy3 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy3);
 
 	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
@@ -69,11 +74,6 @@ void APlayerCharacter::BeginPlay()
 
 	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy);
-
-
-
-
-
 }
 
 // Called every frame
@@ -115,6 +115,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon1);
 	InputComponent->BindAction("LeftMouseButtonReleased", IE_Released, this, &APlayerCharacter::UseWeapon1Release);
 	InputComponent->BindAction("RightMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon2);
+	InputComponent->BindAction("MouseWheelUp", IE_Pressed, this, &APlayerCharacter::SwitchWeaponUp);
+	InputComponent->BindAction("MouseWheelDown", IE_Pressed, this, &APlayerCharacter::SwitchWeaponDown);
 }
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
@@ -132,7 +134,19 @@ void APlayerCharacter::UseWeapon1Release()
 }
 void APlayerCharacter::UseWeapon2()
 {
-	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
+
+}
+void APlayerCharacter::SwitchWeaponUp()
+{
+	currentWeapon++;
+	if (currentWeapon > 3)
+		currentWeapon = 0;
+}
+void APlayerCharacter::SwitchWeaponDown()
+{
+	currentWeapon--;
+	if (currentWeapon < 0)
+		currentWeapon = 3;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

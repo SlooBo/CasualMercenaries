@@ -4,19 +4,19 @@
 
 #include "Weapon.h"
 #include "Granade.h"
-#include "PomegranateLauncher.generated.h"
+#include "PomegranadeLauncher.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CASUALMERCENARIES_API APomegranateLauncher : public AWeapon
+class CASUALMERCENARIES_API APomeGranadeLauncher : public AWeapon
 {
 	GENERATED_BODY()
 
 public:
 
-	APomegranateLauncher(const FObjectInitializer& FOI);
+	APomeGranadeLauncher(const FObjectInitializer& FOI);
 
 	void PrimaryFunction(APlayerCharacter* user);
 
