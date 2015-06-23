@@ -20,8 +20,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
 		UParticleSystemComponent* particleSystem;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
-		UParticleSystemComponent* particleSystem2;
+
 
 	ARocket(const FObjectInitializer& ObjectInitializer);
 
@@ -39,6 +38,7 @@ protected:
 
 private:
 
+	UParticleSystem* part;
 
 	
 };

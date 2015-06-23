@@ -4,7 +4,6 @@
 #include "UnrealNetwork.h"
 #include "PlayerCharacter.h"
 #include "PlayerHud.h"
-#include "Chat.h"
 #include "CMGameMode.h"
 #include "UberWeihmacher.h"
 #include "MashineGun.h"
@@ -14,6 +13,9 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
+
+
+
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -62,11 +64,11 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	UWorld* const World = GetWorld();
 
+	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AddWeapon(pyssy3);
+
 	APomeGranadeLauncher* pyssy4 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy4);
-
-	APomeGranadeLauncher* pyssy3 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
-	AddWeapon(pyssy3);
 
 	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy2);
@@ -125,27 +127,71 @@ void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 
 void APlayerCharacter::UseWeapon1()
 {
+	//inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
+	ServerUseWeapon1();
+}
+
+bool APlayerCharacter::ServerUseWeapon1_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerUseWeapon1_Implementation()
+{
 	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
+
 void APlayerCharacter::UseWeapon1Release()
 {
 	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
+
 void APlayerCharacter::UseWeapon2()
 {
-
+	inventory.GetWeapon(currentWeapon)->SecondaryFunction();
 }
+
+
+
 void APlayerCharacter::SwitchWeaponUp()
 {
 	currentWeapon++;
 	if (currentWeapon > 3)
 		currentWeapon = 0;
+	ServerSwitchWeaponUp();
 }
+
+bool APlayerCharacter::ServerSwitchWeaponUp_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerSwitchWeaponUp_Implementation()
+{
+	currentWeapon++;
+	if (currentWeapon > 3)
+		currentWeapon = 0;
+}
+
 void APlayerCharacter::SwitchWeaponDown()
 {
 	currentWeapon--;
 	if (currentWeapon < 0)
 		currentWeapon = 3;
+	ServerSwitchWeaponDown();
+}
+
+bool APlayerCharacter::ServerSwitchWeaponDown_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerSwitchWeaponDown_Implementation()
+{
+	currentWeapon--;
+	if (currentWeapon < 0)
+		currentWeapon = 3;
+	
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -190,31 +236,8 @@ void APlayerCharacter::ServerOnDeath_Implementation()
 		gameMode->OnPlayerDeath(playerController);
 }
 
-bool APlayerCharacter::ServerAddChat_Validate(const FString& message)
-{
-	return true;
-}
 
-void APlayerCharacter::ServerAddChat_Implementation(const FString& message)
-{
-	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	if (gameMode != NULL)
-		gameMode->AddChat(message);
-}
-
-void APlayerCharacter::ReceiveChat_Implementation(const FString& message)
-{
-	APlayerHud* playerHud = static_cast<APlayerHud*>(Controller->CastToPlayerController()->GetHUD());
-	if (playerHud == NULL)
-		return;
-
-	UChat* chat = playerHud->GetChat();
-	if (chat == NULL)
-		return;
-
-	chat->AddText(message);
-}
 
 void APlayerCharacter::MoveForward(float _val)
 {
@@ -390,14 +413,12 @@ void APlayerCharacter::OpenTeamChat()
 {
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
 	APlayerHud *playerhud = Cast<APlayerHud>(hud);
-	UChat *chat = playerhud->GetChat();
-	chat->OpenTeamChat();
+
 
 }
 void APlayerCharacter::OpenAllChat()
 {
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
 	APlayerHud *playerhud = Cast<APlayerHud>(hud);
-	UChat *chat = playerhud->GetChat();
-	chat->OpenAllChat();
+
 }

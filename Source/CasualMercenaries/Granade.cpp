@@ -6,6 +6,8 @@
 
 AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
 {
+	lifeTime = 3;
+
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
 
 	this->RootComponent = Mesh;
@@ -20,10 +22,14 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	Mesh->SetSimulatePhysics(true);
 
 	ProjectileMovement->ProjectileGravityScale = 1.0;
-	ProjectileMovement->InitialSpeed = 600.f;
-	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
+	ProjectileMovement->InitialSpeed = 1000.f;
 
-	particleSystem->Deactivate();
+	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+
+	part = ParticleObj.Object;
+	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 AGranade::~AGranade()
@@ -34,41 +40,49 @@ AGranade::~AGranade()
 void AGranade::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	//CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AGranade::OnCollision);
+	livedTime += DeltaSeconds;
+	if (livedTime >= lifeTime)
+	{
+		if (HasAuthority())
+		Explode();
+	}
+}
+/*
+bool AGranade::ServerTick_Validate(float DeltaSeconds)
+{
+	return true;
 }
 
+void AGranade::ServerTick_Implementation(float DeltaSeconds)
+{
+	livedTime += DeltaSeconds;
+	if (livedTime >= lifeTime)
+	{
+		UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
+		FVector scale = particle->GetComponentScale();
+		Destroy();
+	}
+}*/
+
+
+bool AGranade::Explode_Validate()
+{
+	return true;
+}
+void AGranade::Explode_Implementation()
+{
+
+	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
+	Destroy();
+}
 void AGranade::BeginPlay()
 {
 
 }
 
 
-//void AGranade::OnCollision(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-//{
-//
-//
-//	//Super::OnCollision(OtherActor, OtherComp,OtherBodyIndex, bFromSweep,SweepResult);
-//	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL))
-//	{
-//		// do some stuff
-//		const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
-//
-//		particleSystem->Template = ParticleObj.Object;
-//
-//		particleSystem->AttachTo(Mesh, "ExhaustSocket");
-//		particleSystem->Activate();
-//
-//	}
-//}
 
 float AGranade::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
-
-	particleSystem->Template = ParticleObj.Object;
-
-	particleSystem->AttachTo(Mesh, "ExhaustSocket");
-	particleSystem->Activate();
-
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }

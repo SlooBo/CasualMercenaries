@@ -35,11 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void changeUIElement(MenuType menu);
 
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	void AddText(FString text);
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	class UChat *GetChat();
+
 private:
+	UClass* chatwindowClass;
 	UPROPERTY()
 	TArray<UUserWidget*> widgets;
 	void changeUIElement(UClass *uitype);
@@ -47,9 +45,7 @@ private:
 	UClass *mainMenuClass;
 	UPROPERTY()
 	UClass *gameUIClass;
-	class UChat *chat;
 	void ClearAllWidgets();
-	void SetUpChat();
 	UUserWidget* widgetInstance;
 	
 };

@@ -19,9 +19,6 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Particles)
 		UParticleSystemComponent* particleSystem;
 
-	//UFUNCTION()
-	//	void OnCollision(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 	float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	AGranade(const FObjectInitializer& ObjectInitializer);
@@ -30,6 +27,20 @@ public:
 
 	void Tick(float DeltaSeconds);
 	void BeginPlay();
+
+	//UFUNCTION(Reliable, Server, WithValidation)
+	//void ServerTick(float DeltaSeconds);
+
+
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+		void Explode();
+
+
+private:
+
+	float lifeTime, livedTime;
+
+	UParticleSystem* part;
 	
 	
 };

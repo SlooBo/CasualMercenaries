@@ -5,7 +5,6 @@
 #include "CMPlayerState.h"
 #include "PlayerCharacter.h"
 #include "Util.h"
-#include "ChatBroadcaster.h"
 ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
 {
@@ -20,7 +19,6 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 
 	DefaultPlayerName = FText::FromString("OfficeRat");
 
-	chatBroadcaster = CreateDefaultSubobject<UChatBroadcaster>("ChatBroadcaster");
 	bDelayedStart = true;
 
 	startTime = 1;
@@ -29,15 +27,6 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	playerRespawnTime = 2;
 }
 
-void ACMGameMode::AddChat(const FString message)
-{
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-	{
-		APlayerCharacter* playerCharacter = static_cast<APlayerCharacter*>((*iter)->GetPawn());
-		if (playerCharacter != NULL)
-			playerCharacter->ReceiveChat(message);
-	}
-}
 
 FString ACMGameMode::GetInGameStateAsString(InGameState state)
 {

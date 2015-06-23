@@ -62,11 +62,10 @@ public:
 	void OnPlayerDeath(APlayerController* player, APlayerController* killer = NULL);
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
 
-	void AddChat(const FString message);
+
 
 protected:
-	//Chat
-	class UChatBroadcaster* chatBroadcaster;
+
 	// Timelimit in minutes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit"), Category = "Gameplay|Level")
 	int32 mapTimelimit;

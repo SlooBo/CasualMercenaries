@@ -2,8 +2,6 @@
 
 #include "CasualMercenaries.h"
 #include "PlayerHud.h"
-//#include "Util.h"
-#include "Chat.h"
 
 
 
@@ -18,13 +16,13 @@ APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 	if (GameUIBP.Object){
 		gameUIClass = (UClass*)GameUIBP.Object->GeneratedClass;
 	}
-	
-		//static ConstructorHelpers::FObjectFinder<UClass> ChatClass(TEXT("Class'/Script/CasualMercenaries.Chat'"));
-		//if (ChatClass.Object){
-	chat = CreateDefaultSubobject<UChat>("chat");
-	//}
-	//chat = UChat::StaticClass();
-	//chat = new UChat(PCIP);
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> ChatObject(TEXT("WidgetBlueprint'/Game/3rdparty/chat/ChatWindow.ChatWindow'"));
+	if (ChatObject.Object != NULL)
+	{
+		chatwindowClass = (UClass*)ChatObject.Object->GeneratedClass;
+	}
+
 
 	
 }
@@ -35,7 +33,7 @@ void APlayerHud::DrawHud()
 void APlayerHud::BeginPlay()
 {
 	changeUIElement(MenuType::MAIN_MENU);
-
+	//call function setup chat from chatwindow
 
 }
 
@@ -53,7 +51,6 @@ void APlayerHud::changeUIElement(MenuType menu)
 		break;
 	case MenuType::GAME_UI:
 		changeUIElement(gameUIClass);
-		SetUpChat();
 		break;
 	case MenuType::NO_UI:
 	default:
@@ -77,16 +74,4 @@ void APlayerHud::ClearAllWidgets()
 		widgets[i]->RemoveFromViewport();
 	}
 	widgets.Empty();
-}
-void APlayerHud::SetUpChat()
-{
-	chat->Initialize(widgetInstance,GetWorld());
-}
-void APlayerHud::AddText(FString text)
-{
-	chat->AddText(text);
-}
-UChat *APlayerHud::GetChat()
-{
-	return chat;
 }

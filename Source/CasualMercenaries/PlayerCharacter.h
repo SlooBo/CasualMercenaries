@@ -54,11 +54,6 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerOnDeath();
 
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerAddChat(const FString& message);
-
-	UFUNCTION(Reliable, Client)
-	void ReceiveChat(const FString& message);
 
 	/* Is character currently performing a jump action. Resets on landed.  */
 	UPROPERTY(Transient, Replicated)
@@ -72,6 +67,16 @@ public:
 	void UseWeapon2();
 	void SwitchWeaponUp();
 	void SwitchWeaponDown();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerUseWeapon1();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerSwitchWeaponUp();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerSwitchWeaponDown();
+
 
 private:
 

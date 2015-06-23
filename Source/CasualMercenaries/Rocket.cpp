@@ -15,7 +15,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/PrototypeParticleSystems/OfficeWars/ParticleSystems/PS_RocketTrail.PS_RocketTrail'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_SmokeTrail.P_SmokeTrail'"));
 	
 	particleSystem->Template = ParticleObj.Object;
 	
@@ -23,7 +23,10 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 	particleSystem->Activate();
 
-
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+	part = ParticleObj2.Object;
+	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 ARocket::~ARocket()
@@ -43,11 +46,6 @@ void ARocket::BeginPlay()
 
 void ARocket::Explode(const FObjectInitializer& ObjectInitializer)
 {
-	particleSystem2 = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle2"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
-
-	particleSystem2->Template = ParticleObj2.Object;
-
-	particleSystem2->AttachTo(Mesh, "ExplosionStartSocket");
-	particleSystem2->Deactivate();
+	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
+	Destroy();
 }
