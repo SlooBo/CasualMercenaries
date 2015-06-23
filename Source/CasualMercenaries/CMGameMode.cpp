@@ -5,7 +5,6 @@
 #include "CMPlayerState.h"
 #include "PlayerCharacter.h"
 #include "Util.h"
-#include "ChatBroadcaster.h"
 ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
 {
@@ -20,7 +19,6 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 
 	DefaultPlayerName = FText::FromString("OfficeRat");
 
-	chatBroadcaster = CreateDefaultSubobject<UChatBroadcaster>("ChatBroadcaster");
 	bDelayedStart = true;
 
 	startTime = 1;
@@ -237,8 +235,4 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 	}
 
 	// TODO: setup player character here after respawning
-}
-UChatBroadcaster* ACMGameMode::getServerChat()
-{
-	return chatBroadcaster;
 }

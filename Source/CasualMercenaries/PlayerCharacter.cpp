@@ -4,8 +4,6 @@
 #include "UnrealNetwork.h"
 #include "PlayerCharacter.h"
 #include "PlayerHud.h"
-#include "Chat.h"
-#include "ChatBroadcaster.h"
 #include "CMGameMode.h"
 #include "UberWeihmacher.h"
 #include "MashineGun.h"
@@ -238,35 +236,8 @@ void APlayerCharacter::ServerOnDeath_Implementation()
 		gameMode->OnPlayerDeath(playerController);
 }
 
-bool APlayerCharacter::ServerAddChat_Validate(const FString& message)
-{
-	return true;
-}
 
-void APlayerCharacter::ServerAddChat_Implementation(const FString& message)
-{
-	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	if (gameMode != NULL)
-	{
-		UChatBroadcaster* chat = gameMode->getServerChat();
-		if (chat != NULL)
-			chat->HandleMessage(message);
-	}
-}
-
-void APlayerCharacter::ReceiveChat_Implementation(const FString& message)
-{
-	APlayerHud* playerHud = static_cast<APlayerHud*>(Controller->CastToPlayerController()->GetHUD());
-	if (playerHud == NULL)
-		return;
-
-	UChat* chat = playerHud->GetChat();
-	if (chat == NULL)
-		return;
-
-	chat->AddText(message);
-}
 
 void APlayerCharacter::MoveForward(float _val)
 {
@@ -439,14 +410,12 @@ void APlayerCharacter::OpenTeamChat()
 {
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
 	APlayerHud *playerhud = Cast<APlayerHud>(hud);
-	UChat *chat = playerhud->GetChat();
-	chat->OpenTeamChat();
+
 
 }
 void APlayerCharacter::OpenAllChat()
 {
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
 	APlayerHud *playerhud = Cast<APlayerHud>(hud);
-	UChat *chat = playerhud->GetChat();
-	chat->OpenAllChat();
+
 }
