@@ -113,6 +113,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("TeamChat", IE_Pressed, this, &APlayerCharacter::OpenTeamChat);
 
 	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon1);
+	InputComponent->BindAction("LeftMouseButtonReleased", IE_Released, this, &APlayerCharacter::UseWeapon1Release);
+	InputComponent->BindAction("RightMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon2);
 }
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
@@ -121,6 +123,14 @@ void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 }
 
 void APlayerCharacter::UseWeapon1()
+{
+	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
+}
+void APlayerCharacter::UseWeapon1Release()
+{
+	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
+}
+void APlayerCharacter::UseWeapon2()
 {
 	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }

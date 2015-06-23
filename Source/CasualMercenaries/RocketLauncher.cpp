@@ -43,9 +43,9 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 	user->GetActorEyesViewPoint(userLoc, cameraRot);
 
 	userLoc = user->GetActorLocation();
-
+	MuzzleOffset.X = 100;
 	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
-
+	
 	FRotator MuzzleRotation = cameraRot;
 
 	UWorld* const World = GetWorld();

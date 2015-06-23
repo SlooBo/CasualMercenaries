@@ -35,7 +35,5 @@ void Inventory::RemoveWeaponFromInventory(AWeapon* weapon)
 
 AWeapon* Inventory::GetWeapon(int number)
 {
-
-	//return nullptr;
 	return weapons.at(number);
 }

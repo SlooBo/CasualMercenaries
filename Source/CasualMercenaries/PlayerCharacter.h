@@ -68,6 +68,8 @@ public:
 	void ChangeUITest();
 
 	void UseWeapon1();
+	void UseWeapon1Release();
+	void UseWeapon2();
 
 private:
 
