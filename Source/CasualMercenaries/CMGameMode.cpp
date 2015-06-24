@@ -5,13 +5,22 @@
 #include "CMPlayerState.h"
 #include "PlayerCharacter.h"
 #include "Util.h"
+#include "PlayerHud.h"
+
 ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
 {
 	// defaults for game mode, use blueprints to override
 
-	DefaultPawnClass = APlayerCharacter::StaticClass();
-	//HUDClass = ACMHUD::StaticClass();
+	static ConstructorHelpers::FObjectFinder<UBlueprint> PlayerCharacter(TEXT("Blueprint'/Game/Game/Blueprints/BP_PlayerCharacter.BP_PlayerCharacter'"));
+	if (PlayerCharacter.Object)
+		DefaultPawnClass = (UClass*)PlayerCharacter.Object->GeneratedClass;
+
+	static ConstructorHelpers::FObjectFinder<UBlueprint> PlayerHud(TEXT("Blueprint'/Game/Game/Blueprints/BP_PlayerHud.BP_PlayerHud'"));
+	if (PlayerHud.Object)
+		HUDClass = (UClass*)PlayerHud.Object->GeneratedClass;
+
+	//HUDClass = APlayerHud::StaticClass();
 	//PlayerControllerClass = ACMPlayerController::StaticClass();
 	PlayerStateClass = ACMPlayerState::StaticClass();
 	//SpectatorClass = ACMSpectatorClass::StaticClass();

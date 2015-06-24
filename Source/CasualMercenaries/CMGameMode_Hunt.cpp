@@ -6,7 +6,7 @@
 #include "Util.h"
 
 ACMGameMode_Hunt::ACMGameMode_Hunt(const class FObjectInitializer& objectInitializer)
-	: Super(objectInitializer)
+	: ACMGameMode(objectInitializer)
 {
 	minPlayersToStart = 1;
 
@@ -190,7 +190,16 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, A
 		SetRandomPlayerHuntTarget(player);
 
 		if (killer != NULL)
-			SetRandomPlayerHuntTarget(killer);
+		{
+			ACMPlayerState* killerState = static_cast<ACMPlayerState*>(killer->PlayerState);
+			APlayerController* killerTarget = NULL;
+
+			if (killerState->GetHuntTarget() != NULL && killerState->GetHuntTarget()->GetNetOwningPlayer() != NULL)
+				killerTarget = killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController;
+
+			if (killerTarget == player)
+				SetRandomPlayerHuntTarget(killer);
+		}
 	}
 }
 
