@@ -59,40 +59,33 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		huntElapsed = 0;
 	}
 
-	int32 rounds = huntElapsed / (huntRoundFreezeTime + huntRoundTime + huntIntermissionTime);
-	int32 roundFreezeStart = rounds * (huntRoundFreezeTime + huntRoundTime + huntIntermissionTime);
-	int32 roundStartTime = roundFreezeStart + huntRoundFreezeTime;
-	int32 roundEndTime = roundStartTime + huntRoundTime;
-	int32 intermissionStartTime = roundEndTime;
-	int32 intermissionEndTime = intermissionStartTime + huntIntermissionTime;
-	
-	
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(GetHuntTotalLength()) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
 
-	if (huntElapsed < roundStartTime && huntRoundFreezeTime > 0 && huntState != HuntState::RoundStarting)
+	if (huntElapsed < GetNextRoundStartTime() && huntRoundFreezeTime > 0 && huntState != HuntState::RoundStarting)
 	{
 		// freeze time started
 		huntState = HuntState::RoundStarting;
-		RoundFreezeStart();
-		RoundStart();
+		OnRoundStart();
+		OnRoundFreezeStart();
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundFreezeTime) + "s)");
 	}
-	else if (huntElapsed >= roundStartTime && huntElapsed < roundEndTime && huntState != HuntState::Round)
+	else if (huntElapsed >= GetNextRoundStartTime() && huntElapsed < GetNextIntermissionStartTime() && huntState != HuntState::Round)
 	{
 		// round started
 		huntState = HuntState::Round;
 
 		if (huntRoundFreezeTime > 0)
-			RoundFreezeEnd();
+			OnRoundFreezeEnd();
 		else
-			RoundStart();
+			OnRoundStart();
 
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundTime) + "s)");
 	}
-	else if (huntElapsed >= intermissionStartTime && huntElapsed < intermissionEndTime && huntState != HuntState::Intermission)
+	else if (huntElapsed >= GetNextIntermissionStartTime() && huntElapsed < GetNextIntermissionEndTime() && huntState != HuntState::Intermission)
 	{
 		// intermission started
 		huntState = HuntState::Intermission;	
-		IntermissionStart();
+		OnIntermissionStart();
 
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntIntermissionTime) + "s)");
 	}
@@ -103,12 +96,39 @@ int32 ACMGameMode_Hunt::GetHuntTimeElapsed()
 	return huntElapsed;
 }
 
+int32 ACMGameMode_Hunt::GetHuntTotalLength()
+{
+	return ((huntRoundTime + huntRoundFreezeTime) * huntRounds) + (huntIntermissionTime * (huntRounds - 1));
+}
+
+int32 ACMGameMode_Hunt::GetCurrentRound()
+{
+	return huntElapsed / (huntRoundFreezeTime + huntRoundTime + huntIntermissionTime);
+}
+
+int32 ACMGameMode_Hunt::GetNextFreezeStartTime()
+{
+	return GetCurrentRound() * (huntRoundFreezeTime + huntRoundTime + huntIntermissionTime);
+}
+
+int32 ACMGameMode_Hunt::GetNextRoundStartTime()
+{
+	return GetNextFreezeStartTime() + huntRoundFreezeTime;
+}
+
+int32 ACMGameMode_Hunt::GetNextIntermissionStartTime()
+{
+	return GetNextRoundStartTime() + huntRoundTime;
+}
+
+int32 ACMGameMode_Hunt::GetNextIntermissionEndTime()
+{
+	return GetNextIntermissionStartTime() + huntIntermissionTime;
+}
+
 int32 ACMGameMode_Hunt::GetHuntRoundTimeElapsed()
 {
-	int32 rounds = huntElapsed / (huntRoundTime + huntIntermissionTime);
-	int32 roundStartTime = rounds * (huntRoundTime + huntIntermissionTime);
-	int32 roundEndTime = roundStartTime + huntRoundTime;
-	int32 roundElapsed = huntElapsed - roundStartTime;
+	int32 roundStartTime = GetNextRoundStartTime();
 
 	if (huntElapsed < roundStartTime)
 		return -1;
@@ -118,10 +138,7 @@ int32 ACMGameMode_Hunt::GetHuntRoundTimeElapsed()
 
 int32 ACMGameMode_Hunt::GetHuntIntermissionTimeElapsed()
 {
-	int32 rounds = huntElapsed / (huntRoundTime + huntIntermissionTime);
-	int32 intermissionEndTime = (rounds + 1) * (huntRoundTime + huntIntermissionTime);
-	int32 intermissionStartTime = intermissionEndTime - huntIntermissionTime;
-	int32 intermissionElapsed = huntElapsed - intermissionStartTime;
+	int32 intermissionStartTime = GetNextIntermissionStartTime();
 
 	if (huntElapsed < intermissionStartTime)
 		return -1;
@@ -131,54 +148,40 @@ int32 ACMGameMode_Hunt::GetHuntIntermissionTimeElapsed()
 
 int32 ACMGameMode_Hunt::GetHuntTimeLeft()
 {
-	int32 huntLength = (huntRoundTime * huntRounds) + (huntIntermissionTime * (huntRounds - 1));
-	return huntLength - huntElapsed;
+	return GetHuntTotalLength() - huntElapsed;
 }
 
 int32 ACMGameMode_Hunt::GetHuntRoundTimeLeft()
 {
-	int32 rounds = huntElapsed / (huntRoundTime + huntIntermissionTime);
-	int32 roundStartTime = rounds * (huntRoundTime + huntIntermissionTime);
-	int32 roundEndTime = roundStartTime + huntRoundTime;
-	int32 roundElapsed = huntElapsed - roundStartTime;
-
-	if (huntElapsed < roundStartTime)
+	if (huntElapsed < GetNextRoundStartTime())
 		return -1;
 
-	return roundEndTime - huntElapsed;
+	return GetNextIntermissionStartTime() - huntElapsed;
 }
 
 int32 ACMGameMode_Hunt::GetHuntIntermissionTimeLeft()
 {
-	int32 rounds = huntElapsed / (huntRoundTime + huntIntermissionTime);
-	int32 intermissionEndTime = (rounds + 1) * (huntRoundTime + huntIntermissionTime);
-	int32 intermissionStartTime = intermissionEndTime - huntIntermissionTime;
-	int32 intermissionElapsed = huntElapsed - intermissionStartTime;
-
-	if (huntElapsed < intermissionStartTime)
+	if (huntElapsed < GetNextIntermissionStartTime())
 		return -1;
 
-	return intermissionEndTime - huntElapsed;
+	return GetNextIntermissionEndTime() - huntElapsed;
 }
 
-void ACMGameMode_Hunt::RoundFreezeStart()
+void ACMGameMode_Hunt::OnRoundFreezeStart_Implementation()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState));
 }
 
-void ACMGameMode_Hunt::RoundFreezeEnd()
+void ACMGameMode_Hunt::OnRoundFreezeEnd_Implementation()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState));
 }
 
-void ACMGameMode_Hunt::RoundStart()
+void ACMGameMode_Hunt::OnRoundStart_Implementation()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState));
 }
 
-void ACMGameMode_Hunt::IntermissionStart()
+void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState));
+
 }
 
 void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer)

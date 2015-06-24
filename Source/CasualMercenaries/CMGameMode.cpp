@@ -117,7 +117,7 @@ void ACMGameMode::WaitTickSecond()
 		if (warmupTime > 0)
 		{
 			inGameState = InGameState::Warmup;
-			WarmupStart();
+			OnWarmupStart();
 		}
 		else
 			inGameState = InGameState::Starting;
@@ -175,7 +175,7 @@ int32 ACMGameMode::MapTimeElapsed()
 	return mapTimeElapsed;
 }
 
-void ACMGameMode::WarmupStart()
+void ACMGameMode::OnWarmupStart_Implementation()
 {
 	StartMatch();
 }

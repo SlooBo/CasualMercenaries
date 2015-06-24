@@ -46,8 +46,10 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Elapsed"), Category = "Gameplay|Level")
 	int32 MapTimeElapsed();
 
-	// Called when warmup starts
-	virtual void WarmupStart();
+	// Event when warmup starts
+	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Warmup Start"), Category = "Gameplay")
+	void OnWarmupStart();
+	virtual void OnWarmupStart_Implementation();
 
 	// Event when match has started
 	UFUNCTION(BlueprintImplementableEvent, Meta = (DisplayName = "On Start Match"), Category = "Gameplay")
