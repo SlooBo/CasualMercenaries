@@ -17,11 +17,6 @@ APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 		gameUIClass = (UClass*)GameUIBP.Object->GeneratedClass;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> ChatObject(TEXT("WidgetBlueprint'/Game/3rdparty/chat/ChatWindow.ChatWindow'"));
-	if (ChatObject.Object != NULL)
-	{
-		chatwindowClass = (UClass*)ChatObject.Object->GeneratedClass;
-	}
 
 
 	
