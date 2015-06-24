@@ -21,8 +21,10 @@ public:
 	APlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
+	//virtual void BeginPlay() override;
+	//had to be changed so blueprint can run
+	UFUNCTION(BlueprintCallable, Reliable, Server, WithValidation, Category = "UI")
+		void BeginPlayCplusplus();
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -51,7 +53,7 @@ public:
 
 	virtual void OnDeath() override;
 
-	UFUNCTION(Reliable, Server, WithValidation)
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerOnDeath();
 
 

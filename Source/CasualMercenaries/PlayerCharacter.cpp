@@ -57,11 +57,14 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	fuckthisshit = FVector();
 
 }
+bool APlayerCharacter::BeginPlayCplusplus_Validate()
+{
+	return true;
+}
 
 // Called when the game starts or when spawned
-void APlayerCharacter::BeginPlay()
+void APlayerCharacter::BeginPlayCplusplus_Implementation()
 {
-	Super::BeginPlay();
 	UWorld* const World = GetWorld();
 
 	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
@@ -127,7 +130,7 @@ void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 
 void APlayerCharacter::UseWeapon1()
 {
-	if (inventory.GetWeapon(currentWeapon) != nullptr)
+	//if (inventory.GetWeapon(currentWeapon) != nullptr)
 		ServerUseWeapon1();
 }
 
@@ -138,6 +141,7 @@ bool APlayerCharacter::ServerUseWeapon1_Validate()
 
 void APlayerCharacter::ServerUseWeapon1_Implementation()
 {
+	if (inventory.GetWeapon(currentWeapon) != nullptr)
 	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
 

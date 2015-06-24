@@ -30,9 +30,9 @@ void APlayerHud::DrawHud()
 {
 	Super::DrawHUD();
 }
-void APlayerHud::BeginPlay()
+void APlayerHud::BeginPlayCplusplus()
 {
-	changeUIElement(MenuType::MAIN_MENU);
+	//changeUIElement(MenuType::MAIN_MENU);
 	//call function setup chat from chatwindow
 
 }

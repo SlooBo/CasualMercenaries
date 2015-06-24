@@ -26,7 +26,10 @@ public:
 	// Sets default values for this actor's properties
 	APlayerHud(const FObjectInitializer& PCIP);
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	//had to be changed so blueprint can run
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		void BeginPlayCplusplus();
+	//virtual void BeginPlay() override;
 	
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
