@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/HUD.h"
+#include "UILogicBase.h"
 #include "PlayerHud.generated.h"
 
 /**
@@ -14,6 +15,7 @@ enum class MenuType : uint8
 {
 	MAIN_MENU 	UMETA(DisplayName = "MAIN_MENU"),
 	GAME_UI 	UMETA(DisplayName = "GAME_UI"),
+	SERVER_BROWSER 	UMETA(DisplayName = "SERVER_BROWSER"),
 	NO_UI	UMETA(DisplayName = "NO_UI")
 };
 
@@ -40,14 +42,21 @@ public:
 
 
 private:
-	UClass* chatwindowClass;
+	
 	UPROPERTY()
 	TArray<UUserWidget*> widgets;
-	void changeUIElement(UClass *uitype);
+	UUserWidget* changeUIElement(UClass *uitype);
+
+	UPROPERTY()
+	UClass* chatwindowClass;
 	UPROPERTY()
 	UClass *mainMenuClass;
 	UPROPERTY()
 	UClass *gameUIClass;
+	UPROPERTY()
+	UClass *serverBrowserClass;
+
+	TArray<UUILogicBase*> logicClasses;
 	void ClearAllWidgets();
 	UUserWidget* widgetInstance;
 	

@@ -2,7 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "PlayerHud.h"
-
+#include "ServerBrowserLogic.h"
 
 
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
@@ -17,7 +17,10 @@ APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 		gameUIClass = (UClass*)GameUIBP.Object->GeneratedClass;
 	}
 
-
+	static ConstructorHelpers::FObjectFinder<UBlueprint> ServerBrowserBP(TEXT("WidgetBlueprint'/Game/Game/UI/ServerBrowserGUI.ServerBrowserGUI'"));
+	if (ServerBrowserBP.Object){
+		serverBrowserClass = (UClass*)ServerBrowserBP.Object->GeneratedClass;
+	}
 
 	
 }
@@ -39,27 +42,39 @@ void APlayerHud::Tick(float DeltaSeconds)
 }
 void APlayerHud::changeUIElement(MenuType menu)
 {
+	
 	switch (menu)
 	{
 	case MenuType::MAIN_MENU:
 		changeUIElement(mainMenuClass);
+		//this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		break;
 	case MenuType::GAME_UI:
+		//this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 		changeUIElement(gameUIClass);
 		break;
+	case MenuType::SERVER_BROWSER:
+	{
+		UUserWidget* widget;
+		widget = changeUIElement(serverBrowserClass);
+		UServerBrowserLogic* serverBrowser = NewObject<UServerBrowserLogic>();
+		serverBrowser->SetUp(widget,GetWorld());
+		logicClasses.Add(serverBrowser);
+		break;
+	}
 	case MenuType::NO_UI:
 	default:
 		break;
 	}
 }
-void APlayerHud::changeUIElement(UClass *uitype)
+UUserWidget* APlayerHud::changeUIElement(UClass *uitype)
 {
 	ClearAllWidgets();
 
 	widgetInstance = CreateWidget<UUserWidget>(GetWorld(), uitype);
 	widgetInstance->AddToViewport();
-	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 	widgets.Add(widgetInstance);
+	return widgetInstance;
 	
 }
 void APlayerHud::ClearAllWidgets()
