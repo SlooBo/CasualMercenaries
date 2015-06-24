@@ -100,7 +100,7 @@ void ABaseCharacter::AddHealth(float _health)
 		health = health + _health;
 }
 
-void ABaseCharacter::TakeDamage(float _health)
+void ABaseCharacter::TakeDamage(float _health, APlayerController* damageSource)
 {
 	if (!IsAlive())
 		return;
@@ -108,7 +108,7 @@ void ABaseCharacter::TakeDamage(float _health)
 	health = health - _health;
 	
 	if (!IsAlive())
-		OnDeath();
+		OnDeath(damageSource);
 }
 
 void ABaseCharacter::AddStamina(float _stamina)

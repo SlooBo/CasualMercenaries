@@ -48,7 +48,7 @@ public:
 		void AddHealth(float _health);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		void TakeDamage(float _damage);
+		void TakeDamage(float _damage, APlayerController* killer = NULL);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		void AddStamina(float _stamina);
@@ -84,7 +84,7 @@ protected:
 
 	/* Take damage & handle death */
 
-	virtual void OnDeath() { };
+	virtual void OnDeath(APlayerController* damageSource = NULL) { };
 
 	/*virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 

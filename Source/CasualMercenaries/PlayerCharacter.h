@@ -49,10 +49,10 @@ public:
 	/* Client mapped to Input */
 	void OnStopJump();
 
-	virtual void OnDeath() override;
+	virtual void OnDeath(APlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerOnDeath();
+	void ServerOnDeath(APlayerController* killer = NULL);
 
 
 	/* Is character currently performing a jump action. Resets on landed.  */
