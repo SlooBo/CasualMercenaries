@@ -2,7 +2,7 @@
 
 #pragma once
 #include "Weapon.h"
-#include <vector>
+
 
 /**
  * 
@@ -26,5 +26,5 @@ public:
 
 private:
 
-	std::vector<AWeapon*> weapons;
+	TArray<AWeapon*> weapons;
 };

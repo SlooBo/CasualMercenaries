@@ -13,27 +13,29 @@ Inventory::~Inventory()
 
 void Inventory::AddWeaponToInventory(AWeapon* weapon)
 {
-	weapons.push_back(weapon);
+	weapons.Add(weapon);
 }
 
 void Inventory::RemoveWeaponFromInventpry(int number)
 {
 	
-	weapons.erase(weapons.begin() + number);
+	weapons.RemoveAt(number,1);
 }
 
 void Inventory::RemoveWeaponFromInventory(AWeapon* weapon)
 {
-	for (int i = 0; i < weapons.size(); i++)
+	for (int i = 0; i < weapons.Num(); i++)
 	{
-		if (weapon == weapons.at(i))
+		if (weapon == weapons[i])
 		{
-			weapons.erase(weapons.begin() + i);
+			weapons.RemoveAt(i, 1);;
 		}
 	}
 }
 
 AWeapon* Inventory::GetWeapon(int number)
 {
-	return weapons.at(number);
+	if (weapons.Num() == 0)
+		return nullptr;
+	return weapons[number];
 }

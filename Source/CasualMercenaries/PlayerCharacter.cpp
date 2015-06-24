@@ -127,7 +127,8 @@ void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 
 void APlayerCharacter::UseWeapon1()
 {
-	ServerUseWeapon1();
+	if (inventory.GetWeapon(currentWeapon) != nullptr)
+		ServerUseWeapon1();
 }
 
 bool APlayerCharacter::ServerUseWeapon1_Validate()
@@ -142,12 +143,14 @@ void APlayerCharacter::ServerUseWeapon1_Implementation()
 
 void APlayerCharacter::UseWeapon1Release()
 {
-	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
+	if (inventory.GetWeapon(currentWeapon) != nullptr)
+		inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
 
 void APlayerCharacter::UseWeapon2()
 {
-	inventory.GetWeapon(currentWeapon)->SecondaryFunction();
+	if (inventory.GetWeapon(currentWeapon) != nullptr)
+		inventory.GetWeapon(currentWeapon)->SecondaryFunction();
 }
 
 void APlayerCharacter::SwitchWeaponUp()
@@ -297,7 +300,6 @@ void APlayerCharacter::WallCheck()
 		wallJumpNormal = RV_Hit.ImpactNormal;
 		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
 		return;
-		
 	}
 
 	FVector RightCheckVector = tempForwardVector.RotateAngleAxis(90, FVector(0, 0, 1));
