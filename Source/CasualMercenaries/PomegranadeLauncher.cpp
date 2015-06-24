@@ -29,7 +29,7 @@ void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
 	if (World != NULL)
 	{
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
+		SpawnParams.Owner = user;
 		SpawnParams.Instigator = Instigator;
 		//SpawnParams.bNoCollisionFail = true;
 

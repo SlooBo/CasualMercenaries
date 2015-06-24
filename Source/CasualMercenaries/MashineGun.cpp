@@ -32,16 +32,21 @@ void AMashineGun::PrimaryFunction(APlayerCharacter* user)
 	FVector userLoc2;
 	FRotator cameraRot;
 
-	userLoc = user->GetActorLocation();
+
 	user->GetActorEyesViewPoint(userLoc2, cameraRot);
 
-	const FVector startTrace = userLoc;
+	FTransform(cameraRot).TransformVector(MuzzleOffset);
+
+	userLoc = user->GetActorLocation() + MuzzleOffset;
+	
 	const FVector shootDir = cameraRot.Vector();
+	const FVector startTrace = userLoc;
 	const FVector endTrace = startTrace + shootDir * 1000;
 
 	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
 	traceParams.bTraceAsyncScene = true;
 	traceParams.bReturnPhysicalMaterial = true;
+	traceParams.AddIgnoredActor(user);
 
 	FHitResult hit(ForceInit);
 
@@ -49,6 +54,8 @@ void AMashineGun::PrimaryFunction(APlayerCharacter* user)
 
 	DrawDebugLine(GetWorld(), startTrace, endTrace, FColor(260.0f, 0.0f, 0.f, 1.f), false, 1.f);
 
+	APlayerCharacter*  player = Cast<APlayerCharacter>(hit.GetActor());
+	player->TakeDamage(10, Cast<APlayerController>(user->GetController()));
 
 	DrawLine(startTrace, endTrace);
 	//oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi

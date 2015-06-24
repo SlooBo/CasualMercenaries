@@ -14,7 +14,7 @@
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
 
-
+	inventory = CreateDefaultSubobject<UInventory>("inventory");
 
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -125,7 +125,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 {
-	inventory.AddWeaponToInventory(_weapon);
+	inventory->AddWeaponToInventory(_weapon);
 }
 
 void APlayerCharacter::UseWeapon1()
@@ -141,20 +141,20 @@ bool APlayerCharacter::ServerUseWeapon1_Validate()
 
 void APlayerCharacter::ServerUseWeapon1_Implementation()
 {
-	if (inventory.GetWeapon(currentWeapon) != nullptr)
-	inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
+	if (inventory->GetWeapon(currentWeapon) != nullptr)
+	inventory->GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
 
 void APlayerCharacter::UseWeapon1Release()
 {
-	if (inventory.GetWeapon(currentWeapon) != nullptr)
-		inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
+	if (inventory->GetWeapon(currentWeapon) != nullptr)
+		inventory->GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
 
 void APlayerCharacter::UseWeapon2()
 {
-	if (inventory.GetWeapon(currentWeapon) != nullptr)
-		inventory.GetWeapon(currentWeapon)->SecondaryFunction();
+	if (inventory->GetWeapon(currentWeapon) != nullptr)
+		inventory->GetWeapon(currentWeapon)->SecondaryFunction();
 }
 
 void APlayerCharacter::SwitchWeaponUp()
@@ -212,6 +212,7 @@ void APlayerCharacter::OnStartJump()
 
 	
 }
+
 void APlayerCharacter::OnStopJump()
 {
 
@@ -221,7 +222,6 @@ void APlayerCharacter::OnDeath(APlayerController* killer)
 {
 	ServerOnDeath(killer);
 }
-
 
 bool APlayerCharacter::ServerOnDeath_Validate(APlayerController* killer)
 {
@@ -236,9 +236,6 @@ void APlayerCharacter::ServerOnDeath_Implementation(APlayerController* killer)
 	if (gameMode != NULL && playerController != NULL)
 		gameMode->OnPlayerDeath(playerController, killer);
 }
-
-
-
 
 void APlayerCharacter::MoveForward(float _val)
 {

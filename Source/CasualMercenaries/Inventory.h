@@ -1,18 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-#include "Weapon.h"
 
+#include "Object.h"
+#include "Weapon.h"
+#include "Inventory.generated.h"
 
 /**
  * 
  */
-class CASUALMERCENARIES_API Inventory
+UCLASS()
+class CASUALMERCENARIES_API UInventory : public UObject
 {
+	GENERATED_BODY()
+	
 public:
 
-	Inventory();
-	~Inventory();
+	UInventory();
+	~UInventory();
 
 	void AddWeaponToInventory(AWeapon* weapon);
 
@@ -27,4 +32,6 @@ public:
 private:
 
 	TArray<AWeapon*> weapons;
+	
+	
 };

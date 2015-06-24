@@ -2,6 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "Rocket.h"
+#include "PlayerCharacter.h"
 
 
 
@@ -50,5 +51,19 @@ void ARocket::BeginPlay()
 void ARocket::Explode(const FObjectInitializer& ObjectInitializer)
 {
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
+
+	float ExplosionRadius = 200.0f;
+	float ExplosionDamage = 25.0f;
+
+	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
+	{
+		float distance = GetDistanceTo(*aItr);
+
+		if (distance <= ExplosionRadius)
+		{
+			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
+			aItr->TakeDamage(ExplosionDamage);
+		}
+	}
 	Destroy();
 }

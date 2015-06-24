@@ -2,6 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "Granade.h"
+#include "PlayerCharacter.h"
 
 
 AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
@@ -13,13 +14,13 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 
 	this->RootComponent = Mesh;
 
-	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Props/FIREHY~1/firehydrant.firehydrant'"));
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/RocketLauncher/Rocket.Rocket'"));
 	Mesh->SetStaticMesh(MeshObj.Object);
 
-	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Props/FIREHY~1/MAT_firehydrant.MAT_firehydrant'"));
+	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
 	Mesh->SetMaterial(0, MateriaObj.Object);
 
-	Mesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
+	//Mesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
 	Mesh->SetSimulatePhysics(true);
 
 
@@ -61,12 +62,27 @@ bool AGranade::Explode_Validate()
 void AGranade::Explode_Implementation()
 {
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
+
+	float ExplosionRadius = 200.0f;
+	float ExplosionDamage = 25.0f;
+
+	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
+	{
+		float distance = GetDistanceTo(*aItr);
+		
+		if (distance <= ExplosionRadius)
+		{
+			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
+			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
+			aItr->TakeDamage(ExplosionDamage, Cast<APlayerController>(tempChar->GetController()));
+		}
+	}
 	Destroy();
 }
 
 void AGranade::BeginPlay()
 {
-
+	Super::BeginPlay();
 }
 
 float AGranade::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)

@@ -30,44 +30,6 @@ void ARocketLauncher::Tick(float DeltaTime)
 	AWeapon::Tick(DeltaTime);
 }
 
-//bool ARocketLauncher::ServerPrimaryFunction_Validate(APlayerCharacter* user)
-//{
-//	return true;
-//}
-//
-//void ARocketLauncher::ServerPrimaryFunction_Implementation(APlayerCharacter* user)
-//{
-//	FVector userLoc;
-//	FRotator cameraRot;
-//
-//	user->GetActorEyesViewPoint(userLoc, cameraRot);
-//
-//	userLoc = user->GetActorLocation();
-//	MuzzleOffset.X = 100;
-//	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
-//
-//	FRotator MuzzleRotation = cameraRot;
-//
-//	UWorld* const World = GetWorld();
-//	if (World != NULL)
-//	{
-//		FActorSpawnParameters SpawnParams;
-//		SpawnParams.Owner = this;
-//		SpawnParams.Instigator = Instigator;
-//		SpawnParams.bNoCollisionFail = true;
-//
-//
-//		// spawn the projectile at the muzzle
-//		ARocket* const projectile = World->SpawnActor<ARocket>(ARocket::StaticClass(), MuzzleLocation, MuzzleRotation, SpawnParams);
-//
-//		if (projectile)
-//		{
-//			FVector const LaunchDir = MuzzleRotation.Vector();
-//			projectile->InitVelocity(LaunchDir);
-//		}
-//	}
-//}
-
 void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 {
 	ammo--;
@@ -87,7 +49,7 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 	if (World != NULL)
 	{
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
+		SpawnParams.Owner = user;
 		SpawnParams.Instigator = Instigator;
 		SpawnParams.bNoCollisionFail = true;
 
@@ -101,7 +63,6 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 			projectile->InitVelocity(LaunchDir);
 		}
 	}
-	//ServerPrimaryFunction(user);
 }
 
 void ARocketLauncher::SecondaryFunction()

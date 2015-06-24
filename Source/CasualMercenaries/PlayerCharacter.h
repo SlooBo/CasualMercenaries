@@ -84,7 +84,7 @@ public:
 
 private:
 
-	Inventory inventory;
+	UInventory* inventory;
 	int currentWeapon;
 	FVector fuckthisshit;
 	FString nickName;

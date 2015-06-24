@@ -1,28 +1,29 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CasualMercenaries.h"
+
 #include "Inventory.h"
 
-Inventory::Inventory()
+UInventory::UInventory()
 {
 }
 
-Inventory::~Inventory()
+UInventory::~UInventory()
 {
 }
 
-void Inventory::AddWeaponToInventory(AWeapon* weapon)
+void UInventory::AddWeaponToInventory(AWeapon* weapon)
 {
 	weapons.Add(weapon);
 }
 
-void Inventory::RemoveWeaponFromInventpry(int number)
+void UInventory::RemoveWeaponFromInventpry(int number)
 {
-	
-	weapons.RemoveAt(number,1);
+
+	weapons.RemoveAt(number, 1);
 }
 
-void Inventory::RemoveWeaponFromInventory(AWeapon* weapon)
+void UInventory::RemoveWeaponFromInventory(AWeapon* weapon)
 {
 	for (int i = 0; i < weapons.Num(); i++)
 	{
@@ -33,9 +34,12 @@ void Inventory::RemoveWeaponFromInventory(AWeapon* weapon)
 	}
 }
 
-AWeapon* Inventory::GetWeapon(int number)
+AWeapon* UInventory::GetWeapon(int number)
 {
 	if (weapons.Num() == 0)
 		return nullptr;
 	return weapons[number];
 }
+
+
+
