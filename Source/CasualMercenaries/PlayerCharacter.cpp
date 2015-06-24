@@ -214,24 +214,24 @@ void APlayerCharacter::OnStopJump()
 
 }
 
-void APlayerCharacter::OnDeath()
+void APlayerCharacter::OnDeath(APlayerController* killer)
 {
-	ServerOnDeath();
+	ServerOnDeath(killer);
 }
 
 
-bool APlayerCharacter::ServerOnDeath_Validate()
+bool APlayerCharacter::ServerOnDeath_Validate(APlayerController* killer)
 {
 	return true;
 }
 
-void APlayerCharacter::ServerOnDeath_Implementation()
+void APlayerCharacter::ServerOnDeath_Implementation(APlayerController* killer)
 {
 	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
 	APlayerController* playerController = static_cast<APlayerController*>(GetController());
 
 	if (gameMode != NULL && playerController != NULL)
-		gameMode->OnPlayerDeath(playerController);
+		gameMode->OnPlayerDeath(playerController, killer);
 }
 
 
