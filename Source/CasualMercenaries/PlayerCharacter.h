@@ -59,6 +59,8 @@ public:
 	UPROPERTY(Transient, Replicated)
 		bool bIsJumping;
 
+
+	//Weapon stuff begins here
 	void AddWeapon(AWeapon* _weapon);
 	void ChangeUITest();
 

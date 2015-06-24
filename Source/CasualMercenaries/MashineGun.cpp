@@ -47,9 +47,26 @@ void AMashineGun::PrimaryFunction(APlayerCharacter* user)
 
 	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	DrawDebugLine(GetWorld(), startTrace, endTrace, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
+	DrawDebugLine(GetWorld(), startTrace, endTrace, FColor(260.0f, 0.0f, 0.f, 1.f), false, 1.f);
 
+
+	DrawLine(startTrace, endTrace);
 	//oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi
+}
+
+void AMashineGun::DrawLine(FVector begin, FVector end)
+{	
+	ServerDrawLine(begin, end);
+}
+
+bool AMashineGun::ServerDrawLine_Validate(FVector begin, FVector end)
+{
+	return true;
+}
+
+void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
+{
+	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
 }
 
 void AMashineGun::SecondaryFunction()

@@ -127,7 +127,6 @@ void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 
 void APlayerCharacter::UseWeapon1()
 {
-	//inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 	ServerUseWeapon1();
 }
 
@@ -151,13 +150,8 @@ void APlayerCharacter::UseWeapon2()
 	inventory.GetWeapon(currentWeapon)->SecondaryFunction();
 }
 
-
-
 void APlayerCharacter::SwitchWeaponUp()
 {
-	currentWeapon++;
-	if (currentWeapon > 3)
-		currentWeapon = 0;
 	ServerSwitchWeaponUp();
 }
 
@@ -175,9 +169,6 @@ void APlayerCharacter::ServerSwitchWeaponUp_Implementation()
 
 void APlayerCharacter::SwitchWeaponDown()
 {
-	currentWeapon--;
-	if (currentWeapon < 0)
-		currentWeapon = 3;
 	ServerSwitchWeaponDown();
 }
 

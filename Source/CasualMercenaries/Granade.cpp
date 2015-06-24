@@ -8,6 +8,7 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 {
 	lifeTime = 3;
 
+
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
 
 	this->RootComponent = Mesh;
@@ -21,13 +22,17 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	Mesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
 	Mesh->SetSimulatePhysics(true);
 
+
 	ProjectileMovement->ProjectileGravityScale = 1.0;
 	ProjectileMovement->InitialSpeed = 1000.f;
+
 
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
 
 	part = ParticleObj.Object;
+
+
 	bReplicates = true;
 	bReplicateMovement = true;
 }
@@ -47,40 +52,22 @@ void AGranade::Tick(float DeltaSeconds)
 		Explode();
 	}
 }
-/*
-bool AGranade::ServerTick_Validate(float DeltaSeconds)
-{
-	return true;
-}
-
-void AGranade::ServerTick_Implementation(float DeltaSeconds)
-{
-	livedTime += DeltaSeconds;
-	if (livedTime >= lifeTime)
-	{
-		UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
-		FVector scale = particle->GetComponentScale();
-		Destroy();
-	}
-}*/
-
 
 bool AGranade::Explode_Validate()
 {
 	return true;
 }
+
 void AGranade::Explode_Implementation()
 {
-
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
 	Destroy();
 }
+
 void AGranade::BeginPlay()
 {
 
 }
-
-
 
 float AGranade::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {

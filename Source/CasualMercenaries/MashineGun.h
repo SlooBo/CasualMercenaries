@@ -27,5 +27,10 @@ public:
 	void Tick(float DeltaSeconds);
 	void Reload() {};
 
+	void DrawLine(FVector begin, FVector end);
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerDrawLine(FVector begin, FVector end);
+
 
 };

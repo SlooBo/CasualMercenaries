@@ -23,8 +23,11 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 	particleSystem->Activate();
 
+
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
 	part = ParticleObj2.Object;
+
+
 	bReplicates = true;
 	bReplicateMovement = true;
 }
