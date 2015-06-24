@@ -169,14 +169,23 @@ int32 ACMGameMode_Hunt::GetHuntIntermissionTimeLeft()
 
 void ACMGameMode_Hunt::OnRoundFreezeStart_Implementation()
 {
+	// freeze players during freeze time
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+		(*iter)->SetIgnoreMoveInput(true);
 }
 
 void ACMGameMode_Hunt::OnRoundFreezeEnd_Implementation()
 {
+	// unfreeze frozen players from frozen state back to unfrozen state
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+		(*iter)->SetIgnoreMoveInput(false);
 }
 
 void ACMGameMode_Hunt::OnRoundStart_Implementation()
 {
+	// respawn players
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+		RestartPlayer(*iter);
 }
 
 void ACMGameMode_Hunt::OnIntermissionStart_Implementation()

@@ -205,6 +205,9 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 void APlayerCharacter::OnStartJump()
 {
+	if (IsMoveInputIgnored())
+		return;
+
 	bPressedJump = true;
 
 	
@@ -379,6 +382,9 @@ void APlayerCharacter::InputDash()
 
 void APlayerCharacter::Dash(float _inputForward, float _inputRight)
 {
+	if (IsMoveInputIgnored())
+		return;
+
 	if (this->CharacterMovement->IsFalling())
 	{
 		dash_Multiplier = 1000;

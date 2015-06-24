@@ -231,6 +231,10 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
 
+	// destroy existing pawn
+	if (player->GetPawn() != NULL)
+		player->GetPawn()->Destroy();
+
 	Super::RestartPlayer(controller);
 }
 
