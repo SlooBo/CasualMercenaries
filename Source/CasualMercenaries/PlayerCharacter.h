@@ -23,7 +23,7 @@ public:
 	// Called when the game starts or when spawned
 	//virtual void BeginPlay() override;
 	//had to be changed so blueprint can run
-	UFUNCTION(BlueprintCallable, Reliable, NetMulticast, WithValidation, Category = "UI")
+	UFUNCTION(BlueprintCallable, Reliable, Server, WithValidation, Category = "UI")
 		void BeginPlayCplusplus();
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
@@ -79,17 +79,17 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerUseWeapon1();
 
-	UFUNCTION(Reliable, NetMulticast, WithValidation)
-	void ServerSwitchWeaponUp();
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerSwitchWeaponUp(float cw, float cp);
 
-	UFUNCTION(Reliable, NetMulticast, WithValidation)
-	void ServerSwitchWeaponDown();
+	UFUNCTION(Reliable, Server, WithValidation)
+		void ServerSwitchWeaponDown(float cw, float cp);
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerUseWeapon1Release();
 
 private:
-
+	UPROPERTY()
 	UInventory* inventory;
 	int currentWeapon;
 	FVector fuckthisshit;

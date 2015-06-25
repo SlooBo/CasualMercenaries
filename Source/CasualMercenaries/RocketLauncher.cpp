@@ -16,6 +16,8 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 	PrimaryActorTick.bCanEverTick = true;
 
+	this->SetActorHiddenInGame(true);
+
 	bReplicates = true;
 }
 

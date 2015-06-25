@@ -26,11 +26,18 @@ public:
 
 	void RemoveWeaponFromInventory(AWeapon* weapon);
 
+
+
+
 	//count begins from 0
 	AWeapon* GetWeapon(int number);
 
+
+
 private:
 
+
+	UPROPERTY()
 	TArray<AWeapon*> weapons;
 	
 	

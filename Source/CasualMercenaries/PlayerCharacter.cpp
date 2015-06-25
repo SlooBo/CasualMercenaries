@@ -15,7 +15,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 {
 
 	inventory = CreateDefaultSubobject<UInventory>("inventory");
-
+	inventory->SetFlags(RF_RootSet);
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -80,8 +80,6 @@ void APlayerCharacter::BeginPlayCplusplus_Implementation()
 
 	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy);
-
-	inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
 }
 
 // Called every frame
@@ -89,9 +87,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//inventory.GetWeapon(currentWeapon)->SetActorLocation(this->GetActorLocation());
-	//inventory.GetWeapon(currentWeapon)->SetActorRotation(FRotator(-cameraComp->GetComponentRotation().Pitch, cameraComp->GetComponentRotation().Yaw + 180, cameraComp->GetComponentRotation().Roll ));
-	//inventory.GetWeapon(currentWeapon)->GetActorRotation().Pitch += 180.0f;
+	//if (inventory->GetWeapon(currentWeapon) != nullptr)
+	//{
+	//	inventory->GetWeapon(currentWeapon)->SetActorLocation(this->GetActorLocation());
+	//	inventory->GetWeapon(currentWeapon)->SetActorRotation(FRotator(-cameraComp->GetComponentRotation().Pitch, cameraComp->GetComponentRotation().Yaw + 180, cameraComp->GetComponentRotation().Roll));
+	//}
+	//inventory->GetWeapon(currentWeapon)->GetActorRotation().Pitch += 180.0f;
 	WallCheck();
 
 	//cameraComp->GetComponentRotation()
@@ -183,52 +184,63 @@ void APlayerCharacter::UseWeapon2()
 }
 
 void APlayerCharacter::SwitchWeaponUp()
-{
-
-	ServerSwitchWeaponUp();
-}
-
-bool APlayerCharacter::ServerSwitchWeaponUp_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::ServerSwitchWeaponUp_Implementation()
-{
+{	
 	int tempLastWeapon = currentWeapon;
-
 	currentWeapon++;
+
 	if (currentWeapon > 3)
 		currentWeapon = 0;
-
-	if(inventory->GetWeapon(tempLastWeapon) != nullptr)
-		inventory->GetWeapon(tempLastWeapon)->SetActorHiddenInGame(true);
-	if (inventory->GetWeapon(currentWeapon) != nullptr)
-	inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
-}
-
-void APlayerCharacter::SwitchWeaponDown()
-{
-	ServerSwitchWeaponDown();
-}
-
-bool APlayerCharacter::ServerSwitchWeaponDown_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::ServerSwitchWeaponDown_Implementation()
-{
-	int tempLastWeapon = currentWeapon;
-
-	currentWeapon--;
-	if (currentWeapon < 0)
-		currentWeapon = 3;
-	
 	if (inventory->GetWeapon(tempLastWeapon) != nullptr)
 		inventory->GetWeapon(tempLastWeapon)->SetActorHiddenInGame(true);
 	if (inventory->GetWeapon(currentWeapon) != nullptr)
 		inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
+
+	ServerSwitchWeaponUp(currentWeapon, tempLastWeapon);
+}
+
+bool APlayerCharacter::ServerSwitchWeaponUp_Validate(float cw, float pw)
+{
+	return true;
+}
+
+void APlayerCharacter::ServerSwitchWeaponUp_Implementation(float cw, float pw)
+{
+	currentWeapon = cw;
+
+	if(inventory->GetWeapon(pw) != nullptr)
+		inventory->GetWeapon(pw)->SetActorHiddenInGame(true);
+	if (inventory->GetWeapon(cw) != nullptr)
+		inventory->GetWeapon(cw)->SetActorHiddenInGame(false);
+}
+
+void APlayerCharacter::SwitchWeaponDown()
+{
+	int tempLastWeapon = currentWeapon;
+	currentWeapon--;
+	if (currentWeapon < 0)
+		currentWeapon = 3;
+
+	if (inventory->GetWeapon(tempLastWeapon) != nullptr)
+		inventory->GetWeapon(tempLastWeapon)->SetActorHiddenInGame(true);
+	if (inventory->GetWeapon(currentWeapon) != nullptr)
+		inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
+
+	ServerSwitchWeaponDown(currentWeapon, tempLastWeapon);
+}
+
+bool APlayerCharacter::ServerSwitchWeaponDown_Validate(float cw, float pw)
+{
+	return true;
+}
+
+void APlayerCharacter::ServerSwitchWeaponDown_Implementation(float cw, float pw)
+{
+	currentWeapon = cw;
+
+	if (inventory->GetWeapon(pw) != nullptr)
+		inventory->GetWeapon(pw)->SetActorHiddenInGame(true);
+	if (inventory->GetWeapon(cw) != nullptr)
+		inventory->GetWeapon(cw)->SetActorHiddenInGame(false);
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

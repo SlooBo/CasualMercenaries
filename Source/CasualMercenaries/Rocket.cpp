@@ -9,7 +9,7 @@
 ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
 {
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("RocketMesh"));
-	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	//Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/RocketLauncher/Rocket.Rocket'"));
 	Mesh->SetStaticMesh(MeshObj.Object);
@@ -31,6 +31,21 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 	bReplicates = true;
 	bReplicateMovement = true;
+
+	SetActorEnableCollision(true);
+
+	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
+
+}
+
+void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Explode();
+}
+
+void ARocket::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Explode();
 }
 
 ARocket::~ARocket()
@@ -48,13 +63,13 @@ void ARocket::BeginPlay()
 	particleSystem->BeginPlay();
 }
 
-void ARocket::Explode(const FObjectInitializer& ObjectInitializer)
+void ARocket::Explode()
 {
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
 
 	float ExplosionRadius = 200.0f;
 	float ExplosionDamage = 25.0f;
-
+	//UGameplayStatics::ApplyRadialDamage(GetWorld(), 25, this->GetActorLocation(), 200, UDamageType::DamageFalloff(), this->GetOwner(), this->GetOwner(), );
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 	{
 		float distance = GetDistanceTo(*aItr);
@@ -62,7 +77,8 @@ void ARocket::Explode(const FObjectInitializer& ObjectInitializer)
 		if (distance <= ExplosionRadius)
 		{
 			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
-			aItr->TakeDamage(ExplosionDamage);
+			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
+			aItr->TakeDamage(ExplosionDamage, Cast<APlayerController>(tempChar->GetController()));
 		}
 	}
 	Destroy();
