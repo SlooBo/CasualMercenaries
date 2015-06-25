@@ -74,6 +74,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Intermission Start"), Category = "Gameplay")
 	void OnIntermissionStart();
 
+	int32 GetHuntMaxMoney() { return huntMaxMoney; };
+
 protected:
 	FTimerHandle huntTimerHandle;	// Ticks once every second during hunt
 	int32 huntElapsed;
@@ -89,19 +91,39 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category=Enum)
 	HuntState huntState;
 
+	//
+	//	Round Settings
+	//
+
 	// Count of hunt rounds (intermissions = rounds-1)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Rounds"), Category = "Gameplay|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Rounds"), Category = "Gameplay|Hunt")
 	int32 huntRounds;
 
 	// Length of one hunt round
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Round Length"), Category = "Gameplay|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Round Length"), Category = "Gameplay|Hunt")
 	int32 huntRoundTime;
 
 	// Freeze time at the beginning of a rounds
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Freeze Time Length"), Category = "Gameplay|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Freeze Time Length"), Category = "Gameplay|Hunt")
 	int32 huntRoundFreezeTime;
 
 	// Intermission length between rounds
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Intermission Length"), Category = "Gameplay|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Intermission Length"), Category = "Gameplay|Hunt")
 	int32 huntIntermissionTime;
+
+	//
+	//	Money / Kill Rewards
+	//
+
+	// Start money for each player
+	int32 huntStartMoney;
+
+	// Limit maximum money players can have
+	int32 huntMaxMoney;
+
+	// Reward for killing the right target
+	int32 huntKillRewardTarget;
+	
+	// Reward for killing a wrong target
+	int32 huntKillRewardWrong;
 };

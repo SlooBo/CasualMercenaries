@@ -42,10 +42,19 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Add Deaths"), Category = "Gameplay")
 	void AddDeaths(int32 num);
 
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Money"), Category = "Gameplay|Hunt")
+	int32 GetMoney();
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Add Money"), Category = "Gameplay|Hunt")
+	void AddMoney(int32 num);
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Money"), Category = "Gameplay|Hunt")
+	void SetMoney(int32 num);
+
 protected:
 
-	// 0 = Everyone/Deathmatch, 1-4 = Teams
-	UPROPERTY(Replicated, EditAnywhere, Meta = (DisplayName = "Team Number"))
+	// 0 = No Team, 1-4 = Teams
+	UPROPERTY(Replicated, EditAnywhere, Meta = (DisplayName = "Team Number", ClampMin = "0", UIMin = "0"))
 	int32 team;
 
 	// TODO: move huntTarget to PlayerCharacter in order to prevent cheating (every player can read these)
@@ -58,6 +67,10 @@ protected:
 	int32 frags;
 
 	// Player Deaths
-	UPROPERTY(Replicated, Meta = (DisplayName = "Player Deaths"))
+	UPROPERTY(Replicated, Meta = (DisplayName = "Player Deaths", ClampMin = "0"))
 	int32 deaths;
+
+	// Player Money
+	UPROPERTY(Replicated, Meta = (DisplayName = "Player Money", ClampMin = "0"))
+	int32 money;
 };

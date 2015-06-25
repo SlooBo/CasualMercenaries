@@ -38,6 +38,10 @@ void ACMGameMode_Hunt::StartMatch()
 	{
 		if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
 			SetRandomPlayerHuntTarget(*iter);
+
+		ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
+		if (playerState != NULL)
+			playerState->SetMoney(huntStartMoney);
 	}
 
 	huntElapsed = -1;
@@ -209,8 +213,16 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, A
 			if (killerState->GetHuntTarget() != NULL && killerState->GetHuntTarget()->GetNetOwningPlayer() != NULL)
 				killerTarget = killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController;
 
+			// killer killed their target?
 			if (killerTarget == player)
+			{
+				killerState->AddMoney(huntKillRewardTarget);
 				SetRandomPlayerHuntTarget(killer);
+			}
+			else if (killerTarget != NULL)
+			{
+				killerState->AddMoney(huntKillRewardWrong);
+			}
 		}
 	}
 }

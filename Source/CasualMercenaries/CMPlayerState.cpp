@@ -2,6 +2,8 @@
 
 #include "CasualMercenaries.h"
 #include "CMPlayerState.h"
+#include "CMGameMode.h"
+#include "CMGameMode_Hunt.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -60,4 +62,30 @@ int32 ACMPlayerState::GetDeaths()
 void ACMPlayerState::AddDeaths(int32 num)
 {
 	deaths += num;
+}
+
+int32 ACMPlayerState::GetMoney()
+{
+	return money;
+}
+
+void ACMPlayerState::AddMoney(int32 num)
+{
+	SetMoney(money + num);
+}
+
+void ACMPlayerState::SetMoney(int32 num)
+{
+	int32 maxMoney = MAX_int32;
+	ACMGameMode_Hunt* gameModeHunt = static_cast<ACMGameMode_Hunt*>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (gameModeHunt != NULL)
+		maxMoney = gameModeHunt->GetHuntMaxMoney();
+
+	money = num;
+
+	if (money < 0)
+		money = 0;
+	
+	if (money > maxMoney)
+		money = maxMoney;
 }
