@@ -23,7 +23,7 @@ public:
 	// Called when the game starts or when spawned
 	//virtual void BeginPlay() override;
 	//had to be changed so blueprint can run
-	UFUNCTION(BlueprintCallable, Reliable, Server, WithValidation, Category = "UI")
+	UFUNCTION(BlueprintCallable, Reliable, NetMulticast, WithValidation, Category = "UI")
 		void BeginPlayCplusplus();
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
@@ -64,6 +64,10 @@ public:
 
 	//Weapon stuff begins here
 	void AddWeapon(AWeapon* _weapon);
+
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+	void ServerAddWeapon(AWeapon* _weapon);
+
 	void ChangeUITest();
 
 	void UseWeapon1();
@@ -75,12 +79,14 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerUseWeapon1();
 
-	UFUNCTION(Reliable, Server, WithValidation)
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerSwitchWeaponUp();
 
-	UFUNCTION(Reliable, Server, WithValidation)
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerSwitchWeaponDown();
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerUseWeapon1Release();
 
 private:
 

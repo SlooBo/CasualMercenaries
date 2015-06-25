@@ -33,7 +33,12 @@ public:
 
 	virtual void PrimaryFunction(APlayerCharacter* user);
 
+	virtual void PrimaryFunctionReleased(APlayerCharacter* user){};
+
 	virtual void SecondaryFunction();
+
+	virtual void SecondaryFunctionReleased(){};
+
 
 	virtual void Reload();
 

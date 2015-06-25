@@ -56,6 +56,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	fuckthisshit = FVector();
 
+
+
 }
 bool APlayerCharacter::BeginPlayCplusplus_Validate()
 {
@@ -78,6 +80,8 @@ void APlayerCharacter::BeginPlayCplusplus_Implementation()
 
 	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy);
+
+	inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
 }
 
 // Called every frame
@@ -126,6 +130,17 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 {
 	inventory->AddWeaponToInventory(_weapon);
+	//ServerAddWeapon(_weapon);
+}
+
+bool APlayerCharacter::ServerAddWeapon_Validate(AWeapon* _weapon)
+{
+	return true;
+}
+
+void APlayerCharacter::ServerAddWeapon_Implementation(AWeapon* _weapon)
+{
+	inventory->AddWeaponToInventory(_weapon);
 }
 
 void APlayerCharacter::UseWeapon1()
@@ -142,13 +157,23 @@ bool APlayerCharacter::ServerUseWeapon1_Validate()
 void APlayerCharacter::ServerUseWeapon1_Implementation()
 {
 	if (inventory->GetWeapon(currentWeapon) != nullptr)
-	inventory->GetWeapon(currentWeapon)->PrimaryFunction(this);
+		inventory->GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
 
 void APlayerCharacter::UseWeapon1Release()
 {
+	ServerUseWeapon1Release();
+}
+
+bool APlayerCharacter::ServerUseWeapon1Release_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerUseWeapon1Release_Implementation()
+{
 	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->PrimaryFunction(this);
+		inventory->GetWeapon(currentWeapon)->PrimaryFunctionReleased(this);
 }
 
 void APlayerCharacter::UseWeapon2()
@@ -159,6 +184,7 @@ void APlayerCharacter::UseWeapon2()
 
 void APlayerCharacter::SwitchWeaponUp()
 {
+
 	ServerSwitchWeaponUp();
 }
 
@@ -169,9 +195,16 @@ bool APlayerCharacter::ServerSwitchWeaponUp_Validate()
 
 void APlayerCharacter::ServerSwitchWeaponUp_Implementation()
 {
+	int tempLastWeapon = currentWeapon;
+
 	currentWeapon++;
 	if (currentWeapon > 3)
 		currentWeapon = 0;
+
+	if(inventory->GetWeapon(tempLastWeapon) != nullptr)
+		inventory->GetWeapon(tempLastWeapon)->SetActorHiddenInGame(true);
+	if (inventory->GetWeapon(currentWeapon) != nullptr)
+	inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
 }
 
 void APlayerCharacter::SwitchWeaponDown()
@@ -186,10 +219,16 @@ bool APlayerCharacter::ServerSwitchWeaponDown_Validate()
 
 void APlayerCharacter::ServerSwitchWeaponDown_Implementation()
 {
+	int tempLastWeapon = currentWeapon;
+
 	currentWeapon--;
 	if (currentWeapon < 0)
 		currentWeapon = 3;
 	
+	if (inventory->GetWeapon(tempLastWeapon) != nullptr)
+		inventory->GetWeapon(tempLastWeapon)->SetActorHiddenInGame(true);
+	if (inventory->GetWeapon(currentWeapon) != nullptr)
+		inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

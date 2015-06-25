@@ -22,7 +22,7 @@ public:
 	void AddWeaponToInventory(AWeapon* weapon);
 
 	//count begins from 0
-	void RemoveWeaponFromInventpry(int number);
+	void RemoveWeaponFromInventory(int number);
 
 	void RemoveWeaponFromInventory(AWeapon* weapon);
 

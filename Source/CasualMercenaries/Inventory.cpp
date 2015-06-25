@@ -6,6 +6,7 @@
 
 UInventory::UInventory()
 {
+
 }
 
 UInventory::~UInventory()
@@ -17,7 +18,7 @@ void UInventory::AddWeaponToInventory(AWeapon* weapon)
 	weapons.Add(weapon);
 }
 
-void UInventory::RemoveWeaponFromInventpry(int number)
+void UInventory::RemoveWeaponFromInventory(int number)
 {
 
 	weapons.RemoveAt(number, 1);
@@ -36,10 +37,7 @@ void UInventory::RemoveWeaponFromInventory(AWeapon* weapon)
 
 AWeapon* UInventory::GetWeapon(int number)
 {
-	if (weapons.Num() == 0)
+	if (weapons.Num() <= 0)
 		return nullptr;
 	return weapons[number];
 }
-
-
-

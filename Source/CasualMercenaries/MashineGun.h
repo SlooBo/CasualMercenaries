@@ -29,7 +29,7 @@ public:
 
 	void DrawLine(FVector begin, FVector end);
 
-	UFUNCTION(Reliable, Server, WithValidation)
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerDrawLine(FVector begin, FVector end);
 
 
