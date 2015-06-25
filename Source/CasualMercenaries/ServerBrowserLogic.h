@@ -4,11 +4,13 @@
 
 #include "UILogicBase.h"
 #include "Online.h"
+#include "Engine/GameInstance.h"
 #include "ServerBrowserLogic.generated.h"
 
 /**
  * 
  */
+
 UCLASS()
 class CASUALMERCENARIES_API UServerBrowserLogic : public UUILogicBase
 {
@@ -23,10 +25,12 @@ public:
 	UFUNCTION()
 	void FindSessions();
 	UFUNCTION()
-	void JoinSession();
+	void JoinSession(int32 searchIndex);
 	UFUNCTION()
-	void AddSessionToGUI();
+		void AddSessionToGUI(int32 searchIndex);
+	//called from UServerInfo
 private:
+	
 	TArray<FOnlineSessionSearchResult, FDefaultAllocator> searchResults;
 	bool searchingSessions;
 	UWorld *world;
@@ -43,4 +47,24 @@ private:
 
 	FOnFindSessionsComplete& OnFindSessionsComplete() { return FindSessionsCompleteEvent; }
 	FOnFindSessionsComplete FindSessionsCompleteEvent;
+	UPROPERTY()
+	TArray<class UServerInfo*> buttonServerInfos;
+};
+UCLASS()
+class UServerInfo: public UObject
+{
+	GENERATED_BODY()
+
+public:
+	
+	int32 searchIndex;
+	UServerBrowserLogic *serverbrowser;
+	UServerInfo()
+	{
+	}
+	UFUNCTION()
+		void OnClicked()
+	{
+		serverbrowser->JoinSession(searchIndex);
+	}
 };

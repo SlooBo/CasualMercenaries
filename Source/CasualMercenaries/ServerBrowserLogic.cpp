@@ -5,7 +5,6 @@
 #include "NetworkSession.h"
 
 
-
 UServerBrowserLogic::UServerBrowserLogic() :Super()
 {
 	OnFindSessionsCompleteDelegate = FOnFindSessionsCompleteDelegate::CreateUObject(this, &UServerBrowserLogic::OnFindSessionsComplete);
@@ -45,12 +44,14 @@ void UServerBrowserLogic::SetUp(UUserWidget *widget,UWorld *world)
 			findSessionsButton = tempFindSessionsButton;
 			findSessionsButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::FindSessions);
 		}
+		/*
 		UButton *tempAddSession = Cast<UButton>(children[i]);
 		if (tempAddSession != nullptr && tempAddSession->GetName().Equals("AddSessionButton"))
 		{
 			addSessionButton= tempAddSession;
 			addSessionButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::AddSessionToGUI);
-		}
+
+		}*/
 	}
 }
 void UServerBrowserLogic::CreateSession()
@@ -104,8 +105,10 @@ void UServerBrowserLogic::OnFindSessionsComplete(bool bWasSuccessful)
 			searchResults = SearchSettings.Get()->SearchResults;
 			for (int32 SearchIdx = 0; SearchIdx < SearchSettings->SearchResults.Num(); SearchIdx++)
 			{
+				//auto  autoni = SearchSettings->SearchResults[0];
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Test");
 				const FOnlineSessionSearchResult& SearchResult = SearchSettings->SearchResults[SearchIdx];
+				AddSessionToGUI(SearchIdx);
 				//SearchResult.Session.SessionInfo.Get()->
 
 				DumpSession(&SearchResult.Session);
@@ -115,18 +118,38 @@ void UServerBrowserLogic::OnFindSessionsComplete(bool bWasSuccessful)
 		}
 	}
 }
-void UServerBrowserLogic::JoinSession()
+void UServerBrowserLogic::JoinSession(int32 searchIndex)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "JOINING SESSION!");
 	IOnlineSubsystem *test = IOnlineSubsystem::Get();
 	IOnlineSessionPtr session = test->GetSessionInterface();
 	auto tt = world->GetUniqueID();
-	session->JoinSession(tt, TEXT("Game") , searchResults[0]);
+	session->JoinSession(tt, TEXT("Game") , searchResults[searchIndex]);
 }
-void UServerBrowserLogic::AddSessionToGUI()
+void UServerBrowserLogic::AddSessionToGUI(int32 searchIndex)
 {
 	UButton *newButton = ConstructObject<UButton>(UButton::StaticClass());
 	UTextBlock *newText = ConstructObject<UTextBlock>(UTextBlock::StaticClass());
 	newText->SetText(FText::FromString("This is server"));
 	newButton->AddChild(newText);
 	serverListScrollBox->AddChild(newButton);
+
+	UServerInfo* serverInfo = NewObject<UServerInfo>();
+	serverInfo->searchIndex = searchIndex;
+	serverInfo->serverbrowser = this;
+	newButton->OnClicked.AddDynamic(serverInfo, &UServerInfo::OnClicked);
+	buttonServerInfos.Add(serverInfo);
+
+	serverInfo->SetFlags(RF_RootSet);
+	UWidgetTree *widgetTree = widget->WidgetTree;
+	TArray<UWidget*> children;
+	widgetTree->GetAllWidgets(children);
+
+
+	int childcount = children.Num();
+	for (int i = 0; i < childcount; i++)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child name: " + children[i]->GetName());
+
+	}
 }
