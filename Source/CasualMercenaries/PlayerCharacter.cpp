@@ -36,6 +36,12 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	cameraComp = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
 	cameraComp->AttachParent = springArmComp;
 
+	//Audio component initialization
+	audioComp = ObjectInitializer.CreateDefaultSubobject<UAudioComponent>(this, TEXT("AudioComp"));
+	audioComp->bAutoActivate = false;
+	audioComp->bAutoDestroy = false;
+	audioComp->AttachParent = GetRootComponent();
+
 	rightShoulder = false;
 
 	health_Max = 100.0f;
@@ -49,8 +55,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	wallTouch = false;
 	dash_Multiplier = 0;
-
-	nickName = "Noob";
 
 	currentWeapon = 0;
 
@@ -249,9 +253,13 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	
 	// Value is already updated locally, skip in replication step
 	//DOREPLIFETIME_CONDITION(APlayerCharacter, value, COND_SkipOwner);
+	DOREPLIFETIME_CONDITION(APlayerCharacter, bIsJumping, COND_SkipOwner);
 
 	//Replicated to every client, no special condition required
 	//DOREPLIFETIME(APlayerCharacter, value);
+	DOREPLIFETIME(APlayerCharacter, health);
+	DOREPLIFETIME(APlayerCharacter, stamina);
+	DOREPLIFETIME(APlayerCharacter, armor);
 };
 
 void APlayerCharacter::OnStartJump()
@@ -401,7 +409,37 @@ void APlayerCharacter::WallCheck()
 
 void APlayerCharacter::WallJump()
 {
-	if (wallTouch == true)
+	WallJumpServer();
+	//if (wallTouch == true)
+	//{
+	//	if (this->CharacterMovement->IsFalling())
+	//	{
+	//		//To disable ever increasing falling speed
+	//		this->CharacterMovement->Velocity = FVector(0, 0, 0);
+
+	//		FRotator temp = GetActorRotation();
+	//		FRotator tempControllerRotation = GetActorRotation();
+	//		FRotator tempControllerYaw(0, tempControllerRotation.Yaw, 0);
+	//		//Wall jump is adjusted using these 3
+	//		FVector tempForwardVector = tempControllerYaw.Vector() * 500.0f;
+	//		FVector tempResult = tempForwardVector.MirrorByVector(wallJumpNormal) * 2.5f;
+	//		tempResult = tempResult + FVector(0.0f, 0.0f, 800.0f);
+
+	//		LaunchCharacter(tempResult, false, false);
+	//		//Hox!
+	//		LoseStamina(25.0f);
+	//	}
+	//}
+}
+
+bool APlayerCharacter::WallJumpServer_Validate()
+{
+			return true;
+}
+
+void APlayerCharacter::WallJumpServer_Implementation()
+{
+	if (wallTouch)
 	{
 		if (this->CharacterMovement->IsFalling())
 		{
@@ -425,10 +463,15 @@ void APlayerCharacter::WallJump()
 
 void APlayerCharacter::InputDash()
 {
-	Dash(GetInputAxisValue("MoveForward") , GetInputAxisValue("MoveRight"));
+	ServerDash(GetInputAxisValue("MoveForward") , GetInputAxisValue("MoveRight"));
 }
 
-void APlayerCharacter::Dash(float _inputForward, float _inputRight)
+bool APlayerCharacter::ServerDash_Validate(float _inputForward, float _inputRight)
+{
+	return true;
+}
+
+void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inputRight)
 {
 	if (IsMoveInputIgnored())
 		return;
@@ -449,6 +492,17 @@ void APlayerCharacter::Dash(float _inputForward, float _inputRight)
 	tempResult = tempResult * dash_Multiplier;
 	LaunchCharacter(tempResult, false, false);
 	LoseStamina(20.0f);
+
+	if (dashSound)
+	{
+		PlaySound(dashSound);
+	}
+}
+
+void APlayerCharacter::PlaySound_Implementation(USoundCue* _component)
+{
+	audioComp->SetSound(_component);
+	audioComp->Play();
 }
 
 void APlayerCharacter::ChangeUITest()

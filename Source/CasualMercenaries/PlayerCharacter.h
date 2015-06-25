@@ -42,8 +42,14 @@ public:
 	virtual void MoveRight(float _val);
 	//UFUNCTION(BlueprintCallable)
 	void WallJump();
+	UFUNCTION(Reliable, Server, WithValidation)
+	void WallJumpServer();
 	//UFUNCTION(BlueprintCallable, Category = "Player movement action")
-	void Dash(float _inputForward, float _inputRight);
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerDash(float _inputForward, float _inputRight);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void PlaySound(USoundCue* _component);
 
 	/* Client mapped to Input */
 	void OnStartJump();
@@ -93,7 +99,6 @@ private:
 	UInventory* inventory;
 	int currentWeapon;
 	FVector fuckthisshit;
-	FString nickName;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* springArmComp;
@@ -101,15 +106,25 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* cameraComp;
 
+	UPROPERTY(VisibleDefaultsOnly,Category = "Camera")
 	bool rightShoulder;
 	void SwitchShoulder();
 
+	UPROPERTY(VisibleDefaultsOnly)
+	UAudioComponent* audioComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player|Effects")
+	USoundCue* dashSound;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")
+	bool wallTouch;
+	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")
+	float dash_Multiplier;
+	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")
+	FVector wallJumpNormal;
+
 	void WallCheck();
 	void InputDash();
-
-	bool wallTouch;
-	float dash_Multiplier;
-	FVector wallJumpNormal;
 
 	void OpenTeamChat();
 	void OpenAllChat();
