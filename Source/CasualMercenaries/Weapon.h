@@ -42,6 +42,7 @@ public:
 
 	virtual void Reload();
 
+	void SetRoot(APlayerCharacter* user);
 	
 protected:
 

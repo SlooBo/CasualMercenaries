@@ -19,6 +19,13 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 	this->SetActorHiddenInGame(true);
 
 	bReplicates = true;
+
+	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_RocketLauncher_MuzzleBack.P_RocketLauncher_MuzzleBack'"));
+
+	particleSystem->Template = ParticleObj.Object;
+
+	particleSystem->AttachTo(weaponMesh, "ExhaustSocket");
 }
 
 void ARocketLauncher::BeginPlay()
@@ -47,6 +54,10 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 	
 	FRotator MuzzleRotation = cameraRot;
 
+
+	particleSystem->Activate();
+
+
 	UWorld* const World = GetWorld();
 	if (World != NULL)
 	{
@@ -65,6 +76,8 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 			projectile->InitVelocity(LaunchDir);
 		}
 	}
+
+	
 }
 
 void ARocketLauncher::SecondaryFunction()

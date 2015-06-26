@@ -61,24 +61,31 @@ public:
 	/* Client mapped to Input */
 	void OnStopJump();
 
+	/* Is character currently performing a jump action. Resets on landed.  */
+	UPROPERTY(Transient, Replicated)
+		bool bIsJumping;
+
+
+	/************************************************************************/
+	/* Life And Death                                                       */
+	/************************************************************************/
+
 	virtual void OnDeath(APlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerOnDeath(APlayerController* killer = NULL);
 
 
-	/* Is character currently performing a jump action. Resets on landed.  */
-	UPROPERTY(Transient, Replicated)
-		bool bIsJumping;
 
 
-	//Weapon stuff begins here
+
+	/************************************************************************/
+	/* Weapons                                                              */
+	/************************************************************************/
 	void AddWeapon(AWeapon* _weapon);
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerAddWeapon(AWeapon* _weapon);
-
-	void ChangeUITest();
 
 	void UseWeapon1();
 	void UseWeapon1Release();
@@ -95,9 +102,21 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerUseWeapon1Release();
 
+
+	/************************************************************************/
+	/* Camera                                                               */
+	/************************************************************************/
+
+	UCameraComponent* GetCamera(){ return cameraComp; };
+
+
+
 private:
+
+
 	UPROPERTY()
 	UInventory* inventory;
+	bool inventoryInitialized;
 
 	int currentWeapon;
 	FVector fuckthisshit;

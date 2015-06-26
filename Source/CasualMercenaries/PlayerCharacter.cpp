@@ -14,6 +14,7 @@
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
 	inventory = CreateDefaultSubobject<UInventory>("inventory");
+	inventoryInitialized = false;
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -58,7 +59,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	fuckthisshit = FVector();
 
-
+	
 
 }
 
@@ -80,18 +81,23 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 	inventory->ClearInventory();
 
 	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	pyssy3->SetRoot(this);
 	AddWeapon(pyssy3);
 
 	APomeGranadeLauncher* pyssy4 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	pyssy4->SetRoot(this);
 	AddWeapon(pyssy4);
 
 	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	pyssy2->SetRoot(this);
 	AddWeapon(pyssy2);
 
 	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	pyssy->SetRoot(this);
 	AddWeapon(pyssy);
 
 	inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
+	inventoryInitialized = true;
 }
 
 // Called every frame
@@ -104,7 +110,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	//	inventory->GetWeapon(currentWeapon)->SetActorLocation(this->GetActorLocation());
 	//	inventory->GetWeapon(currentWeapon)->SetActorRotation(FRotator(-cameraComp->GetComponentRotation().Pitch, cameraComp->GetComponentRotation().Yaw + 180, cameraComp->GetComponentRotation().Roll));
 	//}
-	//inventory->GetWeapon(currentWeapon)->GetActorRotation().Pitch += 180.0f;
 	WallCheck();
 
 	//cameraComp->GetComponentRotation()
@@ -510,15 +515,6 @@ void APlayerCharacter::PlaySound_Implementation(USoundCue* _component)
 	audioComp->Play();
 }
 
-void APlayerCharacter::ChangeUITest()
-{
-	APlayerController* MyPC = Cast<APlayerController>(Controller);
-
-	if (MyPC)
-	{
-		Cast<APlayerHud>(MyPC->GetHUD())->changeUIElement(MenuType::GAME_UI);
-	}
-}
 void APlayerCharacter::OpenTeamChat()
 {
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();

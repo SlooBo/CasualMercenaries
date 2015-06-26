@@ -15,6 +15,9 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05)); 
 
 	bReplicates = true;
+
+
+
 }
 
 void AMashineGun::BeginPlay()

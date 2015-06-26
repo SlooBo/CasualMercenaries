@@ -2,6 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "Weapon.h"
+#include "PlayerCharacter.h"
 
 
 // Sets default values
@@ -19,6 +20,8 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 
 	this->SetActorHiddenInGame(true);
 
+
+
 	bReplicates = true;
 }
 
@@ -32,8 +35,8 @@ void AWeapon::BeginPlay()
 // Called every frame
 void AWeapon::Tick( float DeltaTime )
 {
-	Super::Tick( DeltaTime );
-
+	Super::Tick(DeltaTime);
+	
 }
 
 void AWeapon::PrimaryFunction(APlayerCharacter* user)
@@ -55,4 +58,10 @@ void AWeapon::Reload()
 		ammo = ammoInClip;
 		clips--;
 	}
+}
+
+void AWeapon::SetRoot(APlayerCharacter* user)
+{
+	this->SetOwner(user);
+	this->AttachRootComponentToActor(user);
 }

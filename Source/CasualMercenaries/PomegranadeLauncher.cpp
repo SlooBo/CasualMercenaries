@@ -15,7 +15,7 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 
 
-	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.01, 0.10));
+	weaponMesh->SetRelativeScale3D(FVector(0.01, 0.05, 0.5));
 
 	bReplicates = true;
 }
