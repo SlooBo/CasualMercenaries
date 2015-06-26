@@ -13,9 +13,6 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
-
-	inventory = CreateDefaultSubobject<UInventory>("inventory");
-	//inventory->SetFlags(RF_RootSet);
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -73,6 +70,8 @@ void APlayerCharacter::BeginPlayCplusplus_Implementation()
 {
 	UWorld* const World = GetWorld();
 
+	inventory = NewObject<UInventory>();
+
 	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy3);
 
@@ -84,6 +83,8 @@ void APlayerCharacter::BeginPlayCplusplus_Implementation()
 
 	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	AddWeapon(pyssy);
+
+	inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
 }
 
 // Called every frame
@@ -134,8 +135,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 {
-	inventory->AddWeaponToInventory(_weapon);
-	//ServerAddWeapon(_weapon);
+	//inventory->AddWeaponToInventory(_weapon);
+	ServerAddWeapon(_weapon);
 }
 
 bool APlayerCharacter::ServerAddWeapon_Validate(AWeapon* _weapon)
@@ -161,6 +162,9 @@ bool APlayerCharacter::ServerUseWeapon1_Validate()
 
 void APlayerCharacter::ServerUseWeapon1_Implementation()
 {
+	if (inventory == nullptr)
+		return;
+
 	if (inventory->GetWeapon(currentWeapon) != nullptr)
 		inventory->GetWeapon(currentWeapon)->PrimaryFunction(this);
 }

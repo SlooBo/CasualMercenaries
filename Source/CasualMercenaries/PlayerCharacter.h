@@ -23,7 +23,7 @@ public:
 	// Called when the game starts or when spawned
 	//virtual void BeginPlay() override;
 	//had to be changed so blueprint can run
-	UFUNCTION(BlueprintCallable, Reliable, Server, WithValidation, Category = "UI")
+	UFUNCTION(BlueprintCallable, Reliable, NetMulticast, WithValidation, Category = "UI")
 		void BeginPlayCplusplus();
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
@@ -97,6 +97,7 @@ public:
 private:
 	UPROPERTY()
 	UInventory* inventory;
+
 	int currentWeapon;
 	FVector fuckthisshit;
 
