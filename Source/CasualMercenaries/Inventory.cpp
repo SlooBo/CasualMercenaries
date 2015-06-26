@@ -13,6 +13,11 @@ UInventory::~UInventory()
 {
 }
 
+void UInventory::ClearInventory()
+{
+	weapons.Reset();
+}
+
 void UInventory::AddWeaponToInventory(AWeapon* weapon)
 {
 	//weapon->SetFlags(RF_RootSet);
