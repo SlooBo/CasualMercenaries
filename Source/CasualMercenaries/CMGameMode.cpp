@@ -196,9 +196,12 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 
 	// TODO: broadcast death for every player
 	
-	// destroy player pawn
+	// disable player pawn
 	if (player->GetPawn() != NULL)
-		player->GetPawn()->Destroy();
+	{
+		player->GetPawn()->SetActorHiddenInGame(true);
+		player->GetPawn()->SetActorEnableCollision(false);
+	}
 
 	if (inGameState != InGameState::Warmup && playerRespawnTime != 0)
 	{
@@ -231,10 +234,6 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
 
-	// destroy existing pawn
-	if (player->GetPawn() != NULL)
-		player->GetPawn()->Destroy();
-
 	Super::RestartPlayer(controller);
 }
 
@@ -246,6 +245,8 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: SetPlayerDefaults player pawn is not PlayerCharacter"));
 		return;
 	}
+
+	playerPawn->Reset();
 
 	// TODO: setup player character here after respawning
 }
