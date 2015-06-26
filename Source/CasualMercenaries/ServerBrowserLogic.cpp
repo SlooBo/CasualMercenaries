@@ -12,7 +12,6 @@ UServerBrowserLogic::UServerBrowserLogic() :Super()
 }
 UServerBrowserLogic::~UServerBrowserLogic()
 {
-	MarkPendingKill();
 }
 void UServerBrowserLogic::SetUp(UUserWidget *widget,UWorld *world)
 {
@@ -44,6 +43,16 @@ void UServerBrowserLogic::SetUp(UUserWidget *widget,UWorld *world)
 			findSessionsButton = tempFindSessionsButton;
 			findSessionsButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::FindSessions);
 		}
+		UButton *tempDestroyButton = Cast<UButton>(children[i]);
+		if (tempDestroyButton != nullptr && tempDestroyButton->GetName().Equals("DestroyWorld"))
+		{
+			tempDestroyButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::ForceGarbageCollector);
+		}
+
+		tempCreateSessionButton = nullptr;
+		tempServerListScrollBox = nullptr;
+		tempFindSessionsButton = nullptr;
+		tempDestroyButton = nullptr;
 		/*
 		UButton *tempAddSession = Cast<UButton>(children[i]);
 		if (tempAddSession != nullptr && tempAddSession->GetName().Equals("AddSessionButton"))
@@ -128,12 +137,15 @@ void UServerBrowserLogic::JoinSession(int32 searchIndex)
 }
 void UServerBrowserLogic::AddSessionToGUI(int32 searchIndex)
 {
+	UPROPERTY()
 	UButton *newButton = ConstructObject<UButton>(UButton::StaticClass());
+	UPROPERTY()
 	UTextBlock *newText = ConstructObject<UTextBlock>(UTextBlock::StaticClass());
 	newText->SetText(FText::FromString("This is server"));
 	newButton->AddChild(newText);
 	serverListScrollBox->AddChild(newButton);
 
+	UPROPERTY()
 	UServerInfo* serverInfo = NewObject<UServerInfo>();
 	serverInfo->searchIndex = searchIndex;
 	serverInfo->serverbrowser = this;
@@ -152,4 +164,8 @@ void UServerBrowserLogic::AddSessionToGUI(int32 searchIndex)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Child name: " + children[i]->GetName());
 
 	}
+}
+void UServerBrowserLogic::ForceGarbageCollector()
+{
+	world->ForceGarbageCollection(true);
 }

@@ -19,6 +19,7 @@ class CASUALMERCENARIES_API UServerBrowserLogic : public UUILogicBase
 public:
 	UServerBrowserLogic();
 	~UServerBrowserLogic();
+	UFUNCTION()
 	void SetUp(UUserWidget *widget,UWorld *world);
 	UFUNCTION()
 	void CreateSession();
@@ -30,17 +31,23 @@ public:
 		void AddSessionToGUI(int32 searchIndex);
 	//called from UServerInfo
 private:
-	
 	TArray<FOnlineSessionSearchResult, FDefaultAllocator> searchResults;
+	UPROPERTY()
 	bool searchingSessions;
+	UPROPERTY()
 	UWorld *world;
+	UPROPERTY()
 	UUserWidget *widget;
+	UPROPERTY()
 	UButton *createSessionButton;
+	UPROPERTY()
 	UButton *findSessionsButton;
+	UPROPERTY()
 	UButton *addSessionButton;
+	UPROPERTY()
 	UScrollBox *serverListScrollBox;
 	TSharedPtr<FOnlineSessionSearch> SearchSettings;
-
+	UFUNCTION()
 	void OnFindSessionsComplete(bool bWasSuccessful);
 	FOnFindSessionsCompleteDelegate OnFindSessionsCompleteDelegate;
 	FDelegateHandle OnFindSessionsCompleteDelegateHandle;
@@ -49,6 +56,8 @@ private:
 	FOnFindSessionsComplete FindSessionsCompleteEvent;
 	UPROPERTY()
 	TArray<class UServerInfo*> buttonServerInfos;
+	UFUNCTION()
+		void ForceGarbageCollector();
 };
 UCLASS()
 class UServerInfo: public UObject

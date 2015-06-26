@@ -9,9 +9,9 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 {
 
 	weaponMesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("RocketLauncherMesh"));
-	weaponMesh->SetOnlyOwnerSee(false);
-	weaponMesh->bCastDynamicShadow = true;
-	weaponMesh->CastShadow = true;
+	//weaponMesh->SetOnlyOwnerSee(false);
+	//weaponMesh->bCastDynamicShadow = true;
+	//weaponMesh->CastShadow = true;
 	//weaponMesh->SetSkeletalMesh(new USkeletalMesh(ObjectInitializer));
 
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
