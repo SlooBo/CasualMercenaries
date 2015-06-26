@@ -92,7 +92,9 @@ void ACMGameMode::StartMatch()
 		// match needs restarting, move players back to spawn
 		for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 		{
-			(*iter)->GetPawn()->Reset();
+			if ((*iter)->GetPawn() != NULL)
+				(*iter)->GetPawn()->Reset();
+
 			Super::RestartPlayer((*iter));
 		}
 	}
@@ -196,9 +198,12 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 
 	// TODO: broadcast death for every player
 	
-	// destroy player pawn
+	// disable player pawn
 	if (player->GetPawn() != NULL)
-		player->GetPawn()->Destroy();
+	{
+		player->GetPawn()->SetActorHiddenInGame(true);
+		player->GetPawn()->SetActorEnableCollision(false);
+	}
 
 	if (inGameState != InGameState::Warmup && playerRespawnTime != 0)
 	{
@@ -230,10 +235,6 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->PlayerState->bIsSpectator = false;
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
-
-	// destroy existing pawn
-	if (player->GetPawn() != NULL)
-		player->GetPawn()->Destroy();
 
 	Super::RestartPlayer(controller);
 }

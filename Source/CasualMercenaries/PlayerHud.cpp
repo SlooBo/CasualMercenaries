@@ -7,19 +7,19 @@
 
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
-	static ConstructorHelpers::FObjectFinder<UBlueprint> MainMenuBP(TEXT("WidgetBlueprint'/Game/Game/UI/PhoneUITest.PhoneUITest'"));
+	static ConstructorHelpers::FObjectFinder<UClass> MainMenuBP(TEXT("'/Game/Game/UI/PhoneUITest.PhoneUITest_C'"));
 	if (MainMenuBP.Object){
-		mainMenuClass = (UClass*)MainMenuBP.Object->GeneratedClass;
+		mainMenuClass = (UClass*)MainMenuBP.Object;
 	}
 	;
-	static ConstructorHelpers::FObjectFinder<UBlueprint> GameUIBP(TEXT("WidgetBlueprint'/Game/Game/UI/GameUI.GameUI'"));
+	static ConstructorHelpers::FObjectFinder<UClass> GameUIBP(TEXT("'/Game/Game/UI/GameUI.GameUI_C'"));
 	if (GameUIBP.Object){
-		gameUIClass = (UClass*)GameUIBP.Object->GeneratedClass;
+		gameUIClass = (UClass*)GameUIBP.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> ServerBrowserBP(TEXT("WidgetBlueprint'/Game/Game/UI/ServerBrowserGUI.ServerBrowserGUI'"));
+	static ConstructorHelpers::FObjectFinder<UClass> ServerBrowserBP(TEXT("'/Game/Game/UI/ServerBrowserGUI.ServerBrowserGUI_C'"));
 	if (ServerBrowserBP.Object){
-		serverBrowserClass = (UClass*)ServerBrowserBP.Object->GeneratedClass;
+		serverBrowserClass = (UClass*)ServerBrowserBP.Object;
 	}
 
 	

@@ -23,6 +23,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
+	virtual void FellOutOfWorld(const class UDamageType& DmgType) override;
+
 	/************************************************************************/
 	/* Character condition                                                  */
 	/************************************************************************/

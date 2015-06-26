@@ -19,6 +19,8 @@ public:
 	UInventory();
 	~UInventory();
 
+	void ClearInventory();
+
 	void AddWeaponToInventory(AWeapon* weapon);
 
 	//count begins from 0

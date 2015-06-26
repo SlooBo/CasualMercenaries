@@ -13,9 +13,8 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
-
 	inventory = CreateDefaultSubobject<UInventory>("inventory");
-	inventory->SetFlags(RF_RootSet);
+	inventoryInitialized = false;
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -60,30 +59,45 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	fuckthisshit = FVector();
 
-
+	
 
 }
-bool APlayerCharacter::BeginPlayCplusplus_Validate()
+
+// Called when the game starts or when spawned
+void APlayerCharacter::BeginPlayCplusplus()
+{
+	ServerInitInventory();
+}
+
+bool APlayerCharacter::ServerInitInventory_Validate()
 {
 	return true;
 }
 
-// Called when the game starts or when spawned
-void APlayerCharacter::BeginPlayCplusplus_Implementation()
+void APlayerCharacter::ServerInitInventory_Implementation()
 {
 	UWorld* const World = GetWorld();
 
+	inventory->ClearInventory();
+
 	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	pyssy3->SetRoot(this);
 	AddWeapon(pyssy3);
 
 	APomeGranadeLauncher* pyssy4 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	pyssy4->SetRoot(this);
 	AddWeapon(pyssy4);
 
 	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	pyssy2->SetRoot(this);
 	AddWeapon(pyssy2);
 
 	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	pyssy->SetRoot(this);
 	AddWeapon(pyssy);
+
+	inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
+	inventoryInitialized = true;
 }
 
 // Called every frame
@@ -96,7 +110,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	//	inventory->GetWeapon(currentWeapon)->SetActorLocation(this->GetActorLocation());
 	//	inventory->GetWeapon(currentWeapon)->SetActorRotation(FRotator(-cameraComp->GetComponentRotation().Pitch, cameraComp->GetComponentRotation().Yaw + 180, cameraComp->GetComponentRotation().Roll));
 	//}
-	//inventory->GetWeapon(currentWeapon)->GetActorRotation().Pitch += 180.0f;
 	WallCheck();
 
 	//cameraComp->GetComponentRotation()
@@ -134,8 +147,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 {
-	inventory->AddWeaponToInventory(_weapon);
-	//ServerAddWeapon(_weapon);
+	//inventory->AddWeaponToInventory(_weapon);
+	ServerAddWeapon(_weapon);
 }
 
 bool APlayerCharacter::ServerAddWeapon_Validate(AWeapon* _weapon)
@@ -161,6 +174,9 @@ bool APlayerCharacter::ServerUseWeapon1_Validate()
 
 void APlayerCharacter::ServerUseWeapon1_Implementation()
 {
+	if (inventory == nullptr)
+		return;
+
 	if (inventory->GetWeapon(currentWeapon) != nullptr)
 		inventory->GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
@@ -199,22 +215,7 @@ void APlayerCharacter::SwitchWeaponUp()
 	if (inventory->GetWeapon(currentWeapon) != nullptr)
 		inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
 
-	ServerSwitchWeaponUp(currentWeapon, tempLastWeapon);
-}
-
-bool APlayerCharacter::ServerSwitchWeaponUp_Validate(float cw, float pw)
-{
-	return true;
-}
-
-void APlayerCharacter::ServerSwitchWeaponUp_Implementation(float cw, float pw)
-{
-	currentWeapon = cw;
-
-	if(inventory->GetWeapon(pw) != nullptr)
-		inventory->GetWeapon(pw)->SetActorHiddenInGame(true);
-	if (inventory->GetWeapon(cw) != nullptr)
-		inventory->GetWeapon(cw)->SetActorHiddenInGame(false);
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
 }
 
 void APlayerCharacter::SwitchWeaponDown()
@@ -224,27 +225,34 @@ void APlayerCharacter::SwitchWeaponDown()
 	if (currentWeapon < 0)
 		currentWeapon = 3;
 
-	if (inventory->GetWeapon(tempLastWeapon) != nullptr)
-		inventory->GetWeapon(tempLastWeapon)->SetActorHiddenInGame(true);
-	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
+	if (inventory != nullptr)
+	{
+		if (inventory->GetWeapon(tempLastWeapon) != nullptr)
+			inventory->GetWeapon(tempLastWeapon)->SetActorHiddenInGame(true);
+		if (inventory->GetWeapon(currentWeapon) != nullptr)
+			inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
+	}
 
-	ServerSwitchWeaponDown(currentWeapon, tempLastWeapon);
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
 }
 
-bool APlayerCharacter::ServerSwitchWeaponDown_Validate(float cw, float pw)
+
+bool APlayerCharacter::ServerSwitchWeapon_Validate(float cw, float pw)
 {
 	return true;
 }
 
-void APlayerCharacter::ServerSwitchWeaponDown_Implementation(float cw, float pw)
+void APlayerCharacter::ServerSwitchWeapon_Implementation(float cw, float pw)
 {
 	currentWeapon = cw;
 
-	if (inventory->GetWeapon(pw) != nullptr)
-		inventory->GetWeapon(pw)->SetActorHiddenInGame(true);
-	if (inventory->GetWeapon(cw) != nullptr)
-		inventory->GetWeapon(cw)->SetActorHiddenInGame(false);
+	if (inventory != nullptr)
+	{
+		if (inventory->GetWeapon(pw) != nullptr)
+			inventory->GetWeapon(pw)->SetActorHiddenInGame(true);
+		if (inventory->GetWeapon(cw) != nullptr)
+			inventory->GetWeapon(cw)->SetActorHiddenInGame(false);
+	}
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -260,6 +268,8 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(APlayerCharacter, health);
 	DOREPLIFETIME(APlayerCharacter, stamina);
 	DOREPLIFETIME(APlayerCharacter, armor);
+	
+	
 };
 
 void APlayerCharacter::OnStartJump()
@@ -505,15 +515,6 @@ void APlayerCharacter::PlaySound_Implementation(USoundCue* _component)
 	audioComp->Play();
 }
 
-void APlayerCharacter::ChangeUITest()
-{
-	APlayerController* MyPC = Cast<APlayerController>(Controller);
-
-	if (MyPC)
-	{
-		Cast<APlayerHud>(MyPC->GetHUD())->changeUIElement(MenuType::GAME_UI);
-	}
-}
 void APlayerCharacter::OpenTeamChat()
 {
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();

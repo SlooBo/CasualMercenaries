@@ -2,6 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "Weapon.h"
+#include "PlayerCharacter.h"
 
 
 // Sets default values
@@ -9,15 +10,17 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 {
 
 	weaponMesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("RocketLauncherMesh"));
-	weaponMesh->SetOnlyOwnerSee(false);
-	weaponMesh->bCastDynamicShadow = true;
-	weaponMesh->CastShadow = true;
+	//weaponMesh->SetOnlyOwnerSee(false);
+	//weaponMesh->bCastDynamicShadow = true;
+	//weaponMesh->CastShadow = true;
 	//weaponMesh->SetSkeletalMesh(new USkeletalMesh(ObjectInitializer));
 
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	this->SetActorHiddenInGame(true);
+
+
 
 	bReplicates = true;
 }
@@ -32,8 +35,8 @@ void AWeapon::BeginPlay()
 // Called every frame
 void AWeapon::Tick( float DeltaTime )
 {
-	Super::Tick( DeltaTime );
-
+	Super::Tick(DeltaTime);
+	
 }
 
 void AWeapon::PrimaryFunction(APlayerCharacter* user)
@@ -55,4 +58,10 @@ void AWeapon::Reload()
 		ammo = ammoInClip;
 		clips--;
 	}
+}
+
+void AWeapon::SetRoot(APlayerCharacter* user)
+{
+	this->SetOwner(user);
+	this->AttachRootComponentToActor(user);
 }

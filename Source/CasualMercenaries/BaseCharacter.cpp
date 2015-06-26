@@ -57,6 +57,12 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ABaseCharacter, armor);
 }
 
+void ABaseCharacter::FellOutOfWorld(const class UDamageType& DmgType)
+{
+	health = 0;
+	OnDeath();
+}
+
 float ABaseCharacter::GetHealth() const
 {
 	return health;

@@ -22,6 +22,9 @@ public:
 
 	void BeginPlay();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
+		UParticleSystemComponent* particleSystem;
+
 	// Called every frame
 	void Tick(float DeltaSeconds);
 	void Reload() {};

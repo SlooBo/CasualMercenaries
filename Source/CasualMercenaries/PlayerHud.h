@@ -55,7 +55,7 @@ private:
 	UClass *gameUIClass;
 	UPROPERTY()
 	UClass *serverBrowserClass;
-
+	UPROPERTY()
 	TArray<UUILogicBase*> logicClasses;
 	void ClearAllWidgets();
 	UUserWidget* widgetInstance;

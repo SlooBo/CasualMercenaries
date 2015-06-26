@@ -23,8 +23,12 @@ public:
 	// Called when the game starts or when spawned
 	//virtual void BeginPlay() override;
 	//had to be changed so blueprint can run
-	UFUNCTION(BlueprintCallable, Reliable, Server, WithValidation, Category = "UI")
-		void BeginPlayCplusplus();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void BeginPlayCplusplus();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerInitInventory();
+
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -57,24 +61,31 @@ public:
 	/* Client mapped to Input */
 	void OnStopJump();
 
+	/* Is character currently performing a jump action. Resets on landed.  */
+	UPROPERTY(Transient, Replicated)
+		bool bIsJumping;
+
+
+	/************************************************************************/
+	/* Life And Death                                                       */
+	/************************************************************************/
+
 	virtual void OnDeath(APlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerOnDeath(APlayerController* killer = NULL);
 
 
-	/* Is character currently performing a jump action. Resets on landed.  */
-	UPROPERTY(Transient, Replicated)
-		bool bIsJumping;
 
 
-	//Weapon stuff begins here
+
+	/************************************************************************/
+	/* Weapons                                                              */
+	/************************************************************************/
 	void AddWeapon(AWeapon* _weapon);
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerAddWeapon(AWeapon* _weapon);
-
-	void ChangeUITest();
 
 	void UseWeapon1();
 	void UseWeapon1Release();
@@ -86,17 +97,27 @@ public:
 	void ServerUseWeapon1();
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerSwitchWeaponUp(float cw, float cp);
-
-	UFUNCTION(Reliable, Server, WithValidation)
-		void ServerSwitchWeaponDown(float cw, float cp);
+	void ServerSwitchWeapon(float cw, float cp);
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerUseWeapon1Release();
 
+
+	/************************************************************************/
+	/* Camera                                                               */
+	/************************************************************************/
+
+	UCameraComponent* GetCamera(){ return cameraComp; };
+
+
+
 private:
+
+
 	UPROPERTY()
 	UInventory* inventory;
+	bool inventoryInitialized;
+
 	int currentWeapon;
 	FVector fuckthisshit;
 
