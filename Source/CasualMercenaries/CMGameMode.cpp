@@ -92,7 +92,9 @@ void ACMGameMode::StartMatch()
 		// match needs restarting, move players back to spawn
 		for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 		{
-			(*iter)->GetPawn()->Reset();
+			if ((*iter)->GetPawn() != NULL)
+				(*iter)->GetPawn()->Reset();
+
 			Super::RestartPlayer((*iter));
 		}
 	}
@@ -245,8 +247,6 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: SetPlayerDefaults player pawn is not PlayerCharacter"));
 		return;
 	}
-
-	playerPawn->Reset();
 
 	// TODO: setup player character here after respawning
 }
