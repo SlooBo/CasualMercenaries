@@ -139,8 +139,8 @@ void UServerBrowserLogic::AddSessionToGUI(int32 searchIndex)
 	serverInfo->serverbrowser = this;
 	newButton->OnClicked.AddDynamic(serverInfo, &UServerInfo::OnClicked);
 	buttonServerInfos.Add(serverInfo);
-
-	serverInfo->SetFlags(RF_RootSet);
+	
+	//serverInfo->SetFlags(RF_RootSet);
 	UWidgetTree *widgetTree = widget->WidgetTree;
 	TArray<UWidget*> children;
 	widgetTree->GetAllWidgets(children);

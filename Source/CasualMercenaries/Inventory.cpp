@@ -15,7 +15,7 @@ UInventory::~UInventory()
 
 void UInventory::AddWeaponToInventory(AWeapon* weapon)
 {
-	weapon->SetFlags(RF_RootSet);
+	//weapon->SetFlags(RF_RootSet);
 	weapons.Add(weapon);
 }
 
