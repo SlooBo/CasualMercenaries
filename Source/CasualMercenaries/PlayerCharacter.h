@@ -75,9 +75,8 @@ public:
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerOnDeath(APlayerController* killer = NULL);
 
-
-
-
+	void CheckStatus();
+	int rounds;
 
 	/************************************************************************/
 	/* Weapons                                                              */

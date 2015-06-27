@@ -59,8 +59,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	fuckthisshit = FVector();
 
-	
-
+	state = CHARACTER_STATE::ALIVE;
+	rounds = 0;
 }
 
 // Called when the game starts or when spawned
@@ -111,7 +111,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	//	inventory->GetWeapon(currentWeapon)->SetActorRotation(FRotator(-cameraComp->GetComponentRotation().Pitch, cameraComp->GetComponentRotation().Yaw + 180, cameraComp->GetComponentRotation().Roll));
 	//}
 	WallCheck();
-
+	CheckStatus();
 	//cameraComp->GetComponentRotation()
 }
 
@@ -268,7 +268,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(APlayerCharacter, health);
 	DOREPLIFETIME(APlayerCharacter, stamina);
 	DOREPLIFETIME(APlayerCharacter, armor);
-	
+	DOREPLIFETIME(APlayerCharacter, state);
 	
 };
 
@@ -285,6 +285,16 @@ void APlayerCharacter::OnStartJump()
 void APlayerCharacter::OnStopJump()
 {
 
+}
+
+void APlayerCharacter::CheckStatus()
+{
+	if (state == CHARACTER_STATE::STUNNED)
+	{
+		rounds++;
+		if (rounds > 500)
+			state = CHARACTER_STATE::ALIVE;
+	}
 }
 
 void APlayerCharacter::OnDeath(APlayerController* killer)
@@ -454,14 +464,10 @@ void APlayerCharacter::WallJumpServer_Implementation()
 		if (this->CharacterMovement->IsFalling())
 		{
 			//To disable ever increasing falling speed
-			this->CharacterMovement->Velocity = FVector(0, 0, 0);
+			FVector tempVel = CharacterMovement->Velocity;
+			CharacterMovement->Velocity = FVector(tempVel.X, tempVel.Y, 0);
 
-			FRotator temp = GetActorRotation();
-			FRotator tempControllerRotation = GetActorRotation();
-			FRotator tempControllerYaw(0, tempControllerRotation.Yaw, 0);
-			//Wall jump is adjusted using these 3
-			FVector tempForwardVector = tempControllerYaw.Vector() * 500.0f;
-			FVector tempResult = tempForwardVector.MirrorByVector(wallJumpNormal) * 2.5f;
+			FVector tempResult = wallJumpNormal * 500.0f;
 			tempResult = tempResult + FVector(0.0f, 0.0f, 800.0f);
 
 			LaunchCharacter(tempResult, false, false);
