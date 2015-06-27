@@ -5,6 +5,16 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
+//Apparently enums need to be defined like this
+UENUM(BlueprintType)
+enum class CHARACTER_STATE : uint8
+{
+	ALIVE UMETA(DisplayName = "Alive"),
+	DEAD UMETA(DisplayName = "Dead"),
+	STUNNED UMETA(DisplayName = "Stunned"),
+	PARALYZED UMETA(DisplayName = "Paralyzed")
+};
+
 UCLASS()
 class CASUALMERCENARIES_API ABaseCharacter : public ACharacter
 {
@@ -41,7 +51,8 @@ public:
 		float GetArmor() const;
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		float GetArmorMax() const;
-
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		CHARACTER_STATE GetState() const;
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		bool IsAlive() const;
@@ -64,6 +75,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		void LoseArmor(float _damage);
 
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		void SetState(CHARACTER_STATE _state);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
 	float health;
@@ -79,6 +93,9 @@ protected:
 	float armor;
 	UPROPERTY(VisibleAnywhere, Category = "PlayerCondition")
 	float armor_Max;
+
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
+	CHARACTER_STATE state;
 
 	/************************************************************************/
 	/* Damage & Death                                                       */

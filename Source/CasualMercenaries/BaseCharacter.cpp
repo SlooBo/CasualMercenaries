@@ -20,6 +20,8 @@ ABaseCharacter::ABaseCharacter()
 	armor_Max = 100;
 	armor = 100;
 
+	state = CHARACTER_STATE:: ALIVE;
+
 	/* Don't collide with camera checks to keep 3rd person camera at position when other players are standing behind player */
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
@@ -55,6 +57,7 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ABaseCharacter, health);
 	DOREPLIFETIME(ABaseCharacter, stamina);
 	DOREPLIFETIME(ABaseCharacter, armor);
+	DOREPLIFETIME(ABaseCharacter, state);
 }
 
 void ABaseCharacter::FellOutOfWorld(const class UDamageType& DmgType)
@@ -91,6 +94,11 @@ float ABaseCharacter::GetArmor() const
 float ABaseCharacter::GetArmorMax() const
 {
 	return armor_Max;
+}
+
+CHARACTER_STATE ABaseCharacter::GetState() const
+{
+	return state;
 }
 
 bool ABaseCharacter::IsAlive() const
@@ -147,6 +155,11 @@ void ABaseCharacter::LoseArmor(float _damage)
 		armor = 0;
 	else
 		armor = armor - _damage;
+}
+
+void ABaseCharacter::SetState(CHARACTER_STATE _state)
+{
+	state = _state;
 }
 
 void ABaseCharacter::SetRagdollPhysics()
