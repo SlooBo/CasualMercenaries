@@ -7,7 +7,7 @@
 #include "Util.h"
 #include "PlayerHud.h"
 
-ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
+ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
 {
 	// defaults for game mode, use blueprints to override
@@ -34,6 +34,7 @@ ACMGameMode::ACMGameMode(const class FObjectInitializer& objectInitializer)
 	warmupTime = 0;
 
 	playerRespawnTime = 2;
+	warmupRespawnTime = 1;
 }
 
 
@@ -76,8 +77,10 @@ void ACMGameMode::HandleMatchIsWaitingToStart()
 {
 	Super::HandleMatchIsWaitingToStart();
 
-	waitElapsed = -1;
+	inGameState = InGameState::Warmup;
+	OnWarmupStart();
 
+	waitElapsed = -1;
 	GetWorld()->GetTimerManager().SetTimer(waitTimer, this, &ACMGameMode::WaitTickSecond, 1.0f, true, 0.0f);
 }
 
@@ -95,10 +98,11 @@ void ACMGameMode::StartMatch()
 			if ((*iter)->GetPawn() != NULL)
 				(*iter)->GetPawn()->Reset();
 
-			Super::RestartPlayer((*iter));
 			ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
 			if (playerState != NULL)
 				playerState->ResetStats();
+
+			RespawnPlayer(*iter);
 		}
 	}
 
@@ -114,30 +118,27 @@ void ACMGameMode::WaitTickSecond()
 
 	int32 numPlayers = GetNumPlayers();
 
-	if (numPlayers >= minPlayersToStart && inGameState == InGameState::WaitingForPlayers)
+	if (inGameState == InGameState::Warmup)
 	{
 		// ready to start the match or warmup
-
-		waitElapsed = 0;
-		if (warmupTime > 0)
+		if (numPlayers >= minPlayersToStart)
 		{
-			inGameState = InGameState::Warmup;
-			OnWarmupStart();
+			waitElapsed = 0;
+			inGameState = InGameState::Starting;
+		}
+		else if (warmupTime != 0 && waitElapsed >= warmupTime)
+		{
+			// TODO: what happens when warmup ends and minimum number of players are not met?
 		}
 		else
-			inGameState = InGameState::Starting;
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Waiting for more players... ") + FString::FromInt(waitElapsed)
+				+ TEXT(" ( ") + FString::FromInt(numPlayers) + TEXT("/") + FString::FromInt(minPlayersToStart) + TEXT(" )"));
+		}
 	}
-
-	if (inGameState == InGameState::WaitingForPlayers)
+	else if (inGameState == InGameState::Starting)
 	{
-		inGameState = InGameState::WaitingForPlayers;
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Waiting for more players... ") + FString::FromInt(waitElapsed)
-			+ TEXT(" ( ") + FString::FromInt(numPlayers) + TEXT("/") + FString::FromInt(minPlayersToStart) + TEXT(" )"));
-	}
-	else
-	{
-		const int32 timeToWait = (inGameState == InGameState::Warmup) ? warmupTime : startTime;
-		if (waitElapsed >= timeToWait)
+		if (waitElapsed >= startTime)
 		{
 			inGameState = InGameState::Running;
 			StartMatch();
@@ -218,7 +219,7 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 	if (inGameState != InGameState::Warmup && playerRespawnTime != 0)
 		RespawnPlayer(player, playerRespawnTime);
 	else	// restart immediately
-		RespawnPlayer(player);
+		RespawnPlayer(player, warmupRespawnTime);
 }
 
 void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)

@@ -8,7 +8,6 @@
 UENUM(BlueprintType)
 enum class InGameState : uint8
 {
-	WaitingForPlayers,
 	Warmup,
 	Starting,
 	Running,
@@ -69,7 +68,7 @@ public:
 protected:
 
 	// Timelimit in minutes
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit"), Category = "Gameplay|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit", ClampMin = "0"), Category = "Gameplay|Level")
 	int32 mapTimelimit;
 
 	int32 mapTimeElapsed;
@@ -83,18 +82,22 @@ protected:
 	InGameState inGameState;
 	
 	// Start the game mode when at least this many players has joined
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Minimum Players To Start"), Category = "Gameplay|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Minimum Players To Start", ClampMin = "0", ClampMax = "64"), Category = "Gameplay|Level")
 	int32 minPlayersToStart;
 
 	// Time to wait before game mode starts
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Start Delay Time"), Category = "Gameplay|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Start Delay Time", ClampMin = "0"), Category = "Gameplay|Level")
 	int32 startTime;
 
-	// Length of warmup after minimum number of players has joined the level
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Warmup Time"), Category = "Gameplay|Level")
+	// Max Length of warmup while waiting for players to join
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Warmup Time", ClampMin = "0"), Category = "Gameplay|Level")
 	int32 warmupTime;
 
 	// Player respawn time after death (negative values: respawning disabled)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Respawn Time"), Category = "Gameplay|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Respawn Time", ClampMin = "-1"), Category = "Gameplay|Level")
 	int32 playerRespawnTime;
+
+	// Player respawn time during warmup
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Respawn Time", ClampMin = "-1"), Category = "Gameplay|Level")
+	int32 warmupRespawnTime;
 };
