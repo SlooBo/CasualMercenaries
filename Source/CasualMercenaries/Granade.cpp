@@ -20,7 +20,7 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
 	Mesh->SetMaterial(0, MateriaObj.Object);
 
-	//Mesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
+	Mesh->SetRelativeScale3D(FVector(.1, 1, 1));
 	Mesh->SetSimulatePhysics(true);
 
 

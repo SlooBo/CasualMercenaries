@@ -79,6 +79,7 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 {
 	UWorld* const World = GetWorld();
 
+
 	inventory->ClearInventory();
 
 	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
@@ -97,7 +98,7 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 	pyssy->SetRoot(this);
 	AddWeapon(pyssy);
 
-	inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
+	//inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
 	inventoryInitialized = true;
 }
 
@@ -139,12 +140,19 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("RightMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon2);
 	InputComponent->BindAction("MouseWheelUp", IE_Pressed, this, &APlayerCharacter::SwitchWeaponUp);
 	InputComponent->BindAction("MouseWheelDown", IE_Pressed, this, &APlayerCharacter::SwitchWeaponDown);
+	InputComponent->BindAction("Reload", IE_Pressed, this, &APlayerCharacter::ReloadWeapon);
+}
+
+void APlayerCharacter::ReloadWeapon()
+{
+	if (inventory->GetWeapon(currentWeapon) != nullptr)
+		inventory->GetWeapon(currentWeapon)->Reload();
 }
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 {
-	//inventory->AddWeaponToInventory(_weapon);
-	ServerAddWeapon(_weapon);
+	inventory->AddWeaponToInventory(_weapon);
+	//ServerAddWeapon(_weapon);
 }
 
 bool APlayerCharacter::ServerAddWeapon_Validate(AWeapon* _weapon)
@@ -196,7 +204,38 @@ void APlayerCharacter::ServerUseWeapon1Release_Implementation()
 void APlayerCharacter::UseWeapon2()
 {
 	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->SecondaryFunction();
+		inventory->GetWeapon(currentWeapon)->SecondaryFunction(this);
+	ServerUseWeapon2();
+}
+
+bool APlayerCharacter::ServerUseWeapon2_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerUseWeapon2_Implementation()
+{
+	if (inventory == nullptr)
+		return;
+
+	if (inventory->GetWeapon(currentWeapon) != nullptr)
+		inventory->GetWeapon(currentWeapon)->SecondaryFunction(this);
+}
+
+void APlayerCharacter::UseWeapon2Release()
+{
+	ServerUseWeapon1Release();
+}
+
+bool APlayerCharacter::ServerUseWeapon2Release_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerUseWeapon2Release_Implementation()
+{
+	if (inventory->GetWeapon(currentWeapon) != nullptr)
+		inventory->GetWeapon(currentWeapon)->SecondaryFunctionReleased(this);
 }
 
 void APlayerCharacter::SwitchWeaponUp()
@@ -293,7 +332,7 @@ void APlayerCharacter::OnStopJump()
 
 }
 
-void APlayerCharacter::OnDeath(APlayerController* killer)
+void APlayerCharacter::OnDeath_Implementation(APlayerController* killer)
 {
 	ServerOnDeath(killer);
 }
@@ -310,6 +349,8 @@ void APlayerCharacter::ServerOnDeath_Implementation(APlayerController* killer)
 
 	if (gameMode != NULL && playerController != NULL)
 		gameMode->OnPlayerDeath(playerController, killer);
+
+	ABaseCharacter::OnDeath_Implementation();
 }
 
 void APlayerCharacter::MoveForward(float _val)

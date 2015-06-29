@@ -34,6 +34,9 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 	SetActorEnableCollision(true);
 
+
+	ProjectileMovement->InitialSpeed = 1200.0f;
+
 	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
 
 }

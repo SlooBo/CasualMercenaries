@@ -10,19 +10,15 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 {
 
 	weaponMesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("RocketLauncherMesh"));
-	//weaponMesh->SetOnlyOwnerSee(false);
-	//weaponMesh->bCastDynamicShadow = true;
-	//weaponMesh->CastShadow = true;
-	//weaponMesh->SetSkeletalMesh(new USkeletalMesh(ObjectInitializer));
-
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	this->SetActorHiddenInGame(true);
 
-
+	reloading = false;
 
 	bReplicates = true;
+
+	price = 5;
 }
 
 // Called when the game starts or when spawned
@@ -36,7 +32,28 @@ void AWeapon::BeginPlay()
 void AWeapon::Tick( float DeltaTime )
 {
 	Super::Tick(DeltaTime);
-	
+	if (reloading)
+	{
+		passedTimeReloading += DeltaTime;
+		if (passedTimeReloading >= reloadTime)
+		{
+			ammo = ammoInClip;
+			clips--;
+			passedTimeReloading = 0;
+			reloading = false;
+		}
+	}
+
+
+	passedTimeFiring += DeltaTime;
+	if (firing)
+	{
+		if (passedTimeFiring > firingInterval)
+		{
+			Fire();
+			passedTimeFiring = 0;
+		}
+	}
 }
 
 void AWeapon::PrimaryFunction(APlayerCharacter* user)
@@ -45,23 +62,23 @@ void AWeapon::PrimaryFunction(APlayerCharacter* user)
 
 }
 
-void AWeapon::SecondaryFunction()
+void AWeapon::SecondaryFunction(APlayerCharacter* user)
 {
-
 
 }
 
 void AWeapon::Reload()
 {
-	if (clips > 0)
-	{
-		ammo = ammoInClip;
-		clips--;
-	}
+
 }
 
 void AWeapon::SetRoot(APlayerCharacter* user)
 {
 	this->SetOwner(user);
 	this->AttachRootComponentToActor(user);
+}
+
+void AWeapon::IncreaseAmmoAmount(int32 ammo)
+{
+	clips += ammo;
 }

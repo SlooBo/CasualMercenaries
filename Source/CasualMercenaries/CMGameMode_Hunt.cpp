@@ -5,7 +5,7 @@
 #include "CMPlayerState.h"
 #include "Util.h"
 
-ACMGameMode_Hunt::ACMGameMode_Hunt(const class FObjectInitializer& objectInitializer)
+ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	: ACMGameMode(objectInitializer)
 {
 	minPlayersToStart = 1;
@@ -14,6 +14,29 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const class FObjectInitializer& objectInitial
 	huntRoundTime = 5;
 	huntRoundFreezeTime = 2;
 	huntIntermissionTime = 3;
+	huntTotalLength = ((huntRoundTime + huntRoundFreezeTime) * huntRounds) + (huntIntermissionTime * (huntRounds - 1));
+
+	huntStartMoney = 1500;
+	huntMaxMoney = 20000;
+	huntKillRewardTarget = 2000;
+	huntKillRewardWrong = -1000;
+}
+
+void ACMGameMode_Hunt::PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent)
+{
+	if (propertyChangedEvent.Property != NULL)
+	{
+		FName propertyName = propertyChangedEvent.Property->GetFName();
+		if (propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntRounds) ||
+			propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntRoundTime) ||
+			propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntRoundFreezeTime) ||
+			propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntIntermissionTime))
+		{
+			huntTotalLength = ((huntRoundTime + huntRoundFreezeTime) * huntRounds) + (huntIntermissionTime * (huntRounds - 1));
+		}
+	}
+	
+	Super::PostEditChangeProperty(propertyChangedEvent);
 }
 
 FString ACMGameMode_Hunt::GetHuntStateAsString(HuntState state)
@@ -28,24 +51,30 @@ void ACMGameMode_Hunt::StartMatch()
 {
 	Super::StartMatch();
 
-	if (inGameState == InGameState::Warmup)
-		return;
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("GameMode: Hunt"));
-
-	TArray<APlayerController*> players;
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 	{
-		if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
-			SetRandomPlayerHuntTarget(*iter);
-
 		ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
 		if (playerState != NULL)
-			playerState->SetMoney(huntStartMoney);
+		{
+			if (inGameState != InGameState::Warmup)
+			{
+				if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
+					SetRandomPlayerHuntTarget(*iter);
+
+				playerState->SetMoney(huntStartMoney);
+			}
+			else
+				playerState->SetMoney(huntMaxMoney);
+		}
 	}
 
-	huntElapsed = -1;
-	GetWorld()->GetTimerManager().SetTimer(huntTimerHandle, this, &ACMGameMode_Hunt::HuntTickSecond, 1.0f, true, 0.0f);
+	if (inGameState != InGameState::Warmup)
+	{
+		huntElapsed = -1;
+		GetWorld()->GetTimerManager().SetTimer(huntTimerHandle, this, &ACMGameMode_Hunt::HuntTickSecond, 1.0f, true, 0.0f);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("GameMode: Hunt"));
+	}
 }
 
 void ACMGameMode_Hunt::HandleMatchIsWaitingToStart()
@@ -102,7 +131,7 @@ int32 ACMGameMode_Hunt::GetHuntTimeElapsed()
 
 int32 ACMGameMode_Hunt::GetHuntTotalLength()
 {
-	return ((huntRoundTime + huntRoundFreezeTime) * huntRounds) + (huntIntermissionTime * (huntRounds - 1));
+	return huntTotalLength;
 }
 
 int32 ACMGameMode_Hunt::GetCurrentRound()
@@ -189,7 +218,7 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 {
 	// respawn players
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-		RestartPlayer(*iter);
+		RespawnPlayer(*iter);
 }
 
 void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
@@ -232,7 +261,6 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(APlayerController* player, APlayerCon
 	// TODO: move huntTarget to PlayerCharacter in order to prevent cheating (every player can read PlayerState)
 
 	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
-	ACMPlayerState* killerState = (killer != NULL) ? static_cast<ACMPlayerState*>(killer->PlayerState) : NULL;
 
 	playerState->SetHuntTarget(killer->GetPawn());
 	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killer->GetName());

@@ -16,8 +16,14 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 	bReplicates = true;
 
+	reloadTime = 0.5;
+	maxAmmo = 120;
+	clips = 999;
+	ammo = 30;
+	ammoInClip = 30;
+	firingInterval = .25;
 
-
+	passedTimeReloading = 0;
 }
 
 void AMashineGun::BeginPlay()
@@ -31,40 +37,69 @@ void AMashineGun::Tick(float DeltaTime)
 	AWeapon::Tick(DeltaTime);
 }
 
-void AMashineGun::PrimaryFunction(APlayerCharacter* user)
+void AMashineGun::Fire()
 {
+	if (ammo < 1)
+	{
+		firing = false;
+		return;
+	}
 	FVector userLoc;
 	FVector userLoc2;
 	FRotator cameraRot;
 
 
-	user->GetActorEyesViewPoint(userLoc2, cameraRot);
+	this->GetOwner()->GetActorEyesViewPoint(userLoc2, cameraRot);
 
-	userLoc = user->GetActorLocation();
-	
-	const FVector shootDir = cameraRot.Vector();
+	userLoc = this->GetOwner()->GetActorLocation();
+
+	FVector shootDir = cameraRot.Vector();
+
+	float random1 = FMath::FRand() * 0.05;
+	float random2 = FMath::FRand() * 0.05;
+	float random3 = FMath::FRand() * 0.05;
+
+
+	shootDir.Set(shootDir.X + random1, shootDir.Y + random2, shootDir.Z + random3);
+
 	const FVector startTrace = userLoc;
-	const FVector endTrace = startTrace + shootDir * 1000;
+	const FVector endTrace = startTrace + shootDir * 20000;
 
 	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
 	traceParams.bTraceAsyncScene = true;
 	traceParams.bReturnPhysicalMaterial = true;
-	traceParams.AddIgnoredActor(user);
+	traceParams.AddIgnoredActor(this->GetOwner());
 
 	FHitResult hit(ForceInit);
 
 	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
 	//DrawDebugLine(GetWorld(), startTrace, endTrace, FColor(260.0f, 0.0f, 0.f, 1.f), false, 1.f);
-	
+
 	APlayerCharacter* player = Cast<APlayerCharacter>(hit.GetActor());
 	if (player != nullptr)
-		player->TakeDamage(10, Cast<APlayerController>(user->GetController()));
-	
+		player->TakeDamage(10, Cast<APlayerController>(Cast<APlayerCharacter>(this->GetOwner())->GetController()));
+
 	DrawLine(startTrace, endTrace);
-	//oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi oijoi
+	ammo--;
 }
 
+void AMashineGun::PrimaryFunction(APlayerCharacter* user)
+{
+	this->SetOwner(user);
+	if (ammo > 0)
+	{
+		firing = true;
+		
+	}
+}
+
+void AMashineGun::PrimaryFunctionReleased(APlayerCharacter* user)
+{
+
+	firing = false;
+
+}
 void AMashineGun::DrawLine(FVector begin, FVector end)
 {	
 	ServerDrawLine(begin, end);
@@ -80,7 +115,15 @@ void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
 }
 
-void AMashineGun::SecondaryFunction()
+void AMashineGun::SecondaryFunction(APlayerCharacter* user)
 {
 
+}
+
+void AMashineGun::Reload()
+{
+	if (clips > 0)
+	{
+		reloading = true;
+	}
 }
