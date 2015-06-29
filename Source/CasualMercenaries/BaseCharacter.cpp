@@ -162,6 +162,25 @@ void ABaseCharacter::SetState(CHARACTER_STATE _state)
 	state = _state;
 }
 
+void ABaseCharacter::OnDeath_Implementation(APlayerController* damageSource)
+{
+	// delay the destruction until the player controller no longer controls this character
+	// if pawn is destroyed before the controller acknowledges it, crash happens
+
+	FTimerHandle timerHandle;
+	FTimerDelegate destroyDelegate = FTimerDelegate::CreateUObject<ABaseCharacter, FTimerHandle&>(this, &ABaseCharacter::DelayedDestroy, timerHandle);
+	GetWorld()->GetTimerManager().SetTimer(timerHandle, destroyDelegate, 1.0f, true);
+}
+
+void ABaseCharacter::DelayedDestroy(FTimerHandle& timerHandle)
+{
+	if (Controller == NULL)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(timerHandle);
+		Destroy(true);
+	}
+}
+
 void ABaseCharacter::SetRagdollPhysics()
 {
 	bool tempInRagdoll = false;

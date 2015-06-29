@@ -70,7 +70,7 @@ public:
 	/* Life And Death                                                       */
 	/************************************************************************/
 
-	virtual void OnDeath(APlayerController* killer = NULL) override;
+	virtual void OnDeath_Implementation(APlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerOnDeath(APlayerController* killer = NULL);

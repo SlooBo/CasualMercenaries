@@ -26,6 +26,7 @@ class CASUALMERCENARIES_API ACMGameMode_Hunt : public ACMGameMode
 
 public:
 	ACMGameMode_Hunt(const class FObjectInitializer& objectInitializer);
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& changedEvent) override;
 
 	static FString GetHuntStateAsString(HuntState state);
 
@@ -96,20 +97,24 @@ protected:
 	//
 
 	// Count of hunt rounds (intermissions = rounds-1)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Rounds"), Category = "Gameplay|Hunt")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Rounds", ClampMin = "0"), Category = "Gameplay|Hunt")
 	int32 huntRounds;
 
 	// Length of one hunt round
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Round Length"), Category = "Gameplay|Hunt")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Round Length", ClampMin = "0"), Category = "Gameplay|Hunt")
 	int32 huntRoundTime;
 
-	// Freeze time at the beginning of a rounds
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Freeze Time Length"), Category = "Gameplay|Hunt")
+	// Freeze time length at the beginning of a round
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Freeze Time Length", ClampMin = "0"), Category = "Gameplay|Hunt")
 	int32 huntRoundFreezeTime;
 
 	// Intermission length between rounds
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Intermission Length"), Category = "Gameplay|Hunt")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Intermission Length", ClampMin = "0"), Category = "Gameplay|Hunt")
 	int32 huntIntermissionTime;
+
+	// Total length of hunt match (calculated from previous values)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (DisplayName = "Hunt Total Length"), Category = "Gameplay|Hunt")
+	int32 huntTotalLength;
 
 	//
 	//	Money / Kill Rewards
