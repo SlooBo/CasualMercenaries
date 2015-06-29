@@ -4,7 +4,6 @@
 #include "ServerBrowserLogic.h"
 #include "NetworkSession.h"
 
-
 UServerBrowserLogic::UServerBrowserLogic() :Super()
 {
 	OnFindSessionsCompleteDelegate = FOnFindSessionsCompleteDelegate::CreateUObject(this, &UServerBrowserLogic::OnFindSessionsComplete);
@@ -48,11 +47,29 @@ void UServerBrowserLogic::SetUp(UUserWidget *widget,UWorld *world)
 		{
 			tempDestroyButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::ForceGarbageCollector);
 		}
-
+		UButton *tempConnectButton = Cast<UButton>(children[i]);
+		if (tempConnectButton != nullptr && tempConnectButton->GetName().Equals("ConnectButton"))
+		{
+			connectButton = tempConnectButton;
+			connectButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::ConnectSessionWithIP);
+		}
+		UEditableTextBox *tempIPTextBox = Cast<UEditableTextBox>(children[i]);
+		if (tempIPTextBox != nullptr && tempIPTextBox->GetName().Equals("IPTextBox"))
+		{
+			ipTextBox= tempIPTextBox;
+		}
+		UButton *tempHostGameButton = Cast<UButton>(children[i]);
+		if (tempHostGameButton != nullptr && tempHostGameButton->GetName().Equals("HostButton"))
+		{
+			hostGameButton = tempHostGameButton;
+			hostGameButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::HostGame);
+		}
+		/*
 		tempCreateSessionButton = nullptr;
 		tempServerListScrollBox = nullptr;
 		tempFindSessionsButton = nullptr;
 		tempDestroyButton = nullptr;
+		tempConnectButton = nullptr;*/
 		/*
 		UButton *tempAddSession = Cast<UButton>(children[i]);
 		if (tempAddSession != nullptr && tempAddSession->GetName().Equals("AddSessionButton"))
@@ -168,4 +185,21 @@ void UServerBrowserLogic::AddSessionToGUI(int32 searchIndex)
 void UServerBrowserLogic::ForceGarbageCollector()
 {
 	world->ForceGarbageCollection(true);
+}
+void UServerBrowserLogic::ConnectSessionWithIP()
+{
+	if (ipTextBox == nullptr)
+		return;
+	FString ipText = ipTextBox->GetText().ToString();
+	if (ipText.IsEmpty() || !ipText.Contains("."))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Invalid ip: " + ipText);
+		return;
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Connected with: " + ipText);
+	world->GetFirstPlayerController()->ClientTravel(ipText, TRAVEL_Absolute);
+}
+void UServerBrowserLogic::HostGame()
+{
+	world->GetFirstPlayerController()->ClientTravel(TEXT("Office?Listen"), TRAVEL_Absolute);
 }

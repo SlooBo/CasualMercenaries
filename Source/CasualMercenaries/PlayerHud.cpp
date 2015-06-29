@@ -3,7 +3,7 @@
 #include "CasualMercenaries.h"
 #include "PlayerHud.h"
 #include "ServerBrowserLogic.h"
-
+#include "ShopLogic.h"
 
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
@@ -21,8 +21,11 @@ APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 	if (ServerBrowserBP.Object){
 		serverBrowserClass = (UClass*)ServerBrowserBP.Object;
 	}
-
 	
+		static ConstructorHelpers::FObjectFinder<UClass> ShopBP(TEXT("'/Game/Game/UI/ShopGUI.ShopGUI_C'"));
+		if (ShopBP.Object){
+			shopClass = (UClass*)ShopBP.Object;
+	}
 }
 void APlayerHud::DrawHud()
 {
@@ -42,7 +45,11 @@ void APlayerHud::Tick(float DeltaSeconds)
 }
 void APlayerHud::changeUIElement(MenuType menu)
 {
-	
+	for (int i = 0; i < logicClasses.Num(); i++)
+	{
+		logicClasses[i] = nullptr;
+	}
+	logicClasses.Empty();
 	switch (menu)
 	{
 	case MenuType::MAIN_MENU:
@@ -60,6 +67,14 @@ void APlayerHud::changeUIElement(MenuType menu)
 		UServerBrowserLogic* serverBrowser = NewObject<UServerBrowserLogic>();
 		serverBrowser->SetUp(widget,GetWorld());
 		logicClasses.Add(serverBrowser);
+		break;
+	}
+	case MenuType::SHOP:
+	{
+		UUserWidget* tempWidget = changeUIElement(shopClass);
+		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+		UShopLogic* shopLogic = NewObject<UShopLogic>();
+		shopLogic->SetUp(tempWidget);
 		break;
 	}
 	case MenuType::NO_UI:

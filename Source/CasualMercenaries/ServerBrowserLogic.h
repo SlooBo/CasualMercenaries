@@ -45,7 +45,16 @@ private:
 	UPROPERTY()
 	UButton *addSessionButton;
 	UPROPERTY()
+	UButton *connectButton;
+	UPROPERTY()
 	UScrollBox *serverListScrollBox;
+	UPROPERTY()
+	UEditableTextBox *ipTextBox;
+	UButton *hostGameButton;
+	UFUNCTION()
+	void ConnectSessionWithIP();
+	UFUNCTION()
+		void HostGame();
 	TSharedPtr<FOnlineSessionSearch> SearchSettings;
 	UFUNCTION()
 	void OnFindSessionsComplete(bool bWasSuccessful);

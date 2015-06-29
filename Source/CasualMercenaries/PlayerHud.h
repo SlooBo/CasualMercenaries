@@ -13,10 +13,11 @@
 UENUM(BlueprintType)		//"BlueprintType" is essential to include
 enum class MenuType : uint8
 {
-	MAIN_MENU 	UMETA(DisplayName = "MAIN_MENU"),
-	GAME_UI 	UMETA(DisplayName = "GAME_UI"),
+	MAIN_MENU 		UMETA(DisplayName = "MAIN_MENU"),
+	GAME_UI 		UMETA(DisplayName = "GAME_UI"),
 	SERVER_BROWSER 	UMETA(DisplayName = "SERVER_BROWSER"),
-	NO_UI	UMETA(DisplayName = "NO_UI")
+	SHOP			UMETA(DisplayName = "SHOP"),
+	NO_UI			UMETA(DisplayName = "NO_UI")
 };
 
 UCLASS()
@@ -55,6 +56,8 @@ private:
 	UClass *gameUIClass;
 	UPROPERTY()
 	UClass *serverBrowserClass;
+	UPROPERTY()
+	UClass *shopClass;
 	UPROPERTY()
 	TArray<UUILogicBase*> logicClasses;
 	void ClearAllWidgets();
