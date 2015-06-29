@@ -34,17 +34,19 @@ public:
 	virtual bool ShouldSpawnAtStartSpot(AController* player) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* player) override;
 	virtual void SetPlayerDefaults(APawn* playerPawn) override;
+	virtual void RestartPlayer(AController* controller) override;
 
 	void WaitTickSecond();
 	void MapTickSecond();
-
-	virtual void RestartPlayer(AController* controller) override;
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Left"), Category = "Gameplay|Level")
 	int32 MapTimeleft();
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Elapsed"), Category = "Gameplay|Level")
 	int32 MapTimeElapsed();
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Respawn Player"), Category = "Gameplay|Player")
+	void RespawnPlayer(APlayerController* player, float respawnDelay = 0.0f);
 
 	// Event when warmup starts
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Warmup Start"), Category = "Gameplay")
@@ -63,8 +65,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Player Death"), Category = "Gameplay|Player")
 	void OnPlayerDeath(APlayerController* player, APlayerController* killer = NULL);
 	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
-
-
 
 protected:
 
