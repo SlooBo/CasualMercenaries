@@ -293,7 +293,7 @@ void APlayerCharacter::OnStopJump()
 
 }
 
-void APlayerCharacter::OnDeath(APlayerController* killer)
+void APlayerCharacter::OnDeath_Implementation(APlayerController* killer)
 {
 	ServerOnDeath(killer);
 }
@@ -310,6 +310,8 @@ void APlayerCharacter::ServerOnDeath_Implementation(APlayerController* killer)
 
 	if (gameMode != NULL && playerController != NULL)
 		gameMode->OnPlayerDeath(playerController, killer);
+
+	ABaseCharacter::OnDeath_Implementation();
 }
 
 void APlayerCharacter::MoveForward(float _val)

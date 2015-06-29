@@ -201,13 +201,19 @@ void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlaye
 
 	// TODO: broadcast death for every player
 	
-	// disable player pawn instead of destroying it
+	// disable player pawn instead of destroying it, and let player character destroy itself
 	// this fixes some movement related bugs between server and client right after death occured
 	if (player->GetPawn() != NULL)
 	{
 		player->GetPawn()->SetActorHiddenInGame(true);
 		player->GetPawn()->SetActorEnableCollision(false);
+		player->GetPawn()->SetActorTickEnabled(false);
 	}
+
+	// set player to spectator while waiting to respawn
+	player->PlayerState->bIsSpectator = true;
+	player->ChangeState(NAME_Spectating);
+	player->ClientGotoState(NAME_Spectating);
 
 	if (inGameState != InGameState::Warmup && playerRespawnTime != 0)
 		RespawnPlayer(player, playerRespawnTime);
@@ -226,11 +232,6 @@ void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 	FTimerHandle timerHandle;
 	FTimerDelegate respawnDelegate = FTimerDelegate::CreateUObject<ACMGameMode, AController*>(this, &ACMGameMode::RestartPlayer, player);
 	GetWorld()->GetTimerManager().SetTimer(timerHandle, respawnDelegate, respawnDelay, false);
-
-	// set player to spectator while waiting to respawn
-	player->PlayerState->bIsSpectator = true;
-	player->ChangeState(NAME_Spectating);
-	player->ClientGotoState(NAME_Spectating);
 }
 
 void ACMGameMode::RestartPlayer(AController* controller)
