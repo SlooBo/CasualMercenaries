@@ -18,16 +18,21 @@ public:
 
 	void PrimaryFunction(APlayerCharacter* user);
 
-	void SecondaryFunction();
+	void PrimaryFunctionReleased(APlayerCharacter* user);
+
+	void SecondaryFunction(APlayerCharacter* user);
 
 	void BeginPlay();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
-		UParticleSystemComponent* particleSystem;
+	UParticleSystemComponent* particleSystem;
 
 	// Called every frame
 	void Tick(float DeltaSeconds);
-	void Reload() {};
+
+	void Reload();
+
+	void Fire();
 
 
 };

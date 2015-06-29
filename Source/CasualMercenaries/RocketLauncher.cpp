@@ -10,9 +10,10 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 	reloadTime = 1.5;
 	maxAmmo = 6;
-	clips = 5;
-	ammo = 1;
-	ammoInClip = 1;
+	clips = 999;
+	ammo = 4;
+	ammoInClip = 4;
+	firingInterval = 0.50;
 
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -41,14 +42,40 @@ void ARocketLauncher::Tick(float DeltaTime)
 
 void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 {
+	if (ammo > 0)
+	{
+		firing = true;
+	}
+	else
+	{	
+		Reload();
+	}
+}
+
+void ARocketLauncher::PrimaryFunctionReleased(APlayerCharacter* user)
+{
+	firing = false;
+}
+void ARocketLauncher::Reload()
+{
+	reloading = true;
+}
+
+void ARocketLauncher::Fire()
+{
+	if (ammo < 1)
+	{
+		firing = false;
+		return;
+	}
 	ammo--;
 
 	FVector userLoc;
 	FRotator cameraRot;
 
-	user->GetActorEyesViewPoint(userLoc, cameraRot);
+	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
 
-	userLoc = user->GetActorLocation();
+	userLoc = this->GetOwner()->GetActorLocation();
 	MuzzleOffset.X = 100;
 	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
 	
@@ -62,7 +89,7 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 	if (World != NULL)
 	{
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = user;
+		SpawnParams.Owner = this->GetOwner();
 		SpawnParams.Instigator = Instigator;
 		SpawnParams.bNoCollisionFail = true;
 
@@ -76,11 +103,9 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 			projectile->InitVelocity(LaunchDir);
 		}
 	}
-
-	
 }
 
-void ARocketLauncher::SecondaryFunction()
+void ARocketLauncher::SecondaryFunction(APlayerCharacter* user)
 {
 
 }

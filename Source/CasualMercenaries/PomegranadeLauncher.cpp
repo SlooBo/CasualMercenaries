@@ -52,7 +52,7 @@ void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
 	}
 }
 
-void APomeGranadeLauncher::SecondaryFunction()
+void APomeGranadeLauncher::SecondaryFunction(APlayerCharacter* user)
 {
 	
 }
