@@ -35,25 +35,34 @@ public:
 
 	virtual void PrimaryFunctionReleased(APlayerCharacter* user){};
 
-	virtual void SecondaryFunction();
+	virtual void SecondaryFunction(APlayerCharacter* user);
 
-	virtual void SecondaryFunctionReleased(){};
-
+	virtual void SecondaryFunctionReleased(APlayerCharacter* user){};
 
 	virtual void Reload();
+
+	virtual void Fire(){};
+
+	virtual void IncreaseAmmoAmount(int32 Ammo);
 
 	void SetRoot(APlayerCharacter* user);
 	
 protected:
 
+	int32 price;
 
 	int ammo;
 	int clips;
-	int ammoInClip;
+	int ammoInClip; 
 	int maxAmmo;
+	float firingInterval;
 
 	USkeletalMesh* ammoMesh;
 
 	float reloadTime;
+	float passedTimeReloading;
+	bool reloading;
+	bool firing;
+	float passedTimeFiring;
 
 };

@@ -20,9 +20,11 @@ public:
 
 	void PrimaryFunction(APlayerCharacter* user);
 
-	void SecondaryFunction();
+	void SecondaryFunction(APlayerCharacter* user);
 
 	void BeginPlay();
+
+	void Fire();
 
 	// Called every frame
 	void Tick(float DeltaSeconds);

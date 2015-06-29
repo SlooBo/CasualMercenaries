@@ -19,13 +19,24 @@ public:
 
 	void PrimaryFunction(APlayerCharacter* user);
 
-	void SecondaryFunction();
+	void PrimaryFunctionReleased(APlayerCharacter* user);
+
+	void SecondaryFunction(APlayerCharacter* user);
 
 	void BeginPlay();
 
+	void Reload();
+
+
 	// Called every frame
 	void Tick(float DeltaSeconds);
-	void Reload() {};
+
+
+
+
+private:
+
+	void Fire();
 
 	void DrawLine(FVector begin, FVector end);
 
