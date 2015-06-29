@@ -59,7 +59,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	fuckthisshit = FVector();
 
-	
+	state = CHARACTER_STATE::ALIVE;
+	rounds = 0;
 
 }
 
@@ -105,14 +106,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//if (inventory->GetWeapon(currentWeapon) != nullptr)
-	//{
-	//	inventory->GetWeapon(currentWeapon)->SetActorLocation(this->GetActorLocation());
-	//	inventory->GetWeapon(currentWeapon)->SetActorRotation(FRotator(-cameraComp->GetComponentRotation().Pitch, cameraComp->GetComponentRotation().Yaw + 180, cameraComp->GetComponentRotation().Roll));
-	//}
 	WallCheck();
+	CheckStatus();
 
-	//cameraComp->GetComponentRotation()
 }
 
 // Called to bind functionality to input
@@ -139,7 +135,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("TeamChat", IE_Pressed, this, &APlayerCharacter::OpenTeamChat);
 
 	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon1);
-	InputComponent->BindAction("LeftMouseButtonReleased", IE_Released, this, &APlayerCharacter::UseWeapon1Release);
+	InputComponent->BindAction("LeftMouseButton", IE_Released, this, &APlayerCharacter::UseWeapon1Release);
 	InputComponent->BindAction("RightMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon2);
 	InputComponent->BindAction("MouseWheelUp", IE_Pressed, this, &APlayerCharacter::SwitchWeaponUp);
 	InputComponent->BindAction("MouseWheelDown", IE_Pressed, this, &APlayerCharacter::SwitchWeaponDown);
@@ -268,9 +264,19 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(APlayerCharacter, health);
 	DOREPLIFETIME(APlayerCharacter, stamina);
 	DOREPLIFETIME(APlayerCharacter, armor);
-	
+	DOREPLIFETIME(APlayerCharacter, state);
 	
 };
+
+void APlayerCharacter::CheckStatus()
+{
+	if (state == CHARACTER_STATE::STUNNED)
+	{
+		rounds++;
+		if (rounds > 500)
+			state = CHARACTER_STATE::ALIVE;
+	}
+}
 
 void APlayerCharacter::OnStartJump()
 {
@@ -456,13 +462,13 @@ void APlayerCharacter::WallJumpServer_Implementation()
 			//To disable ever increasing falling speed
 			this->CharacterMovement->Velocity = FVector(0, 0, 0);
 
-			FRotator temp = GetActorRotation();
-			FRotator tempControllerRotation = GetActorRotation();
-			FRotator tempControllerYaw(0, tempControllerRotation.Yaw, 0);
-			//Wall jump is adjusted using these 3
-			FVector tempForwardVector = tempControllerYaw.Vector() * 500.0f;
-			FVector tempResult = tempForwardVector.MirrorByVector(wallJumpNormal) * 2.5f;
-			tempResult = tempResult + FVector(0.0f, 0.0f, 800.0f);
+
+			FVector tempVel = CharacterMovement->Velocity;
+			CharacterMovement->Velocity = FVector(tempVel.X, tempVel.Y, 0);
+
+			FVector tempResult = wallJumpNormal * 500.0f;
+
+
 
 			LaunchCharacter(tempResult, false, false);
 			//Hox!

@@ -149,4 +149,7 @@ private:
 
 	void OpenTeamChat();
 	void OpenAllChat();
+
+	void CheckStatus();
+	int rounds;
 };
