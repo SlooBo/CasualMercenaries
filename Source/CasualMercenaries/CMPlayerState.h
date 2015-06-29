@@ -18,6 +18,9 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Reset Player States"), Category = "Gameplay")
+	void ResetStats();
+
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Team Number"), Category = "Gameplay")
 	int32 GetTeam();
 

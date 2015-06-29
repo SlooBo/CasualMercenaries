@@ -96,6 +96,9 @@ void ACMGameMode::StartMatch()
 				(*iter)->GetPawn()->Reset();
 
 			Super::RestartPlayer((*iter));
+			ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
+			if (playerState != NULL)
+				playerState->ResetStats();
 		}
 	}
 

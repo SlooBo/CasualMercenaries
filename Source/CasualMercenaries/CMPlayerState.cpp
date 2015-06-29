@@ -12,6 +12,8 @@ ACMPlayerState::ACMPlayerState(const FObjectInitializer& objectInitializer)
 {
 	huntTarget = NULL;
 	bReplicates = true;
+
+	ResetStats();
 }
 
 void ACMPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -23,6 +25,14 @@ void ACMPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ACMPlayerState, frags);
 	DOREPLIFETIME(ACMPlayerState, deaths);
 };
+
+void ACMPlayerState::ResetStats()
+{
+	frags = 0;
+	deaths = 0;
+	huntTarget = NULL;
+	money = 0;
+}
 
 int32 ACMPlayerState::GetTeam()
 {
