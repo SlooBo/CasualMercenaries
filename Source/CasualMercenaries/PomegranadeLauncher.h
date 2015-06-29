@@ -24,7 +24,7 @@ public:
 
 	void BeginPlay();
 
-	void Fire(){};
+	void Fire();
 
 	// Called every frame
 	void Tick(float DeltaSeconds);

@@ -14,20 +14,33 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 
-
 	weaponMesh->SetRelativeScale3D(FVector(0.01, 0.05, 0.5));
+
+	reloadTime = 2;
+	maxAmmo = 6;
+	clips = 999;
+	ammo = 6;
+	ammoInClip = 6;
+	firingInterval = 0.40;
+
 
 	bReplicates = true;
 }
 
 void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
 {
+	this->SetOwner(user);
+	if (ammo > 0)
+		firing = true;
+}
+void APomeGranadeLauncher::Fire()
+{
 	FVector userLoc;
 	FRotator cameraRot;
 
-	user->GetActorEyesViewPoint(userLoc, cameraRot);
+	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
 
-	userLoc = user->GetActorLocation();
+	userLoc = this->GetOwner()->GetActorLocation();
 
 	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
 	MuzzleOffset.X = 100;
@@ -37,7 +50,7 @@ void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
 	if (World != NULL)
 	{
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = user;
+		SpawnParams.Owner = this->GetOwner();
 		SpawnParams.Instigator = Instigator;
 		//SpawnParams.bNoCollisionFail = true;
 
@@ -54,7 +67,7 @@ void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
 
 void APomeGranadeLauncher::SecondaryFunction(APlayerCharacter* user)
 {
-	
+	firing = false;
 }
 
 void APomeGranadeLauncher::BeginPlay()

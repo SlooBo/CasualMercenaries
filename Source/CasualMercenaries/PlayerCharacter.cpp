@@ -98,7 +98,7 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 	pyssy->SetRoot(this);
 	AddWeapon(pyssy);
 
-	inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
+	//inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
 	inventoryInitialized = true;
 }
 
@@ -151,8 +151,8 @@ void APlayerCharacter::ReloadWeapon()
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 {
-	//inventory->AddWeaponToInventory(_weapon);
-	ServerAddWeapon(_weapon);
+	inventory->AddWeaponToInventory(_weapon);
+	//ServerAddWeapon(_weapon);
 }
 
 bool APlayerCharacter::ServerAddWeapon_Validate(AWeapon* _weapon)

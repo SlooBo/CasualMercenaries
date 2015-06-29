@@ -84,7 +84,7 @@ public:
 	/************************************************************************/
 	void AddWeapon(AWeapon* _weapon);
 
-	UFUNCTION(Reliable, NetMulticast, WithValidation)
+	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerAddWeapon(AWeapon* _weapon);
 
 	void ReloadWeapon();

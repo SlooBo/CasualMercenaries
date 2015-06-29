@@ -42,6 +42,7 @@ void ARocketLauncher::Tick(float DeltaTime)
 
 void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 {
+	this->SetOwner(user);
 	if (ammo > 0)
 	{
 		firing = true;

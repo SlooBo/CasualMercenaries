@@ -86,9 +86,11 @@ void AMashineGun::Fire()
 
 void AMashineGun::PrimaryFunction(APlayerCharacter* user)
 {
+	this->SetOwner(user);
 	if (ammo > 0)
 	{
 		firing = true;
+		
 	}
 }
 
