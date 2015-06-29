@@ -87,9 +87,11 @@ public:
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerAddWeapon(AWeapon* _weapon);
 
+	void ReloadWeapon();
 	void UseWeapon1();
 	void UseWeapon1Release();
 	void UseWeapon2();
+	void UseWeapon2Release();
 	void SwitchWeaponUp();
 	void SwitchWeaponDown();
 
@@ -97,10 +99,16 @@ public:
 	void ServerUseWeapon1();
 
 	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerUseWeapon2();
+
+	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerSwitchWeapon(float cw, float cp);
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerUseWeapon1Release();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerUseWeapon2Release();
 
 
 	/************************************************************************/
