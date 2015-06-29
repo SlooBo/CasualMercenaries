@@ -460,9 +460,6 @@ void APlayerCharacter::WallJumpServer_Implementation()
 		if (this->CharacterMovement->IsFalling())
 		{
 			//To disable ever increasing falling speed
-			this->CharacterMovement->Velocity = FVector(0, 0, 0);
-
-
 			FVector tempVel = CharacterMovement->Velocity;
 			CharacterMovement->Velocity = FVector(tempVel.X, tempVel.Y, 0);
 
