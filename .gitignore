@@ -85,6 +85,9 @@ Temporary Items
 # Binary Files
 Binaries/*
 
+# Binary Files
+Build/*
+
 # Don't ignore icon files in Build
 !Build/*.ico
 !Build/Windows/*.ico
