@@ -24,12 +24,13 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	firingInterval = .25;
 
 	passedTimeReloading = 0;
+
+	id = 0;
 }
 
 void AMashineGun::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AMashineGun::Tick(float DeltaTime)
@@ -100,6 +101,7 @@ void AMashineGun::PrimaryFunctionReleased(APlayerCharacter* user)
 	firing = false;
 
 }
+
 void AMashineGun::DrawLine(FVector begin, FVector end)
 {	
 	ServerDrawLine(begin, end);

@@ -8,6 +8,18 @@
 
 class APlayerCharacter;
 
+UENUM(BlueprintType)
+enum class WEAPONID : uint8
+{
+	A,
+	B,
+	C,
+	D,
+	E,
+	F,
+	G
+};
+
 UCLASS()
 class CASUALMERCENARIES_API AWeapon : public AActor
 {
@@ -47,7 +59,11 @@ public:
 
 	void SetRoot(APlayerCharacter* user);
 	
+	uint8 GetID(){ return id; };
+
 protected:
+
+	uint8 id;
 
 	int32 price;
 

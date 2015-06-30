@@ -9,6 +9,7 @@
 #include "MashineGun.h"
 #include "RocketLauncher.h"
 #include "PomegranadeLauncher.h"
+#include "MUDbuster.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
@@ -82,7 +83,7 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 
 	inventory->ClearInventory();
 
-	ARocketLauncher* pyssy3 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AMUDbuster* pyssy3 = World->SpawnActor<AMUDbuster>(AMUDbuster::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	pyssy3->SetRoot(this);
 	AddWeapon(pyssy3);
 

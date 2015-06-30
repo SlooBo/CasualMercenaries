@@ -27,6 +27,8 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 	particleSystem->Template = ParticleObj.Object;
 
 	particleSystem->AttachTo(weaponMesh, "ExhaustSocket");
+
+	id = 1;
 }
 
 void ARocketLauncher::BeginPlay()

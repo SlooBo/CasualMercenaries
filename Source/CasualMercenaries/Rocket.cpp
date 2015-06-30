@@ -36,6 +36,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 
 	ProjectileMovement->InitialSpeed = 1200.0f;
+	ProjectileMovement->ProjectileGravityScale = 0.0;
 
 	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
 

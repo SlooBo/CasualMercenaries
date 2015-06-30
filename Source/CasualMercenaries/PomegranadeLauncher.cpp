@@ -25,6 +25,8 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 
 
 	bReplicates = true;
+
+	id = 2;
 }
 
 void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
@@ -78,5 +80,5 @@ void APomeGranadeLauncher::BeginPlay()
 // Called every frame
 void APomeGranadeLauncher::Tick(float DeltaSeconds)
 {
-
+	Super::Tick(DeltaSeconds);
 }
