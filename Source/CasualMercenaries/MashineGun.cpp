@@ -3,6 +3,7 @@
 #include "CasualMercenaries.h"
 #include "MashineGun.h"
 #include "PlayerCharacter.h"//this should not be working...
+#include "Projectile.h"
 
 AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
@@ -75,11 +76,17 @@ void AMashineGun::Fire()
 
 	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	//DrawDebugLine(GetWorld(), startTrace, endTrace, FColor(260.0f, 0.0f, 0.f, 1.f), false, 1.f);
 
 	APlayerCharacter* player = Cast<APlayerCharacter>(hit.GetActor());
 	if (player != nullptr)
 		player->TakeDamage(10, Cast<APlayerController>(Cast<APlayerCharacter>(this->GetOwner())->GetController()));
+	else
+	{ 
+		AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
+		if (projectile != nullptr)
+			projectile->TakeDamage(20);// , FDamageEvent::FDamageEvent(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), this);
+	}
+
 
 	DrawLine(startTrace, endTrace);
 	ammo--;

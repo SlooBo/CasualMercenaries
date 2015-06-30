@@ -29,13 +29,19 @@ public:
 	void Explode();
 
 	UFUNCTION()
-		void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+	void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 
+	void TakeDamage(float damage){ health -= damage; };
 
 private:
 
 	float health;
+	float size;
 
 	UParticleSystem* part;
+
+	bool inflating;
+
+
 	
 };

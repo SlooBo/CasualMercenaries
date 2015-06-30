@@ -54,9 +54,7 @@ void APomeGranadeLauncher::Fire()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this->GetOwner();
 		SpawnParams.Instigator = Instigator;
-		//SpawnParams.bNoCollisionFail = true;
 
-		// spawn the projectile at the muzzle
 		AGranade* const projectile = World->SpawnActor<AGranade>(AGranade::StaticClass(), MuzzleLocation, MuzzleRotation, SpawnParams);
 
 		if (projectile)
@@ -66,10 +64,13 @@ void APomeGranadeLauncher::Fire()
 		}
 	}
 }
-
-void APomeGranadeLauncher::SecondaryFunction(APlayerCharacter* user)
+void APomeGranadeLauncher::PrimaryFunctionReleased(APlayerCharacter* user)
 {
 	firing = false;
+}
+void APomeGranadeLauncher::SecondaryFunction(APlayerCharacter* user)
+{
+
 }
 
 void APomeGranadeLauncher::BeginPlay()

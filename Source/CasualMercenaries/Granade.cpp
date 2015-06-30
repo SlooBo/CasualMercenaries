@@ -25,7 +25,7 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 
 
 	ProjectileMovement->ProjectileGravityScale = 1.0;
-	ProjectileMovement->InitialSpeed = 1000.f;
+	ProjectileMovement->InitialSpeed = 2000.f;
 
 
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
@@ -63,7 +63,7 @@ void AGranade::Explode_Implementation()
 {
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
 
-	float ExplosionRadius = 200.0f;
+	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;
 
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
@@ -77,6 +77,17 @@ void AGranade::Explode_Implementation()
 			aItr->TakeDamage(ExplosionDamage, Cast<APlayerController>(tempChar->GetController()));
 		}
 	}
+	for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
+	{
+		float distance = GetDistanceTo(*aItr);
+
+		if (distance <= ExplosionRadius)
+		{
+			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
+			AProjectile* tempChar = Cast<AProjectile>(this->GetOwner());
+			aItr->TakeDamage(ExplosionDamage);
+		}
+	}
 	Destroy();
 }
 
@@ -85,7 +96,7 @@ void AGranade::BeginPlay()
 	Super::BeginPlay();
 }
 
-float AGranade::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
-{
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-}
+//float AGranade::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+//{
+//	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+//}

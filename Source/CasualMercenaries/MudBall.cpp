@@ -11,6 +11,10 @@ UParticleSystemComponent* particleSystem;
 
 AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	health = 100;
+	inflating = false;
+	size = 0.2;
+
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
 	//Mesh->AttachParent = CollisionComp;
 
@@ -20,12 +24,14 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Projectile/MAT_Mudbuster_projectile.MAT_Mudbuster_projectile'")); // Material missing!!!!!
 	Mesh->SetMaterial(0, MateriaObj.Object);
 
-	Mesh->SetRelativeScale3D(FVector(.2, .2, .2));
+
+
+	Mesh->SetRelativeScale3D(FVector(size, size, size));
 	//Mesh->SetSimulatePhysics(true);
 
 
 	ProjectileMovement->ProjectileGravityScale = 0.1;
-	ProjectileMovement->InitialSpeed = 1000.f;
+	ProjectileMovement->InitialSpeed = 1600.f;
 
 
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
@@ -38,12 +44,13 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	bReplicateMovement = true;
 
 
-	health = 100;
 
 
-	CollisionComp->InitSphereRadius(30.0f);
+	CollisionComp->InitSphereRadius(15.0f);
 	OnActorHit.AddDynamic(this, &AMudBall::OnMyActorHit);
 
+
+	//const ConstructorHelpers::FObjectFinder< UAnimBlueprint > anim (TEXT("AnimSequence'/Game/Game/Weapons/MudBuster/Mudball/ANIM_Mudball_Enlarge.ANIM_Mudball_Enlarge'"));
 }
 
 
@@ -55,7 +62,8 @@ AMudBall::~AMudBall()
 
 void AMudBall::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("Hitsaaaaataatnna")));
+	ProjectileMovement->SetActive(false, false);
+	inflating = true;
 }
 
 
@@ -64,6 +72,20 @@ void AMudBall::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	if (health <= 0)
 		Explode();
+	if (inflating)
+	{		
+		
+		if (size > 1)
+		{	
+			inflating = false;
+			return;
+		}
+		size += 0.1;
+		Mesh->SetRelativeScale3D(FVector(size, size, size));
+		
+	}
+
+
 }
 void AMudBall::BeginPlay()
 {

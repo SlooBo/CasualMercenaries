@@ -14,6 +14,7 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
+	//inventory = NewObject<UInventory>();
 	inventory = CreateDefaultSubobject<UInventory>("inventory");
 	inventoryInitialized = false;
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
