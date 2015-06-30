@@ -117,8 +117,8 @@ public:
 
 	UCameraComponent* GetCamera(){ return cameraComp; };
 
-
-
+	UFUNCTION()
+	UInventory *GetInventory(){ return inventory; }
 private:
 
 

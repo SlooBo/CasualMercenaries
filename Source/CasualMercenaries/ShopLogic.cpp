@@ -2,8 +2,8 @@
 
 #include "CasualMercenaries.h"
 #include "ShopLogic.h"
-
-
+#include "Inventory.h"
+#include "PlayerCharacter.h"
 
 
 UShopLogic::UShopLogic()
@@ -14,14 +14,17 @@ UShopLogic::~UShopLogic()
 {
 
 }
-void UShopLogic::SetUp(UUserWidget *shopWidget)
+void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 {
+	this->world = world;
 	shopMenu = shopWidget;
 	UWidgetTree *widgetTree = shopWidget->WidgetTree;
 	TArray<UWidget*> children;
 	widgetTree->GetAllWidgets(children);
-
-
+	
+	APlayerController *playercontroller = world->GetFirstPlayerController();
+	APlayerCharacter *playercharacter = Cast<APlayerCharacter>(playercontroller->GetPawn());
+	playerInventory = playercharacter->GetInventory();
 	int childcount = children.Num();
 	for (int i = 0; i < childcount; i++)
 	{
@@ -65,6 +68,7 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	if (slotIndex != currentWeaponIndex)
 		ChangeWeaponSlotColor(currentWeaponIndex, FLinearColor::White);
 	currentWeaponIndex = slotIndex;
+
 }
 void UShopLogic::OnClickedShopSlot(uint32 slotIndex)
 {

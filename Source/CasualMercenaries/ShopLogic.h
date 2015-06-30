@@ -15,7 +15,7 @@ class CASUALMERCENARIES_API UShopLogic : public UUILogicBase
 public:
 	UShopLogic();
 	~UShopLogic();
-	void SetUp(UUserWidget *shopWidget);
+	void SetUp(UUserWidget *shopWidget, UWorld *world);
 	UFUNCTION()
 	void OnClickedWeaponSlot(uint32 slotIndex);
 	UFUNCTION()
@@ -23,7 +23,6 @@ public:
 private:
 	UPROPERTY()
 	UUserWidget *shopMenu;
-	
 	UPROPERTY()
 	TArray<UButton*> weaponSlotButtons;
 	UPROPERTY()
@@ -44,6 +43,10 @@ private:
 	TArray<class UShopSlot*> shopSlots;
 	UPROPERTY()
 	TArray<class UWeaponSlot*> weaponSlots;
+	UPROPERTY()
+	class UInventory *playerInventory;
+	UPROPERTY()
+	UWorld *world;
 };
 UCLASS()
 class UWeaponSlot: public UObject

@@ -74,7 +74,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 		UUserWidget* tempWidget = changeUIElement(shopClass);
 		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		UShopLogic* shopLogic = NewObject<UShopLogic>();
-		shopLogic->SetUp(tempWidget);
+		shopLogic->SetUp(tempWidget,GetWorld());
 		break;
 	}
 	case MenuType::NO_UI:
