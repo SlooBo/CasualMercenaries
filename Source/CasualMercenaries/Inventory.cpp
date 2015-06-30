@@ -6,7 +6,6 @@
 
 UInventory::UInventory()
 {
-
 }
 
 UInventory::~UInventory()
@@ -15,18 +14,21 @@ UInventory::~UInventory()
 
 void UInventory::ClearInventory()
 {
+	for (int i = 0; i < weapons.Num(); i++)
+	{ 
+		if (weapons[i] != nullptr && weapons.IsValidIndex(i))
+		weapons[i]->Destroy();
+	}  
 	weapons.Reset();
 }
 
 void UInventory::AddWeaponToInventory(AWeapon* weapon)
 {
-	//weapon->SetFlags(RF_RootSet);
 	weapons.Add(weapon);
 }
 
 void UInventory::RemoveWeaponFromInventory(int number)
 {
-
 	weapons.RemoveAt(number, 1);
 }
 
@@ -46,4 +48,9 @@ AWeapon* UInventory::GetWeapon(int number)
 	if (weapons.Num() <= 0)
 		return nullptr;
 	return weapons[number];
+}
+void UInventory::ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon)
+{
+	if (weapons.Num() > 0 && weapons.IsValidIndex(slot))
+	weapons[slot] = newWeapon;
 }

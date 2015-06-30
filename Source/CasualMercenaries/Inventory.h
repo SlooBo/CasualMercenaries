@@ -23,12 +23,14 @@ public:
 
 	void AddWeaponToInventory(AWeapon* weapon);
 
-	//count begins from 0
+	/*
+	UNSAFE! Don't remove weapon if you want to change it! Use Changeweapon.
+	*/
 	void RemoveWeaponFromInventory(int number);
 
 	void RemoveWeaponFromInventory(AWeapon* weapon);
 
-
+	void ChangeWeaponAtSlot(uint16 slot,AWeapon *newWeapon);
 
 
 	//count begins from 0
@@ -37,8 +39,7 @@ public:
 
 
 private:
-
-
+	uint16 maxInventorySize;
 	UPROPERTY()
 	TArray<AWeapon*> weapons;
 	

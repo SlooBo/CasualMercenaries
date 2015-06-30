@@ -249,6 +249,7 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->ClientGotoState(NAME_Playing);
 
 	Super::RestartPlayer(controller);
+	Cast<APlayerCharacter>(player->GetPawn())->ServerInitInventory();
 }
 
 void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)

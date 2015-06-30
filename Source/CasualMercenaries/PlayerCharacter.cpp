@@ -14,7 +14,7 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
-	inventory = CreateDefaultSubobject<UInventory>("inventory");
+	inventory = NewObject<UInventory>();
 	inventoryInitialized = false;
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -78,7 +78,7 @@ bool APlayerCharacter::ServerInitInventory_Validate()
 void APlayerCharacter::ServerInitInventory_Implementation()
 {
 	UWorld* const World = GetWorld();
-
+	inventory = NewObject<UInventory>();
 
 	inventory->ClearInventory();
 
@@ -243,13 +243,6 @@ void APlayerCharacter::SwitchWeaponUp()
 	int tempLastWeapon = currentWeapon;
 	currentWeapon++;
 
-	if (currentWeapon > 3)
-		currentWeapon = 0;
-	if (inventory->GetWeapon(tempLastWeapon) != nullptr)
-		inventory->GetWeapon(tempLastWeapon)->SetActorHiddenInGame(true);
-	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
-
 	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
 }
 
@@ -257,16 +250,6 @@ void APlayerCharacter::SwitchWeaponDown()
 {
 	int tempLastWeapon = currentWeapon;
 	currentWeapon--;
-	if (currentWeapon < 0)
-		currentWeapon = 3;
-
-	if (inventory != nullptr)
-	{
-		if (inventory->GetWeapon(tempLastWeapon) != nullptr)
-			inventory->GetWeapon(tempLastWeapon)->SetActorHiddenInGame(true);
-		if (inventory->GetWeapon(currentWeapon) != nullptr)
-			inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
-	}
 
 	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
 }
