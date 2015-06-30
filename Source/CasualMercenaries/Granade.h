@@ -19,7 +19,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Particles)
 		UParticleSystemComponent* particleSystem;
 
-	float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	//float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	AGranade(const FObjectInitializer& ObjectInitializer);
 

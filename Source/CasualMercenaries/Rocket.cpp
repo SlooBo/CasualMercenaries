@@ -49,7 +49,7 @@ void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Normal
 
 void ARocket::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Explode();
+	//Explode();
 }
 
 ARocket::~ARocket()
@@ -71,7 +71,7 @@ void ARocket::Explode()
 {
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
 
-	float ExplosionRadius = 200.0f;
+	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;
 	//UGameplayStatics::ApplyRadialDamage(GetWorld(), 25, this->GetActorLocation(), 200, UDamageType::DamageFalloff(), this->GetOwner(), this->GetOwner(), );
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
@@ -80,10 +80,10 @@ void ARocket::Explode()
 
 		if (distance <= ExplosionRadius)
 		{
-			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
-			//APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			//aItr->TakeDamage(ExplosionDamage, Cast<APlayerController>(tempChar->GetController()));
+			UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
+			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
+			aItr->TakeDamage(ExplosionDamage, Cast<APlayerController>(tempChar->GetController()));
 		}
 	}
-	//Destroy();
+	Destroy();
 }

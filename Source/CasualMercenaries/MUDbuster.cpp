@@ -17,7 +17,7 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 
 
-	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.025));
+	weaponMesh->SetRelativeScale3D(FVector(0.5, 0.5, 0.25));
 
 	bReplicates = true;
 
@@ -31,6 +31,8 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	passedTimeReloading = 0;
 
 	id = WEAPONID::MUDBUSTER_GUN;
+
+	//weaponMesh->AnimScriptInstance
 }
 
 void AMUDbuster::PrimaryFunction(APlayerCharacter* user)
@@ -76,7 +78,7 @@ void AMUDbuster::Fire()
 	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
 
 	userLoc = this->GetOwner()->GetActorLocation();
-	MuzzleOffset.X = 500;
+	MuzzleOffset.X = 100;
 	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
 
 	FRotator MuzzleRotation = cameraRot;

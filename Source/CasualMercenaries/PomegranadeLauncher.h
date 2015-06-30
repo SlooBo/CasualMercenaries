@@ -19,6 +19,7 @@ public:
 	APomeGranadeLauncher(const FObjectInitializer& FOI);
 
 	void PrimaryFunction(APlayerCharacter* user);
+	void PrimaryFunctionReleased(APlayerCharacter* user);
 
 	void SecondaryFunction(APlayerCharacter* user);
 

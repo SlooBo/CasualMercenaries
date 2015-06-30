@@ -33,7 +33,6 @@ public:
 	void InitVelocity(const FVector& ShootDirection);
 
 
-
-	
+	virtual void TakeDamage(float damage){};
 	
 };
