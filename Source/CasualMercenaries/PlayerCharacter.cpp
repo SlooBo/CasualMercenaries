@@ -242,7 +242,8 @@ void APlayerCharacter::SwitchWeaponUp()
 {	
 	int tempLastWeapon = currentWeapon;
 	currentWeapon++;
-
+	if (currentWeapon > 3)
+		currentWeapon = 0;
 	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
 }
 
@@ -250,7 +251,8 @@ void APlayerCharacter::SwitchWeaponDown()
 {
 	int tempLastWeapon = currentWeapon;
 	currentWeapon--;
-
+	if (currentWeapon < 0)
+		currentWeapon = 3;
 	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
 }
 

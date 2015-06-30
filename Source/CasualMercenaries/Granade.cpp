@@ -1,30 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "CasualMercenaries.h"
-#include "Granade.h"
-#include "PlayerCharacter.h"
-
-
-AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
-{
-	lifeTime = 3;
-
-
-	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
-
-	this->RootComponent = Mesh;
-
-	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/RocketLauncher/Rocket.Rocket'"));
-	Mesh->SetStaticMesh(MeshObj.Object);
-
-	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
-	Mesh->SetMaterial(0, MateriaObj.Object);
-
-	Mesh->SetRelativeScale3D(FVector(.1, 1, 1));
-	Mesh->SetSimulatePhysics(true);
-
-
-	ProjectileMovement->ProjectileGravityScale = 1.0;
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CasualMercenaries.h"
