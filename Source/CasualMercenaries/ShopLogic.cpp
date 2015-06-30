@@ -6,7 +6,7 @@
 #include "PlayerCharacter.h"
 
 
-UShopLogic::UShopLogic()
+UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
 
 }
@@ -68,7 +68,6 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	if (slotIndex != currentWeaponIndex)
 		ChangeWeaponSlotColor(currentWeaponIndex, FLinearColor::White);
 	currentWeaponIndex = slotIndex;
-
 }
 void UShopLogic::OnClickedShopSlot(uint32 slotIndex)
 {

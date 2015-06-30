@@ -13,7 +13,7 @@ class CASUALMERCENARIES_API UShopLogic : public UUILogicBase
 {
 	GENERATED_BODY()
 public:
-	UShopLogic();
+	UShopLogic(const FObjectInitializer& PCIP);
 	~UShopLogic();
 	void SetUp(UUserWidget *shopWidget, UWorld *world);
 	UFUNCTION()

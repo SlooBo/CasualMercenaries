@@ -11,11 +11,11 @@ class APlayerCharacter;
 UENUM(BlueprintType)
 enum class WEAPONID : uint8
 {
-	A,
-	B,
-	C,
-	D,
-	E,
+	ROCKET_LAUNCHER,
+	WATER_GUN,
+	GRENADE_LAUNCHER,
+	MASHINE_GUN,
+	MUDBUSTER_GUN,
 	F,
 	G
 };
@@ -59,11 +59,11 @@ public:
 
 	void SetRoot(APlayerCharacter* user);
 	
-	uint8 GetID(){ return id; };
+	WEAPONID GetID(){ return id; };
 
 protected:
 
-	uint8 id;
+	WEAPONID id;
 
 	int32 price;
 

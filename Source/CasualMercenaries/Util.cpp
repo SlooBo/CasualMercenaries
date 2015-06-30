@@ -5,7 +5,7 @@
 #include "PlayerCharacter.h"
 APlayerCharacter* Util::GetLocalPlayer(UWorld* world)
 {
-	return Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(world,0));
+	return Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn());
 }
 
 APlayerCharacter* Util::GetPlayerCharacter(APlayerController* player)

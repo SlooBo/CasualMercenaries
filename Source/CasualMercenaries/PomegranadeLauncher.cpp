@@ -26,7 +26,7 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 
 	bReplicates = true;
 
-	id = 2;
+	id = WEAPONID::GRENADE_LAUNCHER;
 }
 
 void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)

@@ -25,7 +25,7 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 	passedTimeReloading = 0;
 
-	id = 0;
+	id = WEAPONID::MASHINE_GUN;
 }
 
 void AMashineGun::BeginPlay()
