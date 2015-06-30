@@ -39,7 +39,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	ProjectileMovement->ProjectileGravityScale = 0.0;
 
 	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
-
+	
 }
 
 void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
@@ -81,9 +81,9 @@ void ARocket::Explode()
 		if (distance <= ExplosionRadius)
 		{
 			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
-			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			aItr->TakeDamage(ExplosionDamage, Cast<APlayerController>(tempChar->GetController()));
+			//APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
+			//aItr->TakeDamage(ExplosionDamage, Cast<APlayerController>(tempChar->GetController()));
 		}
 	}
-	Destroy();
+	//Destroy();
 }

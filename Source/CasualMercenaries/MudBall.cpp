@@ -12,8 +12,7 @@ UParticleSystemComponent* particleSystem;
 AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
-
-	this->RootComponent = Mesh;
+	//Mesh->AttachParent = CollisionComp;
 
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/MudBuster/Projectile/MESH_Budbuster_projectile.MESH_Budbuster_projectile'")); // MESH missing!!!!!
 	Mesh->SetStaticMesh(MeshObj.Object);
@@ -22,7 +21,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	Mesh->SetMaterial(0, MateriaObj.Object);
 
 	Mesh->SetRelativeScale3D(FVector(.2, .2, .2));
-	Mesh->SetSimulatePhysics(true);
+	//Mesh->SetSimulatePhysics(true);
 
 
 	ProjectileMovement->ProjectileGravityScale = 0.1;
@@ -43,8 +42,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 
 	CollisionComp->InitSphereRadius(30.0f);
-	CollisionComp->OnComponentHit.AddDynamic(this, &AMudBall::OnHit);
-
+	OnActorHit.AddDynamic(this, &AMudBall::OnMyActorHit);
 
 }
 
@@ -55,7 +53,7 @@ AMudBall::~AMudBall()
 
 }
 
-void AMudBall::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AMudBall::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("Hitsaaaaataatnna")));
 }

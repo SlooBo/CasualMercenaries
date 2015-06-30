@@ -4,7 +4,7 @@
 #include "ShopLogic.h"
 #include "Inventory.h"
 #include "PlayerCharacter.h"
-
+#include "Weapon.h"
 
 UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
@@ -68,14 +68,45 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	if (slotIndex != currentWeaponIndex)
 		ChangeWeaponSlotColor(currentWeaponIndex, FLinearColor::White);
 	currentWeaponIndex = slotIndex;
+	AWeapon *weapon = playerInventory->GetWeapon(slotIndex);
+	if (weapon != nullptr)
+	{
+		switch (weapon->GetID())
+		{
+		case WEAPONID::ROCKET_LAUNCHER:
+		{
+			ChangeCurrentShopSlot((uint32)WEAPONID::ROCKET_LAUNCHER);
+			break;
+		}
+		case WEAPONID::WATER_GUN:
+		{
+			ChangeCurrentShopSlot((uint32)WEAPONID::WATER_GUN);
+			break;
+		}
+		case WEAPONID::GRENADE_LAUNCHER:
+		{
+			ChangeCurrentShopSlot((uint32)WEAPONID::GRENADE_LAUNCHER);
+			break;
+		}
+		
+		case WEAPONID::MASHINE_GUN:
+		{
+			ChangeCurrentShopSlot((uint32)WEAPONID::MASHINE_GUN);
+			break;
+		}
+		case WEAPONID::MUDBUSTER_GUN:
+		{
+			ChangeCurrentShopSlot((uint32)WEAPONID::MUDBUSTER_GUN);
+			break;
+		}
+	
+		}
+		
+	}
 }
 void UShopLogic::OnClickedShopSlot(uint32 slotIndex)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Clicked shopbutton on index: " + FString::FromInt(slotIndex));
-	ChangeShopSlotColor(slotIndex, FLinearColor::Yellow);
-	if (slotIndex != currentShopIndex)
-	ChangeShopSlotColor(currentShopIndex, FLinearColor::White);
-	currentShopIndex = slotIndex;
+	ChangeCurrentShopSlot(slotIndex);
 }
 UButton* UShopLogic::getShopButton(uint32 index)
 {
@@ -122,4 +153,12 @@ void UShopLogic::ChangeWeaponSlotColor(uint32 index, FLinearColor color)
 	{
 		tempButton->SetBackgroundColor(color);
 	}
+}
+void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Clicked shopbutton on index: " + FString::FromInt(slotIndex));
+	ChangeShopSlotColor(slotIndex, FLinearColor::Yellow);
+	if (slotIndex != currentShopIndex)
+		ChangeShopSlotColor(currentShopIndex, FLinearColor::White);
+	currentShopIndex = slotIndex;
 }

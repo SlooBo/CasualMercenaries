@@ -75,7 +75,6 @@ bool APlayerCharacter::ServerInitInventory_Validate()
 {
 	return true;
 }
-
 void APlayerCharacter::ServerInitInventory_Implementation()
 {
 	UWorld* const World = GetWorld();
@@ -91,7 +90,7 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 	pyssy4->SetRoot(this);
 	AddWeapon(pyssy4);
 
-	AUberWeihmacher* pyssy2 = World->SpawnActor<AUberWeihmacher>(AUberWeihmacher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	ARocketLauncher* pyssy2 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	pyssy2->SetRoot(this);
 	AddWeapon(pyssy2);
 

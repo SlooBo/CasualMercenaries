@@ -47,6 +47,8 @@ private:
 	class UInventory *playerInventory;
 	UPROPERTY()
 	UWorld *world;
+	UFUNCTION()
+	void ChangeCurrentShopSlot(uint32 slotIndex);
 };
 UCLASS()
 class UWeaponSlot: public UObject

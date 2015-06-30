@@ -24,6 +24,8 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	CollisionComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	CollisionComp->SetNotifyRigidBodyCollision(true);
 }
 
 // Called when the game starts or when spawned
