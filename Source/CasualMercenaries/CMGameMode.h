@@ -98,6 +98,6 @@ protected:
 	int32 playerRespawnTime;
 
 	// Player respawn time during warmup
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Respawn Time", ClampMin = "-1"), Category = "Gameplay|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Warmup Respawn Time", ClampMin = "-1"), Category = "Gameplay|Level")
 	int32 warmupRespawnTime;
 };

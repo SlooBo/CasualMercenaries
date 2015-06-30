@@ -92,7 +92,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		huntElapsed = 0;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(GetHuntTotalLength()) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
+	GEngine->AddOnScreenDebugMessage(6765, 3.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(GetHuntTotalLength()) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
 
 	if (huntElapsed < GetNextRoundStartTime() && huntRoundFreezeTime > 0 && huntState != HuntState::RoundStarting)
 	{
@@ -100,7 +100,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		huntState = HuntState::RoundStarting;
 		OnRoundStart();
 		OnRoundFreezeStart();
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundFreezeTime) + "s)");
+		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundFreezeTime) + "s)");
 	}
 	else if (huntElapsed >= GetNextRoundStartTime() && huntElapsed < GetNextIntermissionStartTime() && huntState != HuntState::Round)
 	{
@@ -112,7 +112,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		else
 			OnRoundStart();
 
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundTime) + "s)");
+		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundTime) + "s)");
 	}
 	else if (huntElapsed >= GetNextIntermissionStartTime() && huntElapsed < GetNextIntermissionEndTime() && huntState != HuntState::Intermission)
 	{
@@ -120,7 +120,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		huntState = HuntState::Intermission;	
 		OnIntermissionStart();
 
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntIntermissionTime) + "s)");
+		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntIntermissionTime) + "s)");
 	}
 }
 
@@ -223,7 +223,12 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 
 void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 {
-
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	{
+		ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
+		if (playerState != NULL)
+			playerState->AddMoney(huntRoundReward);
+	}
 }
 
 void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer)
