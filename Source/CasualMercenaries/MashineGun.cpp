@@ -23,10 +23,14 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	ammo = 30;
 	ammoInClip = 30;
 	firingInterval = .25;
+	price = 600;
 
 	passedTimeReloading = 0;
 
 	id = WEAPONID::MASHINE_GUN;
+
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
+	part = ParticleObj2.Object;
 }
 
 void AMashineGun::BeginPlay()
@@ -46,6 +50,9 @@ void AMashineGun::Fire()
 		firing = false;
 		return;
 	}
+
+
+
 	FVector userLoc;
 	FVector userLoc2;
 	FRotator cameraRot;
@@ -76,6 +83,7 @@ void AMashineGun::Fire()
 
 	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
+	ServerEffect(part, startTrace);
 
 	APlayerCharacter* player = Cast<APlayerCharacter>(hit.GetActor());
 	if (player != nullptr)
@@ -135,4 +143,14 @@ void AMashineGun::Reload()
 	{
 		reloading = true;
 	}
+}
+
+bool AMashineGun::ServerEffect_Validate(UParticleSystem* particle, FVector location)
+{
+	return true;
+}
+
+void AMashineGun::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
+{
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
 }

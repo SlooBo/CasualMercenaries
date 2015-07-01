@@ -27,6 +27,7 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	ammo = 10;
 	ammoInClip = 10;
 	firingInterval = .75;
+	price = 1200;
 
 	passedTimeReloading = 0;
 

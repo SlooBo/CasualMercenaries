@@ -10,6 +10,7 @@
 #include "RocketLauncher.h"
 #include "PomegranadeLauncher.h"
 #include "MUDbuster.h"
+#include "WaspNestCudgel.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
@@ -90,7 +91,7 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 	pyssy4->SetRoot(this);
 	AddWeapon(pyssy4);
 
-	ARocketLauncher* pyssy2 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AWaspNestCudgel* pyssy2 = World->SpawnActor<AWaspNestCudgel>(AWaspNestCudgel::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	pyssy2->SetRoot(this);
 	AddWeapon(pyssy2);
 

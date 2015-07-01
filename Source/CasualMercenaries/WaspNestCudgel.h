@@ -5,9 +5,6 @@
 #include "Weapon.h"
 #include "WaspNestCudgel.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class CASUALMERCENARIES_API AWaspNestCudgel : public AWeapon
 {
