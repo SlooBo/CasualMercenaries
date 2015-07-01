@@ -10,6 +10,7 @@
 #include "RocketLauncher.h"
 #include "PomegranadeLauncher.h"
 #include "MUDbuster.h"
+#include "WaspNestCudgel.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
@@ -90,7 +91,7 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 	pyssy4->SetRoot(this);
 	AddWeapon(pyssy4);
 
-	ARocketLauncher* pyssy2 = World->SpawnActor<ARocketLauncher>(ARocketLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
+	AWaspNestCudgel* pyssy2 = World->SpawnActor<AWaspNestCudgel>(AWaspNestCudgel::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
 	pyssy2->SetRoot(this);
 	AddWeapon(pyssy2);
 
@@ -338,23 +339,22 @@ float APlayerCharacter::TakeDamage(float _damage, struct FDamageEvent const& _da
 	return 4.0f;
 }
 
-void APlayerCharacter::OnDeath_Implementation(APlayerController* killer)
+void APlayerCharacter::OnDeath_Implementation(ACMPlayerController* killer)
 {
-
 	ServerOnDeath(killer);
 }
 
-bool APlayerCharacter::ServerOnDeath_Validate(APlayerController* killer)
+bool APlayerCharacter::ServerOnDeath_Validate(ACMPlayerController* killer)
 {
 	return true;
 }
 
-void APlayerCharacter::ServerOnDeath_Implementation(APlayerController* killer)
+void APlayerCharacter::ServerOnDeath_Implementation(ACMPlayerController* killer)
 {
 	inventory->ClearInventory();
 
 	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
-	APlayerController* playerController = static_cast<APlayerController*>(GetController());
+	ACMPlayerController* playerController = static_cast<ACMPlayerController*>(GetController());
 
 	if (gameMode != NULL && playerController != NULL)
 		gameMode->OnPlayerDeath(playerController, killer);

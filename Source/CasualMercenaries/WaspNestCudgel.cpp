@@ -19,7 +19,7 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 
 
 	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("Wasps"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_WaterSpray.P_WaterSpray'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_FireHydrant.P_FireHydrant'"));
 
 	particleSystem->Template = ParticleObj.Object;
 
@@ -35,6 +35,7 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 	ammo = 100;
 	ammoInClip = 100;
 	firingInterval = .5;
+	price = 500;
 
 	passedTimeReloading = 0;
 
@@ -92,7 +93,6 @@ void AWaspNestCudgel::Fire()
 		{
 			UGameplayStatics::ApplyDamage(*aItr, damage, GetInstigatorController(), this, UDamageType::StaticClass());
 			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			//aItr->TakeDamage()
 			aItr->TakeDamage(damage, FDamageEvent::FDamageEvent(), Cast<APlayerController>(tempChar->GetController()), this);
 		}
 	}

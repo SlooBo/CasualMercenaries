@@ -3,6 +3,7 @@
 #include "CasualMercenaries.h"
 #include "CMGameMode_Hunt.h"
 #include "CMPlayerState.h"
+#include "CMPlayerController.h"
 #include "Util.h"
 
 ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
@@ -59,7 +60,7 @@ void ACMGameMode_Hunt::StartMatch()
 			if (inGameState != InGameState::Warmup)
 			{
 				if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
-					SetRandomPlayerHuntTarget(*iter);
+					SetRandomPlayerHuntTarget(static_cast<ACMPlayerController*>((*iter).Get()));
 
 				playerState->SetMoney(huntStartMoney);
 			}
@@ -92,7 +93,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		huntElapsed = 0;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(GetHuntTotalLength()) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
+	GEngine->AddOnScreenDebugMessage(6765, 3.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(GetHuntTotalLength()) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
 
 	if (huntElapsed < GetNextRoundStartTime() && huntRoundFreezeTime > 0 && huntState != HuntState::RoundStarting)
 	{
@@ -100,7 +101,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		huntState = HuntState::RoundStarting;
 		OnRoundStart();
 		OnRoundFreezeStart();
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundFreezeTime) + "s)");
+		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundFreezeTime) + "s)");
 	}
 	else if (huntElapsed >= GetNextRoundStartTime() && huntElapsed < GetNextIntermissionStartTime() && huntState != HuntState::Round)
 	{
@@ -112,7 +113,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		else
 			OnRoundStart();
 
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundTime) + "s)");
+		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundTime) + "s)");
 	}
 	else if (huntElapsed >= GetNextIntermissionStartTime() && huntElapsed < GetNextIntermissionEndTime() && huntState != HuntState::Intermission)
 	{
@@ -120,7 +121,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		huntState = HuntState::Intermission;	
 		OnIntermissionStart();
 
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntIntermissionTime) + "s)");
+		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntIntermissionTime) + "s)");
 	}
 }
 
@@ -223,10 +224,15 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 
 void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 {
-
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	{
+		ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
+		if (playerState != NULL)
+			playerState->AddMoney(huntRoundReward);
+	}
 }
 
-void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer)
+void ACMGameMode_Hunt::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer)
 {
 	Super::OnPlayerDeath_Implementation(player, killer);
 
@@ -237,10 +243,10 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, A
 		if (killer != NULL)
 		{
 			ACMPlayerState* killerState = static_cast<ACMPlayerState*>(killer->PlayerState);
-			APlayerController* killerTarget = NULL;
+			ACMPlayerController* killerTarget = NULL;
 
 			if (killerState->GetHuntTarget() != NULL && killerState->GetHuntTarget()->GetNetOwningPlayer() != NULL)
-				killerTarget = killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController;
+				killerTarget = static_cast<ACMPlayerController*>(killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController);
 
 			// killer killed their target?
 			if (killerTarget == player)
@@ -256,7 +262,7 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(APlayerController* player, A
 	}
 }
 
-void ACMGameMode_Hunt::SetPlayerHuntTarget(APlayerController* player, APlayerController* killer)
+void ACMGameMode_Hunt::SetPlayerHuntTarget(ACMPlayerController* player, ACMPlayerController* killer)
 {
 	// TODO: move huntTarget to PlayerCharacter in order to prevent cheating (every player can read PlayerState)
 
@@ -266,16 +272,16 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(APlayerController* player, APlayerCon
 	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killer->GetName());
 }
 
-void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(APlayerController* player)
+void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(ACMPlayerController* player)
 {
 	if (GetNumPlayers() < 2)
 		return;
 
-	TArray<APlayerController*> players;
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-		players.Add(*iter);
+	TArray<ACMPlayerController*> players;
+	for (auto iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+		players.Add(static_cast<ACMPlayerController*>((*iter).Get()));
 
-	APlayerController* target = NULL;
+	ACMPlayerController* target = NULL;
 	uint32 targetId = 0;
 
 	// randomize target, but disallow self as target

@@ -46,7 +46,7 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 	if (ammo > 0)
 	{
 		firing = true;
-		UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
+		
 	}
 	else
 	{	
@@ -81,10 +81,11 @@ void ARocketLauncher::Fire()
 	MuzzleOffset.X = 100;
 	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
 	
+
+	
+	ServerEffect(part, MuzzleLocation);
+
 	FRotator MuzzleRotation = cameraRot;
-
-
-	particleSystem->Activate();
 
 
 	UWorld* const World = GetWorld();
@@ -110,4 +111,14 @@ void ARocketLauncher::Fire()
 void ARocketLauncher::SecondaryFunction(APlayerCharacter* user)
 {
 
+}
+
+bool ARocketLauncher::ServerEffect_Validate(UParticleSystem* particle, FVector location)
+{
+	return true;
+}
+
+void ARocketLauncher::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
+{
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
 }

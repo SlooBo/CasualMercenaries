@@ -22,6 +22,7 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 	ammo = 6;
 	ammoInClip = 6;
 	firingInterval = 0.40;
+	price = 900;
 
 
 	bReplicates = true;

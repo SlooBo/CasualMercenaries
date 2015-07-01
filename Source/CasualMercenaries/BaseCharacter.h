@@ -3,7 +3,11 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+<<<<<<< HEAD
 #include "DamageTypes.h"
+=======
+#include "CMPlayerController.h"
+>>>>>>> origin/master
 #include "BaseCharacter.generated.h"
 
 //Apparently enums need to be defined like this
@@ -107,8 +111,8 @@ protected:
 	//virtual float TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser) override;
 
 	UFUNCTION(Reliable, NetMulticast)
-	void OnDeath(APlayerController* damageSource = NULL);
-	virtual void OnDeath_Implementation(APlayerController* damageSource = NULL);
+	void OnDeath(ACMPlayerController* damageSource = NULL);
+	virtual void OnDeath_Implementation(ACMPlayerController* damageSource = NULL);
 
 	void DelayedDestroy(FTimerHandle& timerHandle);
 

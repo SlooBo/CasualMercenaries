@@ -34,8 +34,14 @@ public:
 
 	void Fire();
 
+	
+
 private:
 
 	UParticleSystem* part;
+
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+		void ServerEffect(UParticleSystem* particle, FVector location);
+
 
 };

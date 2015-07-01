@@ -34,12 +34,12 @@ public:
 	virtual void StartMatch() override;
 
 	// Event when player dies or is killed by other player
-	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
+	virtual void OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer = NULL);
 
 	void HuntTickSecond();
 
-	void SetRandomPlayerHuntTarget(APlayerController* player);
-	void SetPlayerHuntTarget(APlayerController* player, APlayerController* target);
+	void SetRandomPlayerHuntTarget(ACMPlayerController* player);
+	void SetPlayerHuntTarget(ACMPlayerController* player, ACMPlayerController* target);
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Time Elapsed"), Category = "Gameplay|Level")
 	int32 GetHuntTimeElapsed();
@@ -121,14 +121,22 @@ protected:
 	//
 
 	// Start money for each player
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Start Money"), Category = "Gameplay|Hunt|Money")
 	int32 huntStartMoney;
 
 	// Limit maximum money players can have
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Max Money"), Category = "Gameplay|Hunt|Money")
 	int32 huntMaxMoney;
 
+	// Money given at the end of round
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Round Reward"), Category = "Gameplay|Hunt|Money")
+	int32 huntRoundReward;
+
 	// Reward for killing the right target
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Kill Reward Target"), Category = "Gameplay|Hunt|Money")
 	int32 huntKillRewardTarget;
 	
 	// Reward for killing a wrong target
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Kill Reward Wrong Target"), Category = "Gameplay|Hunt|Money")
 	int32 huntKillRewardWrong;
 };

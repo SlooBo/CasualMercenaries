@@ -44,4 +44,10 @@ private:
 	void ServerDrawLine(FVector begin, FVector end);
 
 
+	UParticleSystem* part;
+
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+		void ServerEffect(UParticleSystem* particle, FVector location);
+
+
 };

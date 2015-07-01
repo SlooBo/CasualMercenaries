@@ -72,10 +72,10 @@ public:
 
 	virtual float TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser) override;
 
-	virtual void OnDeath_Implementation(APlayerController* killer = NULL) override;
+	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
-	void ServerOnDeath(APlayerController* killer = NULL);
+	void ServerOnDeath(ACMPlayerController* killer = NULL);
 
 
 
