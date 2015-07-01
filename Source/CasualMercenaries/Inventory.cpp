@@ -3,7 +3,12 @@
 #include "CasualMercenaries.h"
 
 #include "Inventory.h"
-
+#include "PlayerCharacter.h"
+#include "MUDbuster.h"
+#include "PomegranadeLauncher.h"
+#include "RocketLauncher.h"
+#include "MashineGun.h"
+#include "UberWeihmacher.h"
 UInventory::UInventory()
 {
 }
@@ -49,8 +54,61 @@ AWeapon* UInventory::GetWeapon(int number)
 		return nullptr;
 	return weapons[number];
 }
+void UInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
+{
+	if (weapons.Num() <= 0 || !weapons.IsValidIndex(slot))
+	{
+		return;
+	}
+	UClass *weaponClass= nullptr;
+	AWeapon* weapon = nullptr;
+	switch (weaponid)
+	{
+		case WEAPONID::GRENADE_LAUNCHER:
+		{
+			weaponClass = APomeGranadeLauncher::StaticClass();
+			weapon = owningPlayer->GetWorld()->SpawnActor<APomeGranadeLauncher>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			break;
+		}
+		case WEAPONID::MASHINE_GUN:
+		{
+			weaponClass = AMashineGun::StaticClass();
+			weapon = owningPlayer->GetWorld()->SpawnActor<AMashineGun>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			break;
+		}
+		case WEAPONID::MUDBUSTER_GUN:
+		{
+			weaponClass = AMUDbuster::StaticClass();
+			weapon = owningPlayer->GetWorld()->SpawnActor<AMUDbuster>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			break;
+		}
+		case WEAPONID::ROCKET_LAUNCHER:
+		{
+			weaponClass = ARocketLauncher::StaticClass();
+			weapon = owningPlayer->GetWorld()->SpawnActor<ARocketLauncher>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			break;
+		}
+		case WEAPONID::WATER_GUN:
+		{
+			weaponClass = AUberWeihmacher::StaticClass();
+			weapon = owningPlayer->GetWorld()->SpawnActor<AUberWeihmacher>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			break;
+		}
+		default:
+		{
+			return;
+		}
+	}
+
+	weapon->SetRoot(owningPlayer);
+	ChangeWeaponAtSlot(slot, weapon);
+}
 void UInventory::ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon)
 {
 	if (weapons.Num() > 0 && weapons.IsValidIndex(slot))
 	weapons[slot] = newWeapon;
+}
+void UInventory::SetPlayer(APlayerCharacter *player)
+{
+	owningPlayer = player;
 }

@@ -79,7 +79,7 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 {
 	UWorld* const World = GetWorld();
 	inventory = NewObject<UInventory>();
-
+	inventory->SetPlayer(this);
 	inventory->ClearInventory();
 
 	AMUDbuster* pyssy3 = World->SpawnActor<AMUDbuster>(AMUDbuster::StaticClass(), this->GetActorLocation(), this->GetActorRotation());

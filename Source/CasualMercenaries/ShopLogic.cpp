@@ -5,7 +5,7 @@
 #include "Inventory.h"
 #include "PlayerCharacter.h"
 #include "Weapon.h"
-
+#include "PlayerHud.h"
 UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
 
@@ -59,6 +59,10 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 			shopSlotButtons.Add(Cast<UButton>(children[i]));
 			shopSlots.Add(shopSlot);
 		}
+		else if (tempButton != nullptr && tempButton->GetName().Equals("QuitButton"))
+		{
+			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedQuit);
+		}
 	}
 }
 void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
@@ -107,6 +111,8 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 void UShopLogic::OnClickedShopSlot(uint32 slotIndex)
 {
 	ChangeCurrentShopSlot(slotIndex);
+	APlayerCharacter *player = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn());
+	player->GetInventory()->ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(slotIndex));
 }
 UButton* UShopLogic::getShopButton(uint32 index)
 {
@@ -161,4 +167,8 @@ void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 	if (slotIndex != currentShopIndex)
 		ChangeShopSlotColor(currentShopIndex, FLinearColor::White);
 	currentShopIndex = slotIndex;
+}
+void UShopLogic::OnClickedQuit()
+{
+	Cast<APlayerHud>(world->GetFirstPlayerController()->GetHUD())->changeUIElement(MenuType::GAME_UI);
 }
