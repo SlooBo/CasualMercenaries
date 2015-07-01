@@ -50,6 +50,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 		logicClasses[i] = nullptr;
 	}
 	logicClasses.Empty();
+	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	switch (menu)
 	{
 	case MenuType::MAIN_MENU:
