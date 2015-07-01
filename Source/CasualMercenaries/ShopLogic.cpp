@@ -8,7 +8,6 @@
 #include "PlayerHud.h"
 UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
-
 }
 UShopLogic::~UShopLogic()
 {
@@ -63,11 +62,20 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 		{
 			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedQuit);
 		}
+		else if (tempButton != nullptr && tempButton->GetName().Equals("TradeButton"))
+		{
+			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedTradeButton);
+		}
+		UTextBlock *tempText = Cast<UTextBlock>(children[i]);
+		if (tempText != nullptr && tempText->GetName().Equals("TradeButtonText"))
+		{
+			tradeButtonText = tempText;
+		}
 	}
+	OnClickedWeaponSlot(0);
 }
 void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Clicked weaponslot on index: " + FString::FromInt(slotIndex));
 	ChangeWeaponSlotColor(slotIndex, FLinearColor::Yellow);
 	if (slotIndex != currentWeaponIndex)
 		ChangeWeaponSlotColor(currentWeaponIndex, FLinearColor::White);
@@ -75,44 +83,13 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	AWeapon *weapon = playerInventory->GetWeapon(slotIndex);
 	if (weapon != nullptr)
 	{
-		switch (weapon->GetID())
-		{
-		case WEAPONID::ROCKET_LAUNCHER:
-		{
-			ChangeCurrentShopSlot((uint32)WEAPONID::ROCKET_LAUNCHER);
-			break;
-		}
-		case WEAPONID::WATER_GUN:
-		{
-			ChangeCurrentShopSlot((uint32)WEAPONID::WATER_GUN);
-			break;
-		}
-		case WEAPONID::GRENADE_LAUNCHER:
-		{
-			ChangeCurrentShopSlot((uint32)WEAPONID::GRENADE_LAUNCHER);
-			break;
-		}
-		
-		case WEAPONID::MASHINE_GUN:
-		{
-			ChangeCurrentShopSlot((uint32)WEAPONID::MASHINE_GUN);
-			break;
-		}
-		case WEAPONID::MUDBUSTER_GUN:
-		{
-			ChangeCurrentShopSlot((uint32)WEAPONID::MUDBUSTER_GUN);
-			break;
-		}
-	
-		}
-		
+		ChangeCurrentShopSlot((uint32)weapon->GetID());
 	}
 }
 void UShopLogic::OnClickedShopSlot(uint32 slotIndex)
 {
 	ChangeCurrentShopSlot(slotIndex);
-	APlayerCharacter *player = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn());
-	player->GetInventory()->ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(slotIndex));
+
 }
 UButton* UShopLogic::getShopButton(uint32 index)
 {
@@ -162,13 +139,39 @@ void UShopLogic::ChangeWeaponSlotColor(uint32 index, FLinearColor color)
 }
 void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Clicked shopbutton on index: " + FString::FromInt(slotIndex));
-	ChangeShopSlotColor(slotIndex, FLinearColor::Yellow);
+	FLinearColor color = FLinearColor::Yellow;
+	color = FLinearColor(0.8f, 0.5f, 0.0f, 1.0f);
+	ChangeShopSlotColor(slotIndex, color);
 	if (slotIndex != currentShopIndex)
-		ChangeShopSlotColor(currentShopIndex, FLinearColor::White);
+	{
+		color = FLinearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		ChangeShopSlotColor(currentShopIndex, color);
+	}
 	currentShopIndex = slotIndex;
+	UpdateTradeButtonText();
 }
 void UShopLogic::OnClickedQuit()
 {
 	Cast<APlayerHud>(world->GetFirstPlayerController()->GetHUD())->changeUIElement(MenuType::GAME_UI);
+}
+void UShopLogic::OnClickedTradeButton()
+{
+	APlayerCharacter *player = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn());
+	player->GetInventory()->ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(currentShopIndex));
+	UpdateTradeButtonText();
+}
+void UShopLogic::UpdateTradeButtonText()
+{
+	AWeapon *weapon = playerInventory->GetWeapon(currentWeaponIndex);
+	if (weapon != nullptr)
+	{
+		if ((uint32)weapon->GetID() == currentShopIndex)
+		{
+			tradeButtonText->SetText(FText::FromString("Sell"));
+		}
+		else
+		{
+			tradeButtonText->SetText(FText::FromString("Buy"));
+		}
+	}
 }

@@ -32,6 +32,8 @@ private:
 	UFUNCTION()
 	UButton* getWeaponSlotButton(uint32 index);
 	UPROPERTY()
+	UTextBlock *tradeButtonText;
+	UPROPERTY()
 	uint32 currentShopIndex;
 	UPROPERTY()
 	uint32 currentWeaponIndex;
@@ -51,6 +53,10 @@ private:
 	void ChangeCurrentShopSlot(uint32 slotIndex);
 	UFUNCTION()
 	void OnClickedQuit();
+	UFUNCTION()
+	void OnClickedTradeButton();
+	UFUNCTION()
+	void UpdateTradeButtonText();
 };
 UCLASS()
 class UWeaponSlot: public UObject
