@@ -228,15 +228,28 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 
 	if (killerState != NULL)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" killed ") + killerState->PlayerName);
+	else if (killer == player)
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" committed suicide"));
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" died"));
 
+	// adjust scores
 	if (killerState != NULL)
-		killerState->AddFrags(1);
+	{
+		if (killer != player)
+			killerState->AddFrags(1);
+		else
+			killerState->AddFrags(-1);
+	}
 	playerState->AddDeaths(1);
 
-	// TODO: broadcast death for every player
-	
+	// broadcast death for everyone
+	for (auto iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	{
+		ACMPlayerController* playerController = static_cast<ACMPlayerController*>((*iter).Get());
+		playerController->OnPlayerDeath(player, killer);
+	}
+
 	// disable player pawn instead of destroying it, and let player character destroy itself
 	// this fixes some movement related bugs between server and client right after death occured
 	if (player->GetPawn() != NULL)
@@ -251,9 +264,9 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	player->ChangeState(NAME_Spectating);
 	player->ClientGotoState(NAME_Spectating);
 
-	if (inGameState != InGameState::Warmup && playerRespawnTime != 0)
+	if (inGameState != InGameState::Warmup)
 		RespawnPlayer(player, playerRespawnTime);
-	else	// restart immediately
+	else
 		RespawnPlayer(player, warmupRespawnTime);
 }
 
@@ -272,7 +285,7 @@ void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 
 void ACMGameMode::RestartPlayer(AController* controller)
 {
-	APlayerController* player = controller->CastToPlayerController();
+	ACMPlayerController* player = static_cast<ACMPlayerController*>(controller->CastToPlayerController());
 	if (player == NULL)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer controller is not PlayerController"));
@@ -284,8 +297,6 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->PlayerState->bIsSpectator = false;
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
-	
-	Cast<APlayerCharacter>(player->GetPawn())->ServerInitInventory();
 }
 
 void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)

@@ -15,6 +15,8 @@ class CASUALMERCENARIES_API ACMPlayerController : public APlayerController
 	
 public:
 	ACMPlayerController(const class FObjectInitializer& objectInitializer);
-	
-	
+
+	virtual void BeginPlay() override;
+
+	void OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/);
 };
