@@ -319,6 +319,7 @@ void APlayerCharacter::OnStopJump()
 
 void APlayerCharacter::OnDeath_Implementation(APlayerController* killer)
 {
+
 	ServerOnDeath(killer);
 }
 
@@ -329,6 +330,8 @@ bool APlayerCharacter::ServerOnDeath_Validate(APlayerController* killer)
 
 void APlayerCharacter::ServerOnDeath_Implementation(APlayerController* killer)
 {
+	inventory->ClearInventory();
+
 	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
 	APlayerController* playerController = static_cast<APlayerController*>(GetController());
 

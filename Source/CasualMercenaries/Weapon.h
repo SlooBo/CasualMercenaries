@@ -16,7 +16,7 @@ enum class WEAPONID : uint8
 	GRENADE_LAUNCHER,
 	MASHINE_GUN,
 	MUDBUSTER_GUN,
-	F,
+	WASP_GUN,
 	G
 };
 

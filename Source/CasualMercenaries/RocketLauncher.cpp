@@ -22,6 +22,7 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 	bReplicates = true;
 
 	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
+
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_RocketLauncher_MuzzleBack.P_RocketLauncher_MuzzleBack'"));
 
 	particleSystem->Template = ParticleObj.Object;
