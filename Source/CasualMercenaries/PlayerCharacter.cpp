@@ -317,6 +317,11 @@ void APlayerCharacter::OnStopJump()
 
 }
 
+void APlayerCharacter::TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser)
+{
+	
+}
+
 void APlayerCharacter::OnDeath_Implementation(APlayerController* killer)
 {
 	ServerOnDeath(killer);

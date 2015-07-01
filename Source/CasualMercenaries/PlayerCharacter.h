@@ -70,6 +70,8 @@ public:
 	/* Life And Death                                                       */
 	/************************************************************************/
 
+	virtual float TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser) override;
+
 	virtual void OnDeath_Implementation(APlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)

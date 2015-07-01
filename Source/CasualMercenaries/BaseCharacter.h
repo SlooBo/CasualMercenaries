@@ -103,6 +103,8 @@ protected:
 
 	/* Take damage & handle death */
 
+	//virtual float TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser) override;
+
 	UFUNCTION(Reliable, NetMulticast)
 	void OnDeath(APlayerController* damageSource = NULL);
 	virtual void OnDeath_Implementation(APlayerController* damageSource = NULL);
