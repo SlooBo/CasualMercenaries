@@ -18,11 +18,13 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 	weaponMesh->SetRelativeScale3D(FVector(0.5, 0.5, 0.25));
 
 
-	//const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_RocketLauncher_MuzzleBack.P_RocketLauncher_MuzzleBack'"));
-	//
-	//particleSystem->Template = ParticleObj.Object;
-	//
-	//particleSystem->AttachTo(weaponMesh, "ExhaustSocket");
+	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("Wasps"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_WaterSpray.P_WaterSpray'"));
+
+	particleSystem->Template = ParticleObj.Object;
+
+	particleSystem->AttachTo(weaponMesh, "WaspSocket");
+
 
 
 	bReplicates = true;

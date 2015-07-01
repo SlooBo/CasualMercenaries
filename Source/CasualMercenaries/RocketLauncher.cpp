@@ -23,11 +23,8 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_RocketLauncher_MuzzleBack.P_RocketLauncher_MuzzleBack'"));
-
-	particleSystem->Template = ParticleObj.Object;
-
-	particleSystem->AttachTo(weaponMesh, "ExhaustSocket");
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+	part = ParticleObj2.Object;
 
 	id = WEAPONID::ROCKET_LAUNCHER;
 }
@@ -49,6 +46,7 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 	if (ammo > 0)
 	{
 		firing = true;
+		UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
 	}
 	else
 	{	

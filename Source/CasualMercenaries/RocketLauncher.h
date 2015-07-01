@@ -34,5 +34,8 @@ public:
 
 	void Fire();
 
+private:
+
+	UParticleSystem* part;
 
 };

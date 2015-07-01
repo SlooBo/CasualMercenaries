@@ -19,6 +19,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	//Mesh->AttachParent = CollisionComp;
 
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/MudBuster/Projectile/MESH_Budbuster_projectile.MESH_Budbuster_projectile'"));
+	Mesh->SetStaticMesh(MeshObj.Object);
 
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Projectile/MAT_Mudbuster_projectile.MAT_Mudbuster_projectile'")); // Material missing!!!!!
 	Mesh->SetMaterial(0, MateriaObj.Object);

@@ -61,6 +61,8 @@ public:
 	
 	WEAPONID GetID(){ return id; };
 	static WEAPONID GetIDFromInt(uint8 value);
+
+
 protected:
 
 	WEAPONID id;

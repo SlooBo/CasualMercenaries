@@ -15,6 +15,10 @@ class CASUALMERCENARIES_API AWaspNestCudgel : public AWeapon
 
 public:
 
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
+		UParticleSystemComponent* particleSystem;
+
 	AWaspNestCudgel(const FObjectInitializer& FOI);
 
 	void PrimaryFunction(APlayerCharacter* user);
@@ -27,9 +31,6 @@ public:
 
 	void Reload();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
-		UParticleSystemComponent* particleSystem;
-
 
 	// Called every frame
 	void Tick(float DeltaSeconds);
@@ -41,7 +42,7 @@ private:
 
 	void Fire();
 
-
+	UParticleSystem* part;
 	
 	
 	
