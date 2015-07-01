@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "DamageTypes.h"
 #include "Projectile.generated.h"
 
 UCLASS()
@@ -20,6 +21,8 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
 		UStaticMeshComponent* Mesh;
+
+	DAMAGE_TYPE type;
 
 	// Sets default values for this actor's properties
 	AProjectile(const FObjectInitializer& ObjectInitializer);

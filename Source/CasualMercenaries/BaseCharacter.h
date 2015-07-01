@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+#include "DamageTypes.h"
 #include "BaseCharacter.generated.h"
 
 //Apparently enums need to be defined like this
@@ -12,7 +13,7 @@ enum class CHARACTER_STATE : uint8
 	ALIVE UMETA(DisplayName = "Alive"),
 	DEAD UMETA(DisplayName = "Dead"),
 	STUNNED UMETA(DisplayName = "Stunned"),
-	PARALYZED UMETA(DisplayName = "Paralyzed")
+	ROOTED UMETA(DisplayName = "Rooted")
 };
 
 UCLASS()
@@ -61,7 +62,7 @@ public:
 		void AddHealth(float _health);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		void TakeDamage(float _damage, APlayerController* killer = NULL);
+		void TakeDamage(float _damage, DAMAGE_TYPE _type, APlayerController* killer = NULL);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		void AddStamina(float _stamina);

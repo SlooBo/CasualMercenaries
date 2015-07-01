@@ -114,13 +114,28 @@ void ABaseCharacter::AddHealth(float _health)
 		health = health + _health;
 }
 
-void ABaseCharacter::TakeDamage(float _health, APlayerController* damageSource)
+void ABaseCharacter::TakeDamage(float _health, DAMAGE_TYPE _type, APlayerController* damageSource)
 {
 	if (!IsAlive())
 		return;
 
 	health = health - _health;
 	
+	switch (_type)
+	{
+	case DAMAGE_TYPE::NORMAL:
+		break;
+	case DAMAGE_TYPE::STUN:
+		SetState(CHARACTER_STATE::STUNNED);
+		break;
+	case DAMAGE_TYPE::ROOT:
+		SetState(CHARACTER_STATE::ROOTED);
+		break;
+	default:
+		break;
+	}
+
+
 	if (!IsAlive())
 		OnDeath(damageSource);
 }

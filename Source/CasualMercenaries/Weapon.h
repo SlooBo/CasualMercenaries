@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "DamageTypes.h"
 #include "Weapon.generated.h"
 
 
@@ -74,6 +75,7 @@ protected:
 	int ammoInClip; 
 	int maxAmmo;
 	float firingInterval;
+	DAMAGE_TYPE type;
 
 	USkeletalMesh* ammoMesh;
 
