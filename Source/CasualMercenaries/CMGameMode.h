@@ -71,8 +71,8 @@ public:
 
 	// Event when player dies or is killed by other player, called by the player
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Player Death"), Category = "Gameplay|Player")
-	void OnPlayerDeath(APlayerController* player, APlayerController* killer = NULL);
-	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
+	void OnPlayerDeath(ACMPlayerController* player, ACMPlayerController* killer = NULL);
+	virtual void OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer = NULL);
 
 protected:
 

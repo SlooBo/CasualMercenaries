@@ -6,6 +6,7 @@
 #include "PlayerCharacter.h"
 #include "Util.h"
 #include "PlayerHud.h"
+#include "CMPlayerController.h"
 #include "CMSpectator.h"
 
 ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
@@ -22,7 +23,7 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 		HUDClass = (UClass*)PlayerHud.Object->GeneratedClass;
 
 	//HUDClass = APlayerHud::StaticClass();
-	//PlayerControllerClass = ACMPlayerController::StaticClass();
+	PlayerControllerClass = ACMPlayerController::StaticClass();
 	PlayerStateClass = ACMPlayerState::StaticClass();
 	SpectatorClass = ACMSpectator::StaticClass();
 	//GameStateClass = ACMGameState::StaticClass();
@@ -220,7 +221,7 @@ void ACMGameMode::OnWarmupStart_Implementation()
 
 }
 
-void ACMGameMode::OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer)
+void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer)
 {
 	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
 	ACMPlayerState* killerState = (killer != NULL) ? static_cast<ACMPlayerState*>(killer->PlayerState) : NULL;

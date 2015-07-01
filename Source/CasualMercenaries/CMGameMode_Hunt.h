@@ -34,12 +34,12 @@ public:
 	virtual void StartMatch() override;
 
 	// Event when player dies or is killed by other player
-	virtual void OnPlayerDeath_Implementation(APlayerController* player, APlayerController* killer = NULL);
+	virtual void OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer = NULL);
 
 	void HuntTickSecond();
 
-	void SetRandomPlayerHuntTarget(APlayerController* player);
-	void SetPlayerHuntTarget(APlayerController* player, APlayerController* target);
+	void SetRandomPlayerHuntTarget(ACMPlayerController* player);
+	void SetPlayerHuntTarget(ACMPlayerController* player, ACMPlayerController* target);
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Time Elapsed"), Category = "Gameplay|Level")
 	int32 GetHuntTimeElapsed();

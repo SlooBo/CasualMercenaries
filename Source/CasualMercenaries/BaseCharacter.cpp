@@ -4,7 +4,6 @@
 #include "UnrealNetwork.h"
 #include "BaseCharacter.h"
 
-
 // Sets default values
 ABaseCharacter::ABaseCharacter()
 {
@@ -114,7 +113,7 @@ void ABaseCharacter::AddHealth(float _health)
 		health = health + _health;
 }
 
-void ABaseCharacter::TakeDamage(float _health, APlayerController* damageSource)
+void ABaseCharacter::TakeDamage(float _health, ACMPlayerController* damageSource)
 {
 	if (!IsAlive())
 		return;
@@ -162,7 +161,7 @@ void ABaseCharacter::SetState(CHARACTER_STATE _state)
 	state = _state;
 }
 
-void ABaseCharacter::OnDeath_Implementation(APlayerController* damageSource)
+void ABaseCharacter::OnDeath_Implementation(ACMPlayerController* damageSource)
 {
 	// delay the destruction until the player controller no longer controls this character
 	// if pawn is destroyed before the controller acknowledges it, crash happens

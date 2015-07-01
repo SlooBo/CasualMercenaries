@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+#include "CMPlayerController.h"
 #include "BaseCharacter.generated.h"
 
 //Apparently enums need to be defined like this
@@ -61,7 +62,7 @@ public:
 		void AddHealth(float _health);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		void TakeDamage(float _damage, APlayerController* killer = NULL);
+		void TakeDamage(float _damage, ACMPlayerController* killer = NULL);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		void AddStamina(float _stamina);
@@ -106,8 +107,8 @@ protected:
 	//virtual float TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser) override;
 
 	UFUNCTION(Reliable, NetMulticast)
-	void OnDeath(APlayerController* damageSource = NULL);
-	virtual void OnDeath_Implementation(APlayerController* damageSource = NULL);
+	void OnDeath(ACMPlayerController* damageSource = NULL);
+	virtual void OnDeath_Implementation(ACMPlayerController* damageSource = NULL);
 
 	void DelayedDestroy(FTimerHandle& timerHandle);
 

@@ -87,7 +87,7 @@ void AMashineGun::Fire()
 
 	APlayerCharacter* player = Cast<APlayerCharacter>(hit.GetActor());
 	if (player != nullptr)
-		player->TakeDamage(10, FDamageEvent::FDamageEvent(), Cast<APlayerController>(Cast<APlayerCharacter>(this->GetOwner())->GetController()), this);
+		player->TakeDamage(10, FDamageEvent::FDamageEvent(), Cast<class ACMPlayerController>(Cast<APlayerCharacter>(this->GetOwner())->GetController()), this);
 	else
 	{ 
 		AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
