@@ -219,9 +219,9 @@ void APlayerCharacter::ServerUseWeapon1Release_Implementation()
 
 void APlayerCharacter::UseWeapon2()
 {
-	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->SecondaryFunction(this);
-	ServerUseWeapon2();
+	//if (inventory->GetWeapon(currentWeapon) != nullptr)
+	//	inventory->GetWeapon(currentWeapon)->SecondaryFunction(this);
+	//ServerUseWeapon2();
 }
 
 bool APlayerCharacter::ServerUseWeapon2_Validate()
@@ -333,9 +333,9 @@ void APlayerCharacter::OnStopJump()
 
 }
 
-void APlayerCharacter::TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser)
+float APlayerCharacter::TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser)
 {
-	
+	return 4.0f;
 }
 
 void APlayerCharacter::OnDeath_Implementation(APlayerController* killer)

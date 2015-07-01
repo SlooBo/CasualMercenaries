@@ -75,7 +75,7 @@ void AGranade::Explode_Implementation()
 		{
 			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			aItr->TakeDamage(ExplosionDamage, Cast<APlayerController>(tempChar->GetController()));
+			aItr->TakeDamage(ExplosionDamage, FDamageEvent::FDamageEvent(), Cast<APlayerController>(tempChar->GetController()), this);
 		}
 	}
 	for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
