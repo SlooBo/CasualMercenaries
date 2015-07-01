@@ -82,3 +82,7 @@ void AWeapon::IncreaseAmmoAmount(int32 ammo)
 {
 	clips += ammo;
 }
+WEAPONID AWeapon::GetIDFromInt(uint8 value)
+{
+	return static_cast<WEAPONID>(value);
+}

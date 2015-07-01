@@ -10,10 +10,10 @@
 AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 {
 
-	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/Weapons/MudBuster/Weapon/MESH_Mudbuster.MESH_Mudbuster'")); // MESH missing!!!!!
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/Weapons/MudBuster/Weapon/MESH_Mudbuster.MESH_Mudbuster'"));
 	weaponMesh->SetSkeletalMesh(MeshObj.Object);
 
-	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Weapon/MAT_Mudbuster.MAT_Mudbuster'")); // Material missing!!!!!
+	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Weapon/MAT_Mudbuster.MAT_Mudbuster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 
 

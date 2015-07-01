@@ -63,7 +63,7 @@ public:
 
 	/* Is character currently performing a jump action. Resets on landed.  */
 	UPROPERTY(Transient, Replicated)
-		bool bIsJumping;
+	bool bIsJumping;
 
 
 	/************************************************************************/
@@ -111,7 +111,13 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerUseWeapon2Release();
 
-
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerReloadWeapon();
+	
+	void WeaponSlot1();
+	void WeaponSlot2();
+	void WeaponSlot3();
+	void WeaponSlot4();
 	/************************************************************************/
 	/* Camera                                                               */
 	/************************************************************************/

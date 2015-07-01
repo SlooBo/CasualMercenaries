@@ -16,7 +16,7 @@ enum class WEAPONID : uint8
 	GRENADE_LAUNCHER,
 	MASHINE_GUN,
 	MUDBUSTER_GUN,
-	F,
+	WASP_GUN,
 	G
 };
 
@@ -60,7 +60,7 @@ public:
 	void SetRoot(APlayerCharacter* user);
 	
 	WEAPONID GetID(){ return id; };
-
+	static WEAPONID GetIDFromInt(uint8 value);
 protected:
 
 	WEAPONID id;

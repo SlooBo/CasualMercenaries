@@ -49,6 +49,8 @@ private:
 	UWorld *world;
 	UFUNCTION()
 	void ChangeCurrentShopSlot(uint32 slotIndex);
+	UFUNCTION()
+	void OnClickedQuit();
 };
 UCLASS()
 class UWeaponSlot: public UObject

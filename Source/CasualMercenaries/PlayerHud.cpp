@@ -7,6 +7,7 @@
 
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
+	currentMenu = MenuType::NO_UI;
 	static ConstructorHelpers::FObjectFinder<UClass> MainMenuBP(TEXT("'/Game/Game/UI/PhoneUITest.PhoneUITest_C'"));
 	if (MainMenuBP.Object){
 		mainMenuClass = (UClass*)MainMenuBP.Object;
@@ -45,11 +46,13 @@ void APlayerHud::Tick(float DeltaSeconds)
 }
 void APlayerHud::changeUIElement(MenuType menu)
 {
+	currentMenu = menu;
 	for (int i = 0; i < logicClasses.Num(); i++)
 	{
 		logicClasses[i] = nullptr;
 	}
 	logicClasses.Empty();
+	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	switch (menu)
 	{
 	case MenuType::MAIN_MENU:
@@ -100,4 +103,8 @@ void APlayerHud::ClearAllWidgets()
 		widgets[i]->RemoveFromViewport();
 	}
 	widgets.Empty();
+}
+MenuType APlayerHud::GetCurrentUI()
+{
+	return currentMenu;
 }

@@ -40,10 +40,11 @@ public:
 	void DrawHud();
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void changeUIElement(MenuType menu);
-
+	MenuType GetCurrentUI();
 
 private:
-	
+	UPROPERTY()
+	MenuType currentMenu;
 	UPROPERTY()
 	TArray<UUserWidget*> widgets;
 	UUserWidget* changeUIElement(UClass *uitype);

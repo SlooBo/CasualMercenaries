@@ -79,7 +79,7 @@ void APlayerCharacter::ServerInitInventory_Implementation()
 {
 	UWorld* const World = GetWorld();
 	inventory = NewObject<UInventory>();
-
+	inventory->SetPlayer(this);
 	inventory->ClearInventory();
 
 	AMUDbuster* pyssy3 = World->SpawnActor<AMUDbuster>(AMUDbuster::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
@@ -141,9 +141,25 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("MouseWheelUp", IE_Pressed, this, &APlayerCharacter::SwitchWeaponUp);
 	InputComponent->BindAction("MouseWheelDown", IE_Pressed, this, &APlayerCharacter::SwitchWeaponDown);
 	InputComponent->BindAction("Reload", IE_Pressed, this, &APlayerCharacter::ReloadWeapon);
+
+	InputComponent->BindAction("WeaponSlot1", IE_Pressed, this, &APlayerCharacter::WeaponSlot1);
+	InputComponent->BindAction("WeaponSlot2", IE_Pressed, this, &APlayerCharacter::WeaponSlot2);
+	InputComponent->BindAction("WeaponSlot3", IE_Pressed, this, &APlayerCharacter::WeaponSlot3);
+	InputComponent->BindAction("WeaponSlot4", IE_Pressed, this, &APlayerCharacter::WeaponSlot4);
 }
 
 void APlayerCharacter::ReloadWeapon()
+{
+
+	ServerReloadWeapon();
+}
+
+bool APlayerCharacter::ServerReloadWeapon_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerReloadWeapon_Implementation()
 {
 	if (inventory->GetWeapon(currentWeapon) != nullptr)
 		inventory->GetWeapon(currentWeapon)->Reload();
@@ -324,6 +340,7 @@ void APlayerCharacter::TakeDamage(float _damage, struct FDamageEvent const& _dam
 
 void APlayerCharacter::OnDeath_Implementation(APlayerController* killer)
 {
+
 	ServerOnDeath(killer);
 }
 
@@ -334,6 +351,8 @@ bool APlayerCharacter::ServerOnDeath_Validate(APlayerController* killer)
 
 void APlayerCharacter::ServerOnDeath_Implementation(APlayerController* killer)
 {
+	inventory->ClearInventory();
+
 	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
 	APlayerController* playerController = static_cast<APlayerController*>(GetController());
 
@@ -561,4 +580,37 @@ void APlayerCharacter::OpenAllChat()
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
 	APlayerHud *playerhud = Cast<APlayerHud>(hud);
 
+}
+void APlayerCharacter::WeaponSlot1()
+{
+	int tempLastWeapon = currentWeapon;
+	currentWeapon = 0;
+	if (currentWeapon == tempLastWeapon)
+		return;
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+	//TODO make these into one function
+}
+void APlayerCharacter::WeaponSlot2()
+{
+	int tempLastWeapon = currentWeapon;
+	currentWeapon = 1;
+	if (currentWeapon == tempLastWeapon)
+		return;
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+}
+void APlayerCharacter::WeaponSlot3()
+{
+	int tempLastWeapon = currentWeapon;
+	currentWeapon = 2;
+	if (currentWeapon == tempLastWeapon)
+		return;
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+}
+void APlayerCharacter::WeaponSlot4()
+{
+	int tempLastWeapon = currentWeapon;
+	currentWeapon = 3;
+	if (currentWeapon == tempLastWeapon)
+		return;
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
 }
