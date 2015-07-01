@@ -145,6 +145,17 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 
 void APlayerCharacter::ReloadWeapon()
 {
+
+	ServerReloadWeapon();
+}
+
+bool APlayerCharacter::ServerReloadWeapon_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::ServerReloadWeapon_Implementation()
+{
 	if (inventory->GetWeapon(currentWeapon) != nullptr)
 		inventory->GetWeapon(currentWeapon)->Reload();
 }
