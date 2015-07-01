@@ -111,7 +111,11 @@ public:
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerReloadWeapon();
-
+	
+	void WeaponSlot1();
+	void WeaponSlot2();
+	void WeaponSlot3();
+	void WeaponSlot4();
 	/************************************************************************/
 	/* Camera                                                               */
 	/************************************************************************/

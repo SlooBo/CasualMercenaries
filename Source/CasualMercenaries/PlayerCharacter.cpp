@@ -141,6 +141,11 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("MouseWheelUp", IE_Pressed, this, &APlayerCharacter::SwitchWeaponUp);
 	InputComponent->BindAction("MouseWheelDown", IE_Pressed, this, &APlayerCharacter::SwitchWeaponDown);
 	InputComponent->BindAction("Reload", IE_Pressed, this, &APlayerCharacter::ReloadWeapon);
+
+	InputComponent->BindAction("WeaponSlot1", IE_Pressed, this, &APlayerCharacter::WeaponSlot1);
+	InputComponent->BindAction("WeaponSlot2", IE_Pressed, this, &APlayerCharacter::WeaponSlot2);
+	InputComponent->BindAction("WeaponSlot3", IE_Pressed, this, &APlayerCharacter::WeaponSlot3);
+	InputComponent->BindAction("WeaponSlot4", IE_Pressed, this, &APlayerCharacter::WeaponSlot4);
 }
 
 void APlayerCharacter::ReloadWeapon()
@@ -570,4 +575,37 @@ void APlayerCharacter::OpenAllChat()
 	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
 	APlayerHud *playerhud = Cast<APlayerHud>(hud);
 
+}
+void APlayerCharacter::WeaponSlot1()
+{
+	int tempLastWeapon = currentWeapon;
+	currentWeapon = 0;
+	if (currentWeapon == tempLastWeapon)
+		return;
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+	//TODO make these into one function
+}
+void APlayerCharacter::WeaponSlot2()
+{
+	int tempLastWeapon = currentWeapon;
+	currentWeapon = 1;
+	if (currentWeapon == tempLastWeapon)
+		return;
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+}
+void APlayerCharacter::WeaponSlot3()
+{
+	int tempLastWeapon = currentWeapon;
+	currentWeapon = 2;
+	if (currentWeapon == tempLastWeapon)
+		return;
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+}
+void APlayerCharacter::WeaponSlot4()
+{
+	int tempLastWeapon = currentWeapon;
+	currentWeapon = 3;
+	if (currentWeapon == tempLastWeapon)
+		return;
+	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
 }
