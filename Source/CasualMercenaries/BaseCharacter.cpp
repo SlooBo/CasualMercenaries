@@ -134,9 +134,9 @@ void ABaseCharacter::TakeDamage(float _health, DAMAGE_TYPE _type, APlayerControl
 		break;
 	}
 
-
+	//Temp fix
 	if (!IsAlive())
-		OnDeath(damageSource);
+		OnDeath(Cast<ACMPlayerController>(damageSource));
 }
 
 void ABaseCharacter::AddStamina(float _stamina)

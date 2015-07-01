@@ -3,11 +3,8 @@
 #pragma once
 
 #include "GameFramework/Character.h"
-<<<<<<< HEAD
 #include "DamageTypes.h"
-=======
 #include "CMPlayerController.h"
->>>>>>> origin/master
 #include "BaseCharacter.generated.h"
 
 //Apparently enums need to be defined like this
