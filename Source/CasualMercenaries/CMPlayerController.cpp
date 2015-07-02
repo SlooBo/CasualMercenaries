@@ -4,10 +4,6 @@
 #include "CMPlayerController.h"
 #include "PlayerCharacter.h"
 #include "UnrealNetwork.h"
-#include "MUDbuster.h"
-#include "PomegranadeLauncher.h"
-#include "WaspNestCudgel.h"
-#include "MashineGun.h"
 
 ACMPlayerController::ACMPlayerController(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
@@ -32,31 +28,17 @@ bool ACMPlayerController::ServerInitInventory_Validate()
 }
 void ACMPlayerController::ServerInitInventory_Implementation()
 {
-	UWorld* const World = GetWorld();
+
 	APlayerCharacter* playerPawn = Cast<APlayerCharacter>(GetPawn());
 
-	FVector location = playerPawn->GetActorLocation();
-	FRotator rotation = playerPawn->GetActorRotation();
 
 	//inventory = NewObject<UInventory>();
 	inventory.SetPlayer(playerPawn);
-	inventory.ClearInventory();
-
-	AMUDbuster* pyssy3 = World->SpawnActor<AMUDbuster>(AMUDbuster::StaticClass(), location, rotation);
-	pyssy3->SetRoot(playerPawn);
-	inventory.AddWeaponToInventory(pyssy3);
-
-	APomeGranadeLauncher* pyssy4 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), location, rotation);
-	pyssy4->SetRoot(playerPawn);
-	inventory.AddWeaponToInventory(pyssy4);
-
-	AWaspNestCudgel* pyssy2 = World->SpawnActor<AWaspNestCudgel>(AWaspNestCudgel::StaticClass(), location, rotation);
-	pyssy2->SetRoot(playerPawn);
-	inventory.AddWeaponToInventory(pyssy2);
-
-	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), location, rotation);
-	pyssy->SetRoot(playerPawn);
-	inventory.AddWeaponToInventory(pyssy);
+	if (inventory.weapons.Num() < 1)
+	{
+		for (int i = 0; i < 4; i++)
+			inventory.AddWeaponToInventory(nullptr);
+	}
 
 	//inventory.GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
 	//inventoryInitialized = true;

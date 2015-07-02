@@ -87,6 +87,12 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	{
 		ChangeCurrentShopSlot((uint32)weapon->GetID());
 	}
+	else
+	{
+		FLinearColor color = FLinearColor(0.8f, 0.5f, 0.0f, 0.0f);
+		FSlateColor slateColor = FSlateColor(color);
+		ChangeShopSlotColor(currentShopIndex, slateColor);
+	}
 }
 void UShopLogic::OnClickedShopSlot(uint32 slotIndex)
 {
@@ -146,7 +152,7 @@ void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 	color = FLinearColor(0.8f, 0.5f, 0.0f, 1.0f);
 	FSlateColor slateColor = FSlateColor(color);
 	ChangeShopSlotColor(slotIndex, slateColor);
-	if (slotIndex != currentShopIndex)
+	if (slotIndex != currentShopIndex && currentShopIndex != -1)
 	{
 		color = FLinearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		slateColor = FSlateColor(color);
