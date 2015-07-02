@@ -27,13 +27,15 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	passedTimeReloading = 0;
 	reloadTime = 0.5;
 	firingInterval = .25;
-	id = WEAPONID::MASHINE_GUN;
+
+	
 
 	//particles
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
 	flavorParticleEffect = ParticleObj.Object;
 
-
+	//ID
+	id = WEAPONID::MASHINE_GUN;
 	bReplicates = true;
 }
 

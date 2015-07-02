@@ -8,6 +8,8 @@
 // Sets default values
 AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	weaponMesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh"));
+
 	PrimaryActorTick.bCanEverTick = true;
 
 	this->SetActorHiddenInGame(true);
