@@ -24,6 +24,8 @@ public:
 	// Called every frame
 	void Tick(float DeltaSeconds);
 
+	void BeginPlay();
+
 	/************************************************************************/
 	/* Functionality                                                        */
 	/************************************************************************/
@@ -33,8 +35,6 @@ public:
 	void PrimaryFunctionReleased(APlayerCharacter* user);
 
 	void SecondaryFunction(APlayerCharacter* user);
-
-	void BeginPlay();
 
 	void Reload();
 
@@ -59,4 +59,9 @@ private:
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerEffect(UParticleSystem* particle, FVector location);
 
+	/************************************************************************/
+	/* Particles		                                                    */
+	/************************************************************************/
+
+	UParticleSystem* bulletTrail;
 };

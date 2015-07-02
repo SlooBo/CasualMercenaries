@@ -15,11 +15,9 @@ class CASUALMERCENARIES_API AGranade : public AProjectile
 
 public:
 
-
-	UPROPERTY(VisibleAnywhere, Category = Particles)
-		UParticleSystemComponent* particleSystem;
-
-	//float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	/************************************************************************/
+	/* Defaults                                                             */
+	/************************************************************************/
 
 	AGranade(const FObjectInitializer& ObjectInitializer);
 
@@ -28,16 +26,22 @@ public:
 	void Tick(float DeltaSeconds);
 	void BeginPlay();
 
+	/************************************************************************/
+	/* Functionality                                                        */
+	/************************************************************************/
+
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 		void Explode();
 
+	//float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 
 private:
 
-	float lifeTime, livedTime;
+	/************************************************************************/
+	/* Values										                        */
+	/************************************************************************/
 
-	UParticleSystem* part;
-	
-	
+	float lifeTime, livedTime;
 };

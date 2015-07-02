@@ -2,49 +2,55 @@
 
 #pragma once
 
-#include "Object.h"
-#include "Projectile.h"
-#include "Rocket.generated.h"
+#include "Weapon.h"
+#include "TwisterSister.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CASUALMERCENARIES_API ARocket : public AProjectile
+class CASUALMERCENARIES_API ATwisterSister : public AWeapon
 {
-
 	GENERATED_BODY()
-
+	
 public:
 
 	/************************************************************************/
 	/* Defaults                                                             */
 	/************************************************************************/
 
-	ARocket(const FObjectInitializer& ObjectInitializer);
+	ATwisterSister(const FObjectInitializer& FOI);
 
-	~ARocket();
-	
+	// Called every frame
 	void Tick(float DeltaSeconds);
+
 	void BeginPlay();
 
 	/************************************************************************/
 	/* Functionality                                                        */
 	/************************************************************************/
 
-	UFUNCTION()
-	void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+	void PrimaryFunction(APlayerCharacter* user);
 
-	UFUNCTION()
-	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void PrimaryFunctionReleased(APlayerCharacter* user);
 
+	void SecondaryFunction(APlayerCharacter* user);
+
+	void Reload();
+	
 private:
 
 	/************************************************************************/
-	/* Hidden functionality                                                        */
+	/* Hidden Functionality                                                 */
 	/************************************************************************/
 
-	void Explode();
+	void Fire();
 
 
+	/************************************************************************/
+	/* ServerFunctions                                                      */
+	/************************************************************************/
+	
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+		void ServerEffect(UParticleSystem* particle, FVector location);
 };

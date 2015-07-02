@@ -21,10 +21,10 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 
 	//ParticleSystem
 	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("Wasps"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_FireHydrant.P_FireHydrant'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_PaskMyrsky.P_PaskMyrsky'"));
 	particleSystem->Template = ParticleObj.Object;
 	particleSystem->AttachTo(weaponMesh, "WaspSocket");
-
+	particleSystem->SetRelativeScale3D(FVector(10, 10, 10));
 
 	//Integers
 	maxAmmo = 120;

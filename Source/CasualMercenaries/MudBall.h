@@ -14,9 +14,10 @@ class CASUALMERCENARIES_API AMudBall : public AProjectile
 	GENERATED_BODY()
 
 public:
-	
-	UPROPERTY(VisibleAnywhere, Category = Particles)
-	UParticleSystemComponent* particleSystem;
+
+	/************************************************************************/
+	/* Defaults                                                             */
+	/************************************************************************/
 
 	AMudBall(const FObjectInitializer& ObjectInitializer);
 
@@ -25,20 +26,36 @@ public:
 	void Tick(float DeltaSeconds);
 	void BeginPlay();
 
-	UFUNCTION(Reliable, NetMulticast, WithValidation)
-	void Explode();
+	/************************************************************************/
+	/* Functionality                                                        */
+	/************************************************************************/
 
 	UFUNCTION()
 	void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 
 	void TakeDamage(float damage){ health -= damage; };
 
+
 private:
+
+	/************************************************************************/
+	/* Hidden functionality                                                        */
+	/************************************************************************/
+
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+	void Explode();
+
+
+	/************************************************************************/
+	/* Values                                                               */
+	/************************************************************************/
 
 	float health;
 	float size;
 
-	UParticleSystem* part;
+	/************************************************************************/
+	/* Timers and triggers                                                  */
+	/************************************************************************/
 
 	bool inflating;
 

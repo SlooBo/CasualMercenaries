@@ -8,38 +8,42 @@
 
 ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
 {
-	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("RocketMesh"));
-
-	
+	//StaticMesh
+	projectileMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("RocketMesh"));
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/RocketLauncher/Rocket.Rocket'"));
-	Mesh->SetStaticMesh(MeshObj.Object);
+	projectileMesh->SetStaticMesh(MeshObj.Object);
+	//Material MISSING!
 
 
-	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_SmokeTrail.P_SmokeTrail'"));
-	
-	particleSystem->Template = ParticleObj.Object;
-	
-	particleSystem->AttachTo(Mesh, "ExhaustSocket");
-
-	particleSystem->Activate();
-
-
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
-	part = ParticleObj2.Object;
-
-
-	bReplicates = true;
-	bReplicateMovement = true;
-
-	SetActorEnableCollision(true);
-
-
+	//Movement
 	ProjectileMovement->InitialSpeed = 1200.0f;
 	ProjectileMovement->ProjectileGravityScale = 0.0;
 
+
+	//Delegate
 	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
-	
+
+
+	//Stuff
+	SetActorEnableCollision(true);
+
+
+	//ParticleSystem
+	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_SmokeTrail.P_SmokeTrail'"));
+	particleSystem->Template = ParticleObj.Object;
+	particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
+	particleSystem->Activate();
+
+
+	//ParticleSystem2
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+	flavorParticleEffect = ParticleObj2.Object;
+
+
+	//Replication
+	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
@@ -69,7 +73,7 @@ void ARocket::BeginPlay()
 
 void ARocket::Explode()
 {
-	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
+	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
 
 	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;
@@ -82,7 +86,18 @@ void ARocket::Explode()
 		{
 			UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			aItr->TakeDamage(ExplosionDamage, FDamageEvent::FDamageEvent(), Cast<class ACMPlayerController>(tempChar->GetController()), this);
+			aItr->ABaseCharacter::TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(tempChar->GetController()));
+		}
+	}
+	for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
+	{
+		float distance = GetDistanceTo(*aItr);
+
+		if (distance <= ExplosionRadius)
+		{
+			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
+			AProjectile* tempChar = Cast<AProjectile>(this->GetOwner());
+			aItr->TakeDamage(ExplosionDamage * 2);
 		}
 	}
 	Destroy();

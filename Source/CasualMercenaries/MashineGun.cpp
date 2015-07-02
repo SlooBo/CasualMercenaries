@@ -34,6 +34,10 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
 	flavorParticleEffect = ParticleObj.Object;
 
+
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_BulletTrail.P_BulletTrail'"));
+	bulletTrail = ParticleObj.Object;
+
 	//ID
 	id = WEAPONID::MASHINE_GUN;
 	bReplicates = true;
@@ -84,15 +88,16 @@ void AMashineGun::Fire()
 
 	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
+	
 
 	//Play effect 
 	ServerEffect(flavorParticleEffect, startTrace);
 
 
 	//Hit resolve
-	APlayerCharacter* player = Cast<APlayerCharacter>(hit.GetActor());
+	ABaseCharacter* player = Cast<ABaseCharacter>(hit.GetActor());
 	if (player != nullptr)
-		player->TakeDamage(10, FDamageEvent::FDamageEvent(), Cast<class ACMPlayerController>(Cast<APlayerCharacter>(this->GetOwner())->GetController()), this);
+		player->TakeDamage(10, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
 	else
 	{ 
 		AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
@@ -134,7 +139,10 @@ bool AMashineGun::ServerDrawLine_Validate(FVector begin, FVector end)
 
 void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
-	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
+	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
+	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
+	particlen->SetVectorParameter("BulletTrailEnd", end);
 }
 
 void AMashineGun::SecondaryFunction(APlayerCharacter* user)
