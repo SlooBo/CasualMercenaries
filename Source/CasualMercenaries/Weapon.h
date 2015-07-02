@@ -18,8 +18,8 @@ enum class WEAPONID : uint8
 	MASHINE_GUN,
 	MUDBUSTER_GUN,
 	WASP_GUN,
+	TWISTER_GUN,
 	NO_WEAPON,
-	G
 };
 
 UCLASS()
