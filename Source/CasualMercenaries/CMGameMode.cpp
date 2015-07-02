@@ -297,6 +297,8 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->PlayerState->bIsSpectator = false;
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
+
+	player->ServerInitInventory();
 }
 
 void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)

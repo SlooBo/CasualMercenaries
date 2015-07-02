@@ -3,21 +3,15 @@
 #include "CasualMercenaries.h"
 
 #include "Inventory.h"
+#include "UnrealNetwork.h"
 #include "PlayerCharacter.h"
 #include "MUDbuster.h"
 #include "PomegranadeLauncher.h"
 #include "RocketLauncher.h"
 #include "MashineGun.h"
 #include "UberWeihmacher.h"
-UInventory::UInventory()
-{
-}
 
-UInventory::~UInventory()
-{
-}
-
-void UInventory::ClearInventory()
+void FInventory::ClearInventory()
 {
 	for (int i = 0; i < weapons.Num(); i++)
 	{ 
@@ -27,17 +21,17 @@ void UInventory::ClearInventory()
 	weapons.Reset();
 }
 
-void UInventory::AddWeaponToInventory(AWeapon* weapon)
+void FInventory::AddWeaponToInventory(AWeapon* weapon)
 {
 	weapons.Add(weapon);
 }
 
-void UInventory::RemoveWeaponFromInventory(int number)
+void FInventory::RemoveWeaponFromInventory(int number)
 {
 	weapons.RemoveAt(number, 1);
 }
 
-void UInventory::RemoveWeaponFromInventory(AWeapon* weapon)
+void FInventory::RemoveWeaponFromInventory(AWeapon* weapon)
 {
 	for (int i = 0; i < weapons.Num(); i++)
 	{
@@ -48,13 +42,13 @@ void UInventory::RemoveWeaponFromInventory(AWeapon* weapon)
 	}
 }
 
-AWeapon* UInventory::GetWeapon(int number)
+AWeapon* FInventory::GetWeapon(int number)
 {
-	if (weapons.Num() <= 0)
+	if (!weapons.IsValidIndex(number))
 		return nullptr;
 	return weapons[number];
 }
-void UInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
+void FInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
 {
 	if (weapons.Num() <= 0 || !weapons.IsValidIndex(slot))
 	{
@@ -103,12 +97,12 @@ void UInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
 	weapon->SetRoot(owningPlayer);
 	ChangeWeaponAtSlot(slot, weapon);
 }
-void UInventory::ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon)
+void FInventory::ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon)
 {
 	if (weapons.Num() > 0 && weapons.IsValidIndex(slot))
 	weapons[slot] = newWeapon;
 }
-void UInventory::SetPlayer(APlayerCharacter *player)
+void FInventory::SetPlayer(APlayerCharacter *player)
 {
 	owningPlayer = player;
 }

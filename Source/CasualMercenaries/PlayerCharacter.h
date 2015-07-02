@@ -26,9 +26,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void BeginPlayCplusplus();
 
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerInitInventory();
-
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -83,6 +80,9 @@ public:
 	/************************************************************************/
 	/* Weapons                                                              */
 	/************************************************************************/
+	UFUNCTION()
+	FInventory& GetInventory() { return Cast<ACMPlayerController>(GetController())->GetInventory(); }
+
 	void AddWeapon(AWeapon* _weapon);
 
 	UFUNCTION(Reliable, Server, WithValidation)
@@ -124,13 +124,10 @@ public:
 
 	UCameraComponent* GetCamera(){ return cameraComp; };
 
-	UFUNCTION()
-	UInventory *GetInventory(){ return inventory; }
 private:
 
 
-	UPROPERTY()
-	UInventory* inventory;
+	
 	bool inventoryInitialized;
 
 	int currentWeapon;
