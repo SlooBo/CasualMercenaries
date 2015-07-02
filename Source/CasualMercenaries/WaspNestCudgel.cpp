@@ -95,7 +95,7 @@ void AWaspNestCudgel::Fire()
 		{
 			UGameplayStatics::ApplyDamage(*aItr, damage, GetInstigatorController(), this, UDamageType::StaticClass());
 			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			aItr->TakeDamage(damage, FDamageEvent::FDamageEvent(), Cast<APlayerController>(tempChar->GetController()), this);
+			aItr->ABaseCharacter::TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<APlayerController>(tempChar->GetController()));
 		}
 	}
 }
