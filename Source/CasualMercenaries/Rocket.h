@@ -17,8 +17,9 @@ class CASUALMERCENARIES_API ARocket : public AProjectile
 
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
-		UParticleSystemComponent* particleSystem;
+	/************************************************************************/
+	/* Defaults                                                             */
+	/************************************************************************/
 
 	ARocket(const FObjectInitializer& ObjectInitializer);
 
@@ -27,7 +28,9 @@ public:
 	void Tick(float DeltaSeconds);
 	void BeginPlay();
 
-	void Explode();
+	/************************************************************************/
+	/* Functionality                                                        */
+	/************************************************************************/
 
 	UFUNCTION()
 	void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
@@ -35,13 +38,13 @@ public:
 	UFUNCTION()
 	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-protected:
-
-
-
 private:
 
-	UParticleSystem* part;
+	/************************************************************************/
+	/* Hidden functionality                                                        */
+	/************************************************************************/
 
-	
+	void Explode();
+
+
 };

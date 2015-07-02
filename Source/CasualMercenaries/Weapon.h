@@ -18,7 +18,8 @@ enum class WEAPONID : uint8
 	MASHINE_GUN,
 	MUDBUSTER_GUN,
 	WASP_GUN,
-	G
+	TWISTER_GUN,
+	NO_WEAPON,
 };
 
 UCLASS()
@@ -28,11 +29,23 @@ class CASUALMERCENARIES_API AWeapon : public AActor
 
 public:	
 
+	/************************************************************************/
+	/* UProperties                                                          */
+	/************************************************************************/
+
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* weaponMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	FVector MuzzleOffset;
+	FVector muzzleOffset;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Particles)
+	UParticleSystemComponent* particleSystem;
+
+
+	/************************************************************************/
+	/* Defaults                                                             */
+	/************************************************************************/
 
 	// Sets default values for this actor's properties
 	AWeapon(const FObjectInitializer& ObjectInitializer);
@@ -43,6 +56,9 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	/************************************************************************/
+	/* Functionality                                                        */
+	/************************************************************************/
 
 	virtual void PrimaryFunction(APlayerCharacter* user);
 
@@ -58,6 +74,10 @@ public:
 
 	virtual void IncreaseAmmoAmount(int32 Ammo);
 
+	/************************************************************************/
+	/* Utility                                                              */
+	/************************************************************************/
+
 	void SetRoot(APlayerCharacter* user);
 	
 	WEAPONID GetID(){ return id; };
@@ -66,23 +86,35 @@ public:
 
 protected:
 
-	WEAPONID id;
-
-	int32 price;
-
+	/************************************************************************/
+	/* Kept values                                                          */
+	/************************************************************************/
+	
 	int ammo;
 	int clips;
 	int ammoInClip; 
 	int maxAmmo;
-	float firingInterval;
+	int32 price;
+
 	DAMAGE_TYPE type;
+	WEAPONID id;
 
-	USkeletalMesh* ammoMesh;
+	/************************************************************************/
+	/* Timers and triggers                                                  */
+	/************************************************************************/
 
+	float firingInterval;
 	float reloadTime;
 	float passedTimeReloading;
-	bool reloading;
-	bool firing;
 	float passedTimeFiring;
 
+	bool reloading;
+	bool firing;
+
+	/************************************************************************/
+	/* Particles                                                            */
+	/************************************************************************/
+
+	UParticleSystem* flavorParticleEffect;
+	
 };

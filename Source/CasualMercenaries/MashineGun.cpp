@@ -7,30 +7,40 @@
 
 AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
+	//skeletalMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/ToasterGun/MESH_Toaster_gun.MESH_Toaster_gun'"));
 	weaponMesh->SetSkeletalMesh(MeshObj.Object);
+
+	//material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
-
-
 	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05)); 
 
-	bReplicates = true;
-
-	reloadTime = 0.5;
+	//integer values
 	maxAmmo = 120;
 	clips = 999;
 	ammo = 30;
 	ammoInClip = 30;
-	firingInterval = .25;
 	price = 600;
 
+	//float values
 	passedTimeReloading = 0;
+	reloadTime = 0.5;
+	firingInterval = .25;
 
+	
+
+	//particles
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
+	flavorParticleEffect = ParticleObj.Object;
+
+
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_BulletTrail.P_BulletTrail'"));
+	bulletTrail = ParticleObj.Object;
+
+	//ID
 	id = WEAPONID::MASHINE_GUN;
-
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
-	part = ParticleObj2.Object;
+	bReplicates = true;
 }
 
 void AMashineGun::BeginPlay()
@@ -50,27 +60,22 @@ void AMashineGun::Fire()
 		firing = false;
 		return;
 	}
-
-
-
 	FVector userLoc;
 	FVector userLoc2;
 	FRotator cameraRot;
 
-
 	this->GetOwner()->GetActorEyesViewPoint(userLoc2, cameraRot);
-
 	userLoc = this->GetOwner()->GetActorLocation();
 
 	FVector shootDir = cameraRot.Vector();
 
+	//Bullet spread
 	float random1 = FMath::FRand() * 0.05;
 	float random2 = FMath::FRand() * 0.05;
 	float random3 = FMath::FRand() * 0.05;
-
-
 	shootDir.Set(shootDir.X + random1, shootDir.Y + random2, shootDir.Z + random3);
 
+	//LineTrace
 	const FVector startTrace = userLoc;
 	const FVector endTrace = startTrace + shootDir * 20000;
 
@@ -83,11 +88,16 @@ void AMashineGun::Fire()
 
 	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	ServerEffect(part, startTrace);
+	
 
-	APlayerCharacter* player = Cast<APlayerCharacter>(hit.GetActor());
+	//Play effect 
+	ServerEffect(flavorParticleEffect, startTrace);
+
+
+	//Hit resolve
+	ABaseCharacter* player = Cast<ABaseCharacter>(hit.GetActor());
 	if (player != nullptr)
-		player->TakeDamage(10, FDamageEvent::FDamageEvent(), Cast<class ACMPlayerController>(Cast<APlayerCharacter>(this->GetOwner())->GetController()), this);
+		player->TakeDamage(10, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
 	else
 	{ 
 		AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
@@ -96,6 +106,7 @@ void AMashineGun::Fire()
 	}
 
 
+	//Another effect
 	DrawLine(startTrace, endTrace);
 	ammo--;
 }
@@ -106,7 +117,6 @@ void AMashineGun::PrimaryFunction(APlayerCharacter* user)
 	if (ammo > 0)
 	{
 		firing = true;
-		
 	}
 }
 
@@ -129,7 +139,10 @@ bool AMashineGun::ServerDrawLine_Validate(FVector begin, FVector end)
 
 void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
-	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
+	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
+	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
+	particlen->SetVectorParameter("BulletTrailEnd", end);
 }
 
 void AMashineGun::SecondaryFunction(APlayerCharacter* user)

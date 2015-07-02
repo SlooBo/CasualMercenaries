@@ -16,20 +16,37 @@ class CASUALMERCENARIES_API APomeGranadeLauncher : public AWeapon
 
 public:
 
+	/************************************************************************/
+	/* Defaults                                                             */
+	/************************************************************************/
+
 	APomeGranadeLauncher(const FObjectInitializer& FOI);
 
+	// Called every frame
+	void Tick(float DeltaSeconds);
+
+	void BeginPlay();
+
+	/************************************************************************/
+	/* Functionality                                                        */
+	/************************************************************************/
+
 	void PrimaryFunction(APlayerCharacter* user);
+
 	void PrimaryFunctionReleased(APlayerCharacter* user);
 
 	void SecondaryFunction(APlayerCharacter* user);
 
-	void BeginPlay();
+	void Reload(){};
+
+private:
+
+	/************************************************************************/
+	/* Hidden functionality                                                 */
+	/************************************************************************/
 
 	void Fire();
 
-	// Called every frame
-	void Tick(float DeltaSeconds);
-	void Reload() {};
-	
+
 	
 };

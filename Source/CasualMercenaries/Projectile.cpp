@@ -7,11 +7,16 @@
 // Sets default values
 AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	//CollisionComponent
 	CollisionComp = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(15.0f);
+	CollisionComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	CollisionComp->SetNotifyRigidBodyCollision(true);
+
+	//Set Root component
 	RootComponent = CollisionComp;
 
-
+	//MovementComponent
 	ProjectileMovement = ObjectInitializer.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
 	ProjectileMovement->InitialSpeed = 600.f;
@@ -24,15 +29,12 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	CollisionComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	CollisionComp->SetNotifyRigidBodyCollision(true);
 }
 
 // Called when the game starts or when spawned
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

@@ -9,15 +9,12 @@
 /**
  * 
  */
-UCLASS()
-class CASUALMERCENARIES_API UInventory : public UObject
+USTRUCT()
+struct CASUALMERCENARIES_API FInventory
 {
-	GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 	
 public:
-
-	UInventory();
-	~UInventory();
 
 	void ClearInventory();
 
@@ -40,13 +37,16 @@ public:
 
 	void SetPlayer(APlayerCharacter *player);
 
-private:
-
-	void ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon);
-	class APlayerCharacter *owningPlayer;
-	uint16 maxInventorySize;
 	UPROPERTY()
 	TArray<AWeapon*> weapons;
+
+	void ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon);
+	UPROPERTY()
+	class APlayerCharacter *owningPlayer;
+	UPROPERTY()
+	uint16 maxInventorySize;
+
+	
 	
 	
 };

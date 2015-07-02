@@ -13,6 +13,10 @@ class CASUALMERCENARIES_API AProjectile : public AActor
 	
 public:	
 
+	/************************************************************************/
+	/* UProperties                                                          */
+	/************************************************************************/
+
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
 		USphereComponent* CollisionComp;
 
@@ -20,9 +24,14 @@ public:
 		UProjectileMovementComponent* ProjectileMovement;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-		UStaticMeshComponent* Mesh;
+		UStaticMeshComponent* projectileMesh;
 
-	DAMAGE_TYPE type;
+	UPROPERTY(VisibleAnywhere, Category = Particles)
+		UParticleSystemComponent* particleSystem;
+
+	/************************************************************************/
+	/* Defaults                                                             */
+	/************************************************************************/
 
 	// Sets default values for this actor's properties
 	AProjectile(const FObjectInitializer& ObjectInitializer);
@@ -33,9 +42,27 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	/************************************************************************/
+	/* Functionality                                                        */
+	/************************************************************************/
+
 	void InitVelocity(const FVector& ShootDirection);
 
-
 	virtual void TakeDamage(float damage){};
-	
+
+
+protected:
+
+	/************************************************************************/
+	/* Values                                                               */
+	/************************************************************************/
+
+	DAMAGE_TYPE type;
+
+	/************************************************************************/
+	/* Particles                                                            */
+	/************************************************************************/
+
+	UParticleSystem* flavorParticleEffect;
+
 };

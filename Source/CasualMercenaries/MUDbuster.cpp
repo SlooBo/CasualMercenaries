@@ -9,31 +9,32 @@
 
 AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 {
-
+	//skeletalMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/Weapons/MudBuster/Weapon/MESH_Mudbuster.MESH_Mudbuster'"));
 	weaponMesh->SetSkeletalMesh(MeshObj.Object);
 
+	//skeletalMesh
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Weapon/MAT_Mudbuster.MAT_Mudbuster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
-
-
 	weaponMesh->SetRelativeScale3D(FVector(0.5, 0.5, 0.25));
 
-	bReplicates = true;
-
-	reloadTime = 0.5;
+	// integers
 	maxAmmo = 120;
 	clips = 999;
 	ammo = 10;
 	ammoInClip = 10;
-	firingInterval = .75;
 	price = 1200;
 
+	// floats
+	firingInterval = .75;
+	reloadTime = 0.5;
 	passedTimeReloading = 0;
 
+	//ID
 	id = WEAPONID::MUDBUSTER_GUN;
 
-	//weaponMesh->AnimScriptInstance
+	//replication
+	bReplicates = true;
 }
 
 void AMUDbuster::PrimaryFunction(APlayerCharacter* user)
@@ -61,30 +62,28 @@ void AMUDbuster::Reload()
 
 }
 
-
-
 void AMUDbuster::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 }
 
-
 void AMUDbuster::Fire()
 {
 	firing = false;
 
-	FVector userLoc;
-	FRotator cameraRot;
+	//Get & set the orientation of projectile to be created
+	FVector tempUserLoc;
+	FRotator tempCameraRot;
 
-	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
+	this->GetOwner()->GetActorEyesViewPoint(tempUserLoc, tempCameraRot);
+	tempUserLoc = this->GetOwner()->GetActorLocation();
 
-	userLoc = this->GetOwner()->GetActorLocation();
-	MuzzleOffset.X = 100;
-	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
-
-	FRotator MuzzleRotation = cameraRot;
+	muzzleOffset.X = 100;
+	FVector const muzzleLocation = tempUserLoc + FTransform(tempCameraRot).TransformVector(muzzleOffset);
+	FRotator tempMuzzleRotation = tempCameraRot;
 
 
+	
 	UWorld* const World = GetWorld();
 	if (World != NULL)
 	{
@@ -95,12 +94,12 @@ void AMUDbuster::Fire()
 
 
 		// spawn the projectile at the muzzle
-		AMudBall* const projectile = World->SpawnActor<AMudBall>(AMudBall::StaticClass(), MuzzleLocation, MuzzleRotation, SpawnParams);
+		AMudBall* const projectile = World->SpawnActor<AMudBall>(AMudBall::StaticClass(), muzzleLocation, tempMuzzleRotation, SpawnParams);
 
 		if (projectile)
 		{
-			FVector const LaunchDir = MuzzleRotation.Vector();
-			projectile->InitVelocity(LaunchDir);
+			FVector const tempLaunchDir = tempMuzzleRotation.Vector();
+			projectile->InitVelocity(tempLaunchDir);
 		}
 	}
 }

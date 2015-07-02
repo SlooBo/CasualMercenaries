@@ -20,10 +20,7 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 	UWidgetTree *widgetTree = shopWidget->WidgetTree;
 	TArray<UWidget*> children;
 	widgetTree->GetAllWidgets(children);
-	
-	APlayerController *playercontroller = world->GetFirstPlayerController();
-	APlayerCharacter *playercharacter = Cast<APlayerCharacter>(playercontroller->GetPawn());
-	playerInventory = playercharacter->GetInventory();
+
 	int childcount = children.Num();
 	for (int i = 0; i < childcount; i++)
 	{
@@ -40,6 +37,7 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 			weaponSlot->shopLogic = this;
 
 			tempButton->OnClicked.AddDynamic(weaponSlot, &UWeaponSlot::OnClicked);
+
 			weaponSlotButtons.Add(Cast<UButton>(children[i]));
 			weaponSlots.Add(weaponSlot);
 		}
@@ -62,14 +60,18 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 		{
 			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedQuit);
 		}
-		else if (tempButton != nullptr && tempButton->GetName().Equals("TradeButton"))
+		else if (tempButton != nullptr && tempButton->GetName().Equals("SellButton"))
 		{
-			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedTradeButton);
+			//tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedTradeButton);
+		}
+		else if (tempButton != nullptr && tempButton->GetName().Equals("BuyButton"))
+		{
+			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedBuyButton);
 		}
 		UTextBlock *tempText = Cast<UTextBlock>(children[i]);
-		if (tempText != nullptr && tempText->GetName().Equals("TradeButtonText"))
+		if (tempText != nullptr && tempText->GetName().Equals("BuyButtonText"))
 		{
-			tradeButtonText = tempText;
+			buyButtonText = tempText;
 		}
 	}
 	OnClickedWeaponSlot(0);
@@ -80,10 +82,16 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	if (slotIndex != currentWeaponIndex)
 		ChangeWeaponSlotColor(currentWeaponIndex, FLinearColor::White);
 	currentWeaponIndex = slotIndex;
-	AWeapon *weapon = playerInventory->GetWeapon(slotIndex);
+	AWeapon *weapon = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn())->GetInventory().GetWeapon(slotIndex);
 	if (weapon != nullptr)
 	{
 		ChangeCurrentShopSlot((uint32)weapon->GetID());
+	}
+	else
+	{
+		FLinearColor color = FLinearColor(0.8f, 0.5f, 0.0f, 0.0f);
+		FSlateColor slateColor = FSlateColor(color);
+		ChangeShopSlotColor(currentShopIndex, slateColor);
 	}
 }
 void UShopLogic::OnClickedShopSlot(uint32 slotIndex)
@@ -121,57 +129,53 @@ UButton* UShopLogic::getWeaponSlotButton(uint32 index)
 	}
 	return nullptr;
 }
-void UShopLogic::ChangeShopSlotColor(uint32 index, FLinearColor color)
+void UShopLogic::ChangeShopSlotColor(uint32 index, FSlateColor color)
 {
 	UButton* tempButton = getShopButton(index);
 	if (tempButton != nullptr)
 	{
-		tempButton->SetBackgroundColor(color);
+		tempButton->WidgetStyle.Normal.TintColor = color;
+		tempButton->WidgetStyle.Hovered.TintColor == color;
 	}
 }
-void UShopLogic::ChangeWeaponSlotColor(uint32 index, FLinearColor color)
+void UShopLogic::ChangeWeaponSlotColor(uint32 index, FSlateColor color)
 {
 	UButton* tempButton = getWeaponSlotButton(index);
 	if (tempButton != nullptr)
 	{
-		tempButton->SetBackgroundColor(color);
+		tempButton->WidgetStyle.Normal.TintColor = color;
 	}
 }
 void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 {
 	FLinearColor color = FLinearColor::Yellow;
 	color = FLinearColor(0.8f, 0.5f, 0.0f, 1.0f);
-	ChangeShopSlotColor(slotIndex, color);
-	if (slotIndex != currentShopIndex)
+	FSlateColor slateColor = FSlateColor(color);
+	ChangeShopSlotColor(slotIndex, slateColor);
+	if (slotIndex != currentShopIndex && currentShopIndex != -1)
 	{
 		color = FLinearColor(1.0f, 1.0f, 1.0f, 0.0f);
-		ChangeShopSlotColor(currentShopIndex, color);
+		slateColor = FSlateColor(color);
+		ChangeShopSlotColor(currentShopIndex, slateColor);
 	}
 	currentShopIndex = slotIndex;
-	UpdateTradeButtonText();
+	UpdateBuyButtonText();
 }
 void UShopLogic::OnClickedQuit()
 {
 	Cast<APlayerHud>(world->GetFirstPlayerController()->GetHUD())->changeUIElement(MenuType::GAME_UI);
 }
-void UShopLogic::OnClickedTradeButton()
+void UShopLogic::OnClickedBuyButton()
 {
 	APlayerCharacter *player = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn());
-	player->GetInventory()->ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(currentShopIndex));
-	UpdateTradeButtonText();
+	player->GetInventory().ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(currentShopIndex));
+	UpdateBuyButtonText();
 }
-void UShopLogic::UpdateTradeButtonText()
+void UShopLogic::UpdateBuyButtonText()
 {
-	AWeapon *weapon = playerInventory->GetWeapon(currentWeaponIndex);
+	AWeapon *weapon = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn())->GetInventory().GetWeapon(currentWeaponIndex);
 	if (weapon != nullptr)
 	{
-		if ((uint32)weapon->GetID() == currentShopIndex)
-		{
-			tradeButtonText->SetText(FText::FromString("Sell"));
-		}
-		else
-		{
-			tradeButtonText->SetText(FText::FromString("Buy"));
-		}
+		buyButtonText->SetText(FText::FromString("1000$"));
 	}
 }

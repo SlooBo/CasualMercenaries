@@ -1,4 +1,3 @@
-
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CasualMercenaries.h"
@@ -8,33 +7,36 @@
 
 AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
 {
-	lifeTime = 3;
-
-
-	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
-
-	this->RootComponent = Mesh;
-
+	//StaticMesh
+	projectileMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/RocketLauncher/Rocket.Rocket'"));
-	Mesh->SetStaticMesh(MeshObj.Object);
-
+	projectileMesh->SetStaticMesh(MeshObj.Object);
+	//Material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
-	Mesh->SetMaterial(0, MateriaObj.Object);
+	projectileMesh->SetMaterial(0, MateriaObj.Object);
+	//Scale
+	projectileMesh->SetRelativeScale3D(FVector(.1, 1, 1));
+	projectileMesh->SetSimulatePhysics(true);
 
-	Mesh->SetRelativeScale3D(FVector(.1, 1, 1));
-	Mesh->SetSimulatePhysics(true);
+	this->RootComponent = projectileMesh;
 
 
+	//Movement
 	ProjectileMovement->ProjectileGravityScale = 1.0;
 	ProjectileMovement->InitialSpeed = 2000.f;
 
 
+	//Integers
+	lifeTime = 3;
+
+
+	//Particles
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+	flavorParticleEffect = ParticleObj.Object;
 
-	part = ParticleObj.Object;
 
-
+	//Replication
 	bReplicates = true;
 	bReplicateMovement = true;
 }
@@ -62,8 +64,8 @@ bool AGranade::Explode_Validate()
 
 void AGranade::Explode_Implementation()
 {
-	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, part, this->GetActorLocation(), FRotator::ZeroRotator, true);
-
+	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
+	particle->SetRelativeScale3D(FVector(2, 2, 2));
 	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;
 
@@ -75,7 +77,7 @@ void AGranade::Explode_Implementation()
 		{
 			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			aItr->TakeDamage(ExplosionDamage, FDamageEvent::FDamageEvent(), Cast<class ACMPlayerController>(tempChar->GetController()), this);
+			aItr->ABaseCharacter::TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(tempChar->GetController()));
 		}
 	}
 	for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
@@ -86,7 +88,7 @@ void AGranade::Explode_Implementation()
 		{
 			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			AProjectile* tempChar = Cast<AProjectile>(this->GetOwner());
-			aItr->TakeDamage(ExplosionDamage);
+			aItr->TakeDamage(ExplosionDamage*2);
 		}
 	}
 	Destroy();
