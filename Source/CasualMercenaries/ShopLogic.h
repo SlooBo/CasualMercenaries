@@ -32,15 +32,15 @@ private:
 	UFUNCTION()
 	UButton* getWeaponSlotButton(uint32 index);
 	UPROPERTY()
-	UTextBlock *tradeButtonText;
+	UTextBlock *buyButtonText;
 	UPROPERTY()
 	uint32 currentShopIndex;
 	UPROPERTY()
 	uint32 currentWeaponIndex;
 	UFUNCTION()
-	void ChangeShopSlotColor(uint32 index, FLinearColor color);
+	void ChangeShopSlotColor(uint32 index, FSlateColor color);
 	UFUNCTION()
-	void ChangeWeaponSlotColor(uint32 index, FLinearColor color);
+	void ChangeWeaponSlotColor(uint32 index, FSlateColor color);
 	UPROPERTY()
 	TArray<class UShopSlot*> shopSlots;
 	UPROPERTY()
@@ -54,9 +54,9 @@ private:
 	UFUNCTION()
 	void OnClickedQuit();
 	UFUNCTION()
-	void OnClickedTradeButton();
+	void OnClickedBuyButton();
 	UFUNCTION()
-	void UpdateTradeButtonText();
+	void UpdateBuyButtonText();
 };
 UCLASS()
 class UWeaponSlot: public UObject
