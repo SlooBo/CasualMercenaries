@@ -64,6 +64,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	state = CHARACTER_STATE::ALIVE;
 	rounds = 0;
 
+	bReplicates = true;
+	/// pleasant surprise 
+
 }
 
 // Called when the game starts or when spawned
@@ -151,7 +154,6 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 
 void APlayerCharacter::ReloadWeapon()
 {
-
 	ServerReloadWeapon();
 }
 

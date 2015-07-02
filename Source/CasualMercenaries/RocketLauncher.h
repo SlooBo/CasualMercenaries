@@ -13,8 +13,20 @@ class CASUALMERCENARIES_API ARocketLauncher : public AWeapon
 
 public:
 
+	/************************************************************************/
+	/* Defaults                                                             */
+	/************************************************************************/
 
 	ARocketLauncher(const FObjectInitializer& FOI);
+
+	void BeginPlay();
+
+	// Called every frame
+	void Tick(float DeltaSeconds);
+
+	/************************************************************************/
+	/* Functionality                                                        */
+	/************************************************************************/
 
 	void PrimaryFunction(APlayerCharacter* user);
 
@@ -22,26 +34,16 @@ public:
 
 	void SecondaryFunction(APlayerCharacter* user);
 
-	void BeginPlay();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Particles)
-	UParticleSystemComponent* particleSystem;
-
-	// Called every frame
-	void Tick(float DeltaSeconds);
-
 	void Reload();
-
-	void Fire();
-
-	
 
 private:
 
-	UParticleSystem* part;
+	/************************************************************************/
+	/* Hidden functionality                                                 */
+	/************************************************************************/
+
+	void Fire();
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
-		void ServerEffect(UParticleSystem* particle, FVector location);
-
-
+	void ServerEffect(UParticleSystem* particle, FVector location);
 };

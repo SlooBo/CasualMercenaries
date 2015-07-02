@@ -8,17 +8,16 @@
 // Sets default values
 AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-
-	weaponMesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("RocketLauncherMesh"));
 	PrimaryActorTick.bCanEverTick = true;
 
 	this->SetActorHiddenInGame(true);
 
+	price = 5;
+
 	reloading = false;
+	firing = false;
 
 	bReplicates = true;
-
-	price = 5;
 }
 
 // Called when the game starts or when spawned
@@ -43,7 +42,6 @@ void AWeapon::Tick( float DeltaTime )
 			reloading = false;
 		}
 	}
-
 
 	passedTimeFiring += DeltaTime;
 	if (firing)
