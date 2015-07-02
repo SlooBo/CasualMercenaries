@@ -32,6 +32,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
 
+	//Called when game ends
+	virtual void EndPlay(const EEndPlayReason::Type _endPlayReason) override;
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
@@ -70,7 +73,10 @@ public:
 	/* Life And Death                                                       */
 	/************************************************************************/
 
-	virtual float TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser) override;
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL);
+
+	//virtual float TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser) override;
 
 	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 
@@ -134,7 +140,6 @@ private:
 	bool inventoryInitialized;
 
 	int currentWeapon;
-	FVector fuckthisshit;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* springArmComp;
@@ -152,6 +157,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Player|Effects")
 	USoundCue* dashSound;
 
+	//Status timers and boold
+	FTimerHandle stunTimerHandle;
+	bool canLook;
+	FTimerHandle rootTimerHandle;
+	bool canWalk;
+	void RestoreActivity();
+
+
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")
 	bool wallTouch;
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")
@@ -165,6 +178,5 @@ private:
 	void OpenTeamChat();
 	void OpenAllChat();
 
-	void CheckStatus();
 	int rounds;
 };

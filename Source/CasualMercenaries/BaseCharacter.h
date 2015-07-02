@@ -63,7 +63,7 @@ public:
 		void AddHealth(float _health);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		void TakeDamage(float _damage, DAMAGE_TYPE _type, APlayerController* killer = NULL);
+		virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, APlayerController* _damageSource = NULL);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		void AddStamina(float _stamina);
@@ -113,15 +113,12 @@ protected:
 
 	void DelayedDestroy(FTimerHandle& timerHandle);
 
-	/*virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
-
-	virtual bool CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const;
+	/*virtual bool CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const;
 
 	virtual bool Die(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser);
-
 	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
-
-	virtual void FellOutOfWorld(const class UDamageType& DmgType) override;*/
+	*/
+	//virtual void FellOutOfWorld(const class UDamageType& DmgType) override;
 
 	void SetRagdollPhysics();
 

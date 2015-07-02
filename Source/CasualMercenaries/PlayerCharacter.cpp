@@ -59,9 +59,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	currentWeapon = 0;
 
-	fuckthisshit = FVector();
-
 	state = CHARACTER_STATE::ALIVE;
+	canLook = true;
+	canWalk = true;
 	rounds = 0;
 
 }
@@ -70,6 +70,14 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 void APlayerCharacter::BeginPlayCplusplus()
 {
 	ServerInitInventory();
+}
+
+void APlayerCharacter::EndPlay(const EEndPlayReason::Type _endPlayReason)
+{
+	Super::EndPlay(_endPlayReason);
+
+	//Clears all timers
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 }
 
 bool APlayerCharacter::ServerInitInventory_Validate()
@@ -109,8 +117,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	WallCheck();
-	CheckStatus();
-
 }
 
 // Called to bind functionality to input
@@ -309,16 +315,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	
 };
 
-void APlayerCharacter::CheckStatus()
-{
-	if (state == CHARACTER_STATE::STUNNED)
-	{
-		rounds++;
-		if (rounds > 500)
-			state = CHARACTER_STATE::ALIVE;
-	}
-}
-
 void APlayerCharacter::OnStartJump()
 {
 	if (IsMoveInputIgnored())
@@ -334,10 +330,47 @@ void APlayerCharacter::OnStopJump()
 
 }
 
-float APlayerCharacter::TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser)
+void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* damageSource)
 {
-	return 4.0f;
+	if (!IsAlive())
+		return;
+
+	health = health - _damage;
+
+	switch (_type)
+	{
+	case DAMAGE_TYPE::NORMAL:
+		break;
+	case DAMAGE_TYPE::STUN:
+		canLook = false;
+		springArmComp->bUsePawnControlRotation = false;
+		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
+		SetState(CHARACTER_STATE::STUNNED);
+		break;
+	case DAMAGE_TYPE::ROOT:
+		canWalk = false;
+		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
+		SetState(CHARACTER_STATE::ROOTED);
+		break;
+	default:
+		break;
+	}
+
+	//Temp fix
+	if (!IsAlive())
+		OnDeath(Cast<ACMPlayerController>(damageSource));
 }
+
+void APlayerCharacter::RestoreActivity()
+{
+	SetState(CHARACTER_STATE::ALIVE);
+	springArmComp->bUsePawnControlRotation = true;
+}
+
+//float APlayerCharacter::TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser)
+//{
+//	return 4.0f;
+//}
 
 void APlayerCharacter::OnDeath_Implementation(ACMPlayerController* killer)
 {
@@ -364,21 +397,27 @@ void APlayerCharacter::ServerOnDeath_Implementation(ACMPlayerController* killer)
 
 void APlayerCharacter::MoveForward(float _val)
 {
-	if (Controller && _val != 0.0f)
+	if (canLook && canWalk)
 	{
-		const FRotator tempRotation = GetActorRotation();
-		FVector tempDirection = FRotationMatrix(tempRotation).GetScaledAxis(EAxis::X);
-		AddMovementInput(tempDirection, _val);
+		if (Controller && _val != 0.0f)
+		{
+			const FRotator tempRotation = GetActorRotation();
+			FVector tempDirection = FRotationMatrix(tempRotation).GetScaledAxis(EAxis::X);
+			AddMovementInput(tempDirection, _val);
+		}
 	}
 }
 
 void APlayerCharacter::MoveRight(float _val)
 {
-	if (_val != 0.0f)
+	if (canLook && canWalk)
 	{
-		const FRotator tempRotation = GetActorRotation();
-		FVector tempDirection = FRotationMatrix(tempRotation).GetScaledAxis(EAxis::Y);
-		AddMovementInput(tempDirection, _val);
+		if (_val != 0.0f)
+		{
+			const FRotator tempRotation = GetActorRotation();
+			FVector tempDirection = FRotationMatrix(tempRotation).GetScaledAxis(EAxis::Y);
+			AddMovementInput(tempDirection, _val);
+		}
 	}
 }
 

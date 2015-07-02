@@ -113,7 +113,7 @@ void ABaseCharacter::AddHealth(float _health)
 		health = health + _health;
 }
 
-void ABaseCharacter::TakeDamage(float _health, DAMAGE_TYPE _type, APlayerController* damageSource)
+void ABaseCharacter::TakeDamage(float _health, DAMAGE_TYPE _type, APlayerController* _damageSource)
 {
 	if (!IsAlive())
 		return;
@@ -136,7 +136,7 @@ void ABaseCharacter::TakeDamage(float _health, DAMAGE_TYPE _type, APlayerControl
 
 	//Temp fix
 	if (!IsAlive())
-		OnDeath(Cast<ACMPlayerController>(damageSource));
+		OnDeath(Cast<ACMPlayerController>(_damageSource));
 }
 
 void ABaseCharacter::AddStamina(float _stamina)
