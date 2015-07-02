@@ -15,7 +15,18 @@ class CASUALMERCENARIES_API AMashineGun : public AWeapon
 
 public:
 
+	/************************************************************************/
+	/* Defaults                                                             */
+	/************************************************************************/
+
 	AMashineGun(const FObjectInitializer& FOI);
+
+	// Called every frame
+	void Tick(float DeltaSeconds);
+
+	/************************************************************************/
+	/* Functionality                                                        */
+	/************************************************************************/
 
 	void PrimaryFunction(APlayerCharacter* user);
 
@@ -27,27 +38,25 @@ public:
 
 	void Reload();
 
-
-	// Called every frame
-	void Tick(float DeltaSeconds);
-
-
-
-
 private:
+
+	/************************************************************************/
+	/* Hidden Functionality                                                 */
+	/************************************************************************/
 
 	void Fire();
 
 	void DrawLine(FVector begin, FVector end);
 
+
+	/************************************************************************/
+	/* ServerFunctions                                                      */
+	/************************************************************************/
+
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ServerDrawLine(FVector begin, FVector end);
 
-
-	UParticleSystem* part;
-
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
-		void ServerEffect(UParticleSystem* particle, FVector location);
-
+	void ServerEffect(UParticleSystem* particle, FVector location);
 
 };

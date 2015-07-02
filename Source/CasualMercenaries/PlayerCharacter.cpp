@@ -15,8 +15,6 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
-	inventory = NewObject<UInventory>();
-	inventoryInitialized = false;
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -64,43 +62,14 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	state = CHARACTER_STATE::ALIVE;
 	rounds = 0;
 
+	bReplicates = true;
+	/// pleasant surprise 
+
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlayCplusplus()
 {
-	ServerInitInventory();
-}
-
-bool APlayerCharacter::ServerInitInventory_Validate()
-{
-	return true;
-}
-void APlayerCharacter::ServerInitInventory_Implementation()
-{
-	UWorld* const World = GetWorld();
-	inventory = NewObject<UInventory>();
-	inventory->SetPlayer(this);
-	inventory->ClearInventory();
-
-	AMUDbuster* pyssy3 = World->SpawnActor<AMUDbuster>(AMUDbuster::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
-	pyssy3->SetRoot(this);
-	AddWeapon(pyssy3);
-
-	APomeGranadeLauncher* pyssy4 = World->SpawnActor<APomeGranadeLauncher>(APomeGranadeLauncher::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
-	pyssy4->SetRoot(this);
-	AddWeapon(pyssy4);
-
-	AWaspNestCudgel* pyssy2 = World->SpawnActor<AWaspNestCudgel>(AWaspNestCudgel::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
-	pyssy2->SetRoot(this);
-	AddWeapon(pyssy2);
-
-	AMashineGun* pyssy = World->SpawnActor<AMashineGun>(AMashineGun::StaticClass(), this->GetActorLocation(), this->GetActorRotation());
-	pyssy->SetRoot(this);
-	AddWeapon(pyssy);
-
-	//inventory->GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
-	inventoryInitialized = true;
 }
 
 // Called every frame
@@ -151,7 +120,6 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 
 void APlayerCharacter::ReloadWeapon()
 {
-
 	ServerReloadWeapon();
 }
 
@@ -162,13 +130,15 @@ bool APlayerCharacter::ServerReloadWeapon_Validate()
 
 void APlayerCharacter::ServerReloadWeapon_Implementation()
 {
-	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->Reload();
+	FInventory& inventory = GetInventory();
+	if (inventory.GetWeapon(currentWeapon) != nullptr)
+		inventory.GetWeapon(currentWeapon)->Reload();
 }
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
 {
-	inventory->AddWeaponToInventory(_weapon);
+	FInventory& inventory = GetInventory();
+	inventory.AddWeaponToInventory(_weapon);
 	//ServerAddWeapon(_weapon);
 }
 
@@ -179,13 +149,13 @@ bool APlayerCharacter::ServerAddWeapon_Validate(AWeapon* _weapon)
 
 void APlayerCharacter::ServerAddWeapon_Implementation(AWeapon* _weapon)
 {
-	inventory->AddWeaponToInventory(_weapon);
+	FInventory& inventory = GetInventory();
+	inventory.AddWeaponToInventory(_weapon);
 }
 
 void APlayerCharacter::UseWeapon1()
 {
-	//if (inventory.GetWeapon(currentWeapon) != nullptr)
-		ServerUseWeapon1();
+	ServerUseWeapon1();
 }
 
 bool APlayerCharacter::ServerUseWeapon1_Validate()
@@ -195,11 +165,10 @@ bool APlayerCharacter::ServerUseWeapon1_Validate()
 
 void APlayerCharacter::ServerUseWeapon1_Implementation()
 {
-	if (inventory == nullptr)
-		return;
+	FInventory& inventory = GetInventory();
 
-	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->PrimaryFunction(this);
+	if (inventory.GetWeapon(currentWeapon) != nullptr)
+		inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
 }
 
 void APlayerCharacter::UseWeapon1Release()
@@ -214,14 +183,15 @@ bool APlayerCharacter::ServerUseWeapon1Release_Validate()
 
 void APlayerCharacter::ServerUseWeapon1Release_Implementation()
 {
-	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->PrimaryFunctionReleased(this);
+	FInventory& inventory = GetInventory();
+	if (inventory.GetWeapon(currentWeapon) != nullptr)
+		inventory.GetWeapon(currentWeapon)->PrimaryFunctionReleased(this);
 }
 
 void APlayerCharacter::UseWeapon2()
 {
-	//if (inventory->GetWeapon(currentWeapon) != nullptr)
-	//	inventory->GetWeapon(currentWeapon)->SecondaryFunction(this);
+	//if (inventory.GetWeapon(currentWeapon) != nullptr)
+	//	inventory.GetWeapon(currentWeapon)->SecondaryFunction(this);
 	//ServerUseWeapon2();
 }
 
@@ -232,11 +202,10 @@ bool APlayerCharacter::ServerUseWeapon2_Validate()
 
 void APlayerCharacter::ServerUseWeapon2_Implementation()
 {
-	if (inventory == nullptr)
-		return;
+	FInventory& inventory = GetInventory();
 
-	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->SecondaryFunction(this);
+	if (inventory.GetWeapon(currentWeapon) != nullptr)
+		inventory.GetWeapon(currentWeapon)->SecondaryFunction(this);
 }
 
 void APlayerCharacter::UseWeapon2Release()
@@ -251,8 +220,9 @@ bool APlayerCharacter::ServerUseWeapon2Release_Validate()
 
 void APlayerCharacter::ServerUseWeapon2Release_Implementation()
 {
-	if (inventory->GetWeapon(currentWeapon) != nullptr)
-		inventory->GetWeapon(currentWeapon)->SecondaryFunctionReleased(this);
+	FInventory& inventory = GetInventory();
+	if (inventory.GetWeapon(currentWeapon) != nullptr)
+		inventory.GetWeapon(currentWeapon)->SecondaryFunctionReleased(this);
 }
 
 void APlayerCharacter::SwitchWeaponUp()
@@ -283,13 +253,13 @@ void APlayerCharacter::ServerSwitchWeapon_Implementation(float cw, float pw)
 {
 	currentWeapon = cw;
 
-	if (inventory != nullptr)
-	{
-		if (inventory->GetWeapon(pw) != nullptr)
-			inventory->GetWeapon(pw)->SetActorHiddenInGame(true);
-		if (inventory->GetWeapon(cw) != nullptr)
-			inventory->GetWeapon(cw)->SetActorHiddenInGame(false);
-	}
+	FInventory& inventory = GetInventory();
+
+	if (inventory.GetWeapon(pw) != nullptr)
+		inventory.GetWeapon(pw)->SetActorHiddenInGame(true);
+	if (inventory.GetWeapon(cw) != nullptr)
+		inventory.GetWeapon(cw)->SetActorHiddenInGame(false);
+	
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -351,7 +321,8 @@ bool APlayerCharacter::ServerOnDeath_Validate(ACMPlayerController* killer)
 
 void APlayerCharacter::ServerOnDeath_Implementation(ACMPlayerController* killer)
 {
-	inventory->ClearInventory();
+	FInventory& inventory = GetInventory();
+	inventory.ClearInventory();
 
 	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
 	ACMPlayerController* playerController = static_cast<ACMPlayerController*>(GetController());

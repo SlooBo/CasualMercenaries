@@ -20,10 +20,7 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 	UWidgetTree *widgetTree = shopWidget->WidgetTree;
 	TArray<UWidget*> children;
 	widgetTree->GetAllWidgets(children);
-	
-	APlayerController *playercontroller = world->GetFirstPlayerController();
-	APlayerCharacter *playercharacter = Cast<APlayerCharacter>(playercontroller->GetPawn());
-	playerInventory = playercharacter->GetInventory();
+
 	int childcount = children.Num();
 	for (int i = 0; i < childcount; i++)
 	{
@@ -85,7 +82,7 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	if (slotIndex != currentWeaponIndex)
 		ChangeWeaponSlotColor(currentWeaponIndex, FLinearColor::White);
 	currentWeaponIndex = slotIndex;
-	AWeapon *weapon = playerInventory->GetWeapon(slotIndex);
+	AWeapon *weapon = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn())->GetInventory().GetWeapon(slotIndex);
 	if (weapon != nullptr)
 	{
 		ChangeCurrentShopSlot((uint32)weapon->GetID());
@@ -165,12 +162,12 @@ void UShopLogic::OnClickedQuit()
 void UShopLogic::OnClickedBuyButton()
 {
 	APlayerCharacter *player = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn());
-	player->GetInventory()->ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(currentShopIndex));
+	player->GetInventory().ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(currentShopIndex));
 	UpdateBuyButtonText();
 }
 void UShopLogic::UpdateBuyButtonText()
 {
-	AWeapon *weapon = playerInventory->GetWeapon(currentWeaponIndex);
+	AWeapon *weapon = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn())->GetInventory().GetWeapon(currentWeaponIndex);
 	if (weapon != nullptr)
 	{
 		buyButtonText->SetText(FText::FromString("1000$"));

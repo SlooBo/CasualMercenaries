@@ -9,7 +9,7 @@
 ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
 {
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("RocketMesh"));
-	//Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 	
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/RocketLauncher/Rocket.Rocket'"));
 	Mesh->SetStaticMesh(MeshObj.Object);

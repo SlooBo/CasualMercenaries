@@ -3,7 +3,9 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
+#include "Inventory.h"
 #include "CMPlayerController.generated.h"
+
 
 /**
  * 
@@ -16,7 +18,19 @@ class CASUALMERCENARIES_API ACMPlayerController : public APlayerController
 public:
 	ACMPlayerController(const class FObjectInitializer& objectInitializer);
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	virtual void BeginPlay() override;
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerInitInventory();
+
 	void OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/);
+
+	FInventory& GetInventory() { return inventory; }
+
+protected:
+
+	UPROPERTY(Replicated)
+	FInventory inventory;
 };

@@ -5,28 +5,34 @@
 #include "PlayerCharacter.h"//this should not be working...
 ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
+	//SkeletonMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/RocketLauncher/RocketLauncher.RocketLauncher'"));
 	weaponMesh->SetSkeletalMesh(MeshObj.Object);
 
-	reloadTime = 1.5;
+
+	//Integers
 	maxAmmo = 6;
 	clips = 999;
 	ammo = 4;
 	ammoInClip = 4;
+
+
+	//Floats
 	firingInterval = 0.50;
+	reloadTime = 1.5;
 
-	PrimaryActorTick.bCanEverTick = true;
 
-	this->SetActorHiddenInGame(true);
-
-	bReplicates = true;
-
+	//ParticleSystem
 	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
-
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_RocketLauncher_MuzzleBack.P_RocketLauncher_MuzzleBack'"));
-	part = ParticleObj2.Object;
+	flavorParticleEffect = ParticleObj2.Object;
 
+
+	//ID
 	id = WEAPONID::ROCKET_LAUNCHER;
+
+	//replication
+	bReplicates = true;
 }
 
 void ARocketLauncher::BeginPlay()
@@ -78,12 +84,12 @@ void ARocketLauncher::Fire()
 	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
 
 	userLoc = this->GetOwner()->GetActorLocation();
-	MuzzleOffset.X = 100;
-	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(MuzzleOffset);
+	muzzleOffset.X = 100;
+	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(muzzleOffset);
 	
 
-	
-	ServerEffect(part, MuzzleLocation);
+	//Play effect
+	ServerEffect(flavorParticleEffect, MuzzleLocation);
 
 	FRotator MuzzleRotation = cameraRot;
 

@@ -9,39 +9,41 @@
 
 AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 {
+	//SkeletonMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/Weapons/Beehive/MESH_Beehive.MESH_Beehive'"));
 	weaponMesh->SetSkeletalMesh(MeshObj.Object);
-
+	//Material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Weapon/MAT_Mudbuster.MAT_Mudbuster'")); // Material missing!!!!!
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
-
+	//Scaling
 	weaponMesh->SetRelativeScale3D(FVector(0.5, 0.5, 0.25));
 
 
+	//ParticleSystem
 	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("Wasps"));
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_FireHydrant.P_FireHydrant'"));
-
 	particleSystem->Template = ParticleObj.Object;
-
 	particleSystem->AttachTo(weaponMesh, "WaspSocket");
 
 
-
-	bReplicates = true;
-
-	reloadTime = 2.5;
+	//Integers
 	maxAmmo = 120;
 	clips = 999;
 	ammo = 100;
 	ammoInClip = 100;
-	firingInterval = .5;
+
+
+	//Floats
 	price = 500;
-
+	reloadTime = 2.5;
 	passedTimeReloading = 0;
+	firingInterval = .5;
 
+
+	//ID
 	id = WEAPONID::WASP_GUN;
-
-	firing = false;
+	//replication
+	bReplicates = true;
 }
 
 void AWaspNestCudgel::PrimaryFunction(APlayerCharacter* user)

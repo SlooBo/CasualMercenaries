@@ -3,7 +3,9 @@
 #pragma once
 
 #include "UILogicBase.h"
+#include "Inventory.h"
 #include "ShopLogic.generated.h"
+
 
 /**
  * 
@@ -45,8 +47,6 @@ private:
 	TArray<class UShopSlot*> shopSlots;
 	UPROPERTY()
 	TArray<class UWeaponSlot*> weaponSlots;
-	UPROPERTY()
-	class UInventory *playerInventory;
 	UPROPERTY()
 	UWorld *world;
 	UFUNCTION()

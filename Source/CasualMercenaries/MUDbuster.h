@@ -15,7 +15,20 @@ class CASUALMERCENARIES_API AMUDbuster : public AWeapon
 
 public:
 
+	/************************************************************************/
+	/* Defaults                                                             */
+	/************************************************************************/
+
 	AMUDbuster(const FObjectInitializer& FOI);
+
+	void BeginPlay();
+
+	// Called every frame
+	void Tick(float DeltaSeconds);
+
+	/************************************************************************/
+	/* Functionality                                                        */
+	/************************************************************************/
 
 	void PrimaryFunction(APlayerCharacter* user);
 
@@ -23,18 +36,13 @@ public:
 
 	void SecondaryFunction(APlayerCharacter* user);
 
-	void BeginPlay();
-
 	void Reload();
 
-
-	// Called every frame
-	void Tick(float DeltaSeconds);
-
-
-
-
 private:
+
+	/************************************************************************/
+	/* Hidden functionality                                                 */
+	/************************************************************************/
 
 	void Fire();
 	
