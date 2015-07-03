@@ -22,14 +22,3 @@ int32 Util::GetNumPlayers(UWorld* world)
 
 	return numPlayers;
 }
-/*AChatData* Util::GetChatData(UWorld* world)
-{
-	AChatData* chatData = nullptr;
-	for (TActorIterator<AActor> ActorItr(world); ActorItr; ++ActorItr)
-	{
-		chatData = Cast<AChatData>(*ActorItr);
-		if (chatData != nullptr)
-			return chatData;
-	}
-	return chatData;
-}*/

@@ -19,6 +19,7 @@ enum class WEAPONID : uint8
 	MUDBUSTER_GUN,
 	WASP_GUN,
 	TWISTER_GUN,
+	SHOT_GUN,
 	NO_WEAPON,
 };
 

@@ -40,7 +40,6 @@ struct CASUALMERCENARIES_API FWeaponData
 	UPROPERTY()
 	FString description;
 
-
 	UPROPERTY()
 	RANGE_TYPE range;
 
@@ -51,12 +50,23 @@ struct CASUALMERCENARIES_API FWeaponData
 	uint32 sellPrice;
 
 	UPROPERTY()
-		FString displayName;
+	FString displayName;
+
+	UPROPERTY()
+	FString iconPath;
+
+	UPROPERTY()
+	uint32 upgradePrice1;
+
+	UPROPERTY()
+	uint32 upgradePrice2;
+
 	FWeaponData()
 	{
 
 	}
-	FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice, FString name,FString description)
+	FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice,
+		uint32 upgradePrice1,uint32 upgradePrice2, FString name,FString description,FString iconPath)
 	{
 		this->clipSize = clipSize;
 		this->reloadTime = reloadTime;
@@ -67,11 +77,9 @@ struct CASUALMERCENARIES_API FWeaponData
 		this->buyPrice = buyPrice;
 		this->sellPrice = buyPrice / 2;
 		this->displayName = name;
-		uint8 test = static_cast<uint8>(RANGE_TYPE::CLOSE_RANGE) | static_cast<uint8>(RANGE_TYPE::MID_RANGE);
-		if (test & static_cast<uint8>(RANGE_TYPE::CLOSE_RANGE))
-		{
-			bool test = false;
-		}
+		this->iconPath = iconPath;
+		this->upgradePrice1 = upgradePrice1;
+		this->upgradePrice2 = upgradePrice2;
 	}
 	
 };

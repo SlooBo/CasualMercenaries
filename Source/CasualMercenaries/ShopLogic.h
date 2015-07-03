@@ -30,26 +30,37 @@ private:
 	TArray<UButton*> weaponSlotButtons;
 	UPROPERTY()
 	TArray<UButton*> shopSlotButtons;
-	UFUNCTION()
-	UButton* getShopButton(uint32 index);
-	UFUNCTION()
-	UButton* getWeaponSlotButton(uint32 index);
+
+	UPROPERTY()
+	UButton* buyButton;
+	UPROPERTY()
+	UButton* upgradeButton1;
+	UPROPERTY()
+	UButton* upgradeButton2;
 	UPROPERTY()
 	UTextBlock *buyButtonText;
+	UPROPERTY()
+	UImage* weaponImage;
 	UPROPERTY()
 	uint32 currentShopIndex;
 	UPROPERTY()
 	uint32 currentWeaponIndex;
-	UFUNCTION()
-	void ChangeShopSlotColor(uint32 index, FSlateColor color);
-	UFUNCTION()
-	void ChangeWeaponSlotColor(uint32 index, FSlateColor color);
+	UPROPERTY()
+	TMap<WEAPONID, FWeaponData> weaponData;
 	UPROPERTY()
 	TArray<class UShopSlot*> shopSlots;
 	UPROPERTY()
 	TArray<class UWeaponSlot*> weaponSlots;
 	UPROPERTY()
 	UWorld *world;
+	UFUNCTION()
+	UButton* getShopButton(uint32 index);
+	UFUNCTION()
+	UButton* getWeaponSlotButton(uint32 index);
+	UFUNCTION()
+	void ChangeShopSlotColor(uint32 index, FSlateColor color);
+	UFUNCTION()
+	void ChangeWeaponSlotColor(uint32 index, FSlateColor color);
 	UFUNCTION()
 	void ChangeCurrentShopSlot(uint32 slotIndex);
 	UFUNCTION()
@@ -58,8 +69,10 @@ private:
 	void OnClickedBuyButton();
 	UFUNCTION()
 	void UpdateBuyButtonText();
-	UPROPERTY()
-	TMap<WEAPONID, FWeaponData> weaponData;
+	UFUNCTION()
+	void OnClickedUpgradeButton1();
+	UFUNCTION()
+	void OnClickedUpgradeButton2();
 };
 UCLASS()
 class UWeaponSlot: public UObject

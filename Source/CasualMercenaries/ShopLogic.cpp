@@ -8,29 +8,30 @@
 #include "PlayerHud.h"
 UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
-	//FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice, FString name, FString description)
-	FWeaponData rocketLauncher = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Rocket Launcher", "shoots rockets");
+	//	FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice,
+	//uint32 upgradePrice1, uint32 upgradePrice2, FString name, FString description, FString iconPath)
+	FWeaponData rocketLauncher = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100,200,300, "Rocket Launcher", "shoots rockets","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::ROCKET_LAUNCHER, rocketLauncher);
 
-	FWeaponData waterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Water Gun", "shoots water");
+	FWeaponData waterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100,200,300, "Water Gun", "shoots water","Texture2D'/Game/Game/UI/Textures/watergunPic.watergunPic'");
 	weaponData.Add(WEAPONID::WATER_GUN, waterGun);
 
-	FWeaponData grenadeLauncher = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Grenade Launcher", "Shoots shit");
+	FWeaponData grenadeLauncher = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100,200,300, "Grenade Launcher", "Shoots shit","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::GRENADE_LAUNCHER, grenadeLauncher);
 
-	FWeaponData mashineGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Mashine Gun", "shoots mashines");
+	FWeaponData mashineGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100,200,300, "Mashine Gun", "shoots mashines","Texture2D'/Game/Game/UI/Textures/GunPic.GunPic'");
 	weaponData.Add(WEAPONID::MASHINE_GUN, mashineGun);
 
-	FWeaponData mudbusterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Mudbuster Gun", "shoots mudbusters");
+	FWeaponData mudbusterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100,200,300, "Mudbuster Gun", "shoots mudbusters","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::MUDBUSTER_GUN, mudbusterGun);
 
-	FWeaponData waspGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Wasp Gun", "shoots wasps");
+	FWeaponData waspGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100,200,300, "Wasp Gun", "shoots wasps","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::WASP_GUN, waspGun);
 
-	FWeaponData twisterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Twister Torpedo", "shoots torpedo");
+	FWeaponData twisterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100,200,300, "Twister Torpedo", "shoots torpedo","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::TWISTER_GUN, twisterGun);
 
-	FWeaponData noWeapon = FWeaponData(-1, -1, -1, -1, RANGE_TYPE::CLOSE_RANGE, -1, "", "");
+	FWeaponData noWeapon = FWeaponData(-1, -1, -1, -1, RANGE_TYPE::CLOSE_RANGE, -1,-1,-1, "", "","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::NO_WEAPON, noWeapon);
 }
 UShopLogic::~UShopLogic()
@@ -84,18 +85,30 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 		{
 			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedQuit);
 		}
-		else if (tempButton != nullptr && tempButton->GetName().Equals("SellButton"))
-		{
-			//tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedTradeButton);
-		}
 		else if (tempButton != nullptr && tempButton->GetName().Equals("BuyButton"))
 		{
 			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedBuyButton);
+			buyButton = Cast<UButton>(children[i]);
+		}
+		else if (tempButton != nullptr && tempButton->GetName().Equals("UpgradeButton1"))
+		{
+			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton1);
+			upgradeButton1= Cast<UButton>(children[i]);
+		}
+		else if (tempButton != nullptr && tempButton->GetName().Equals("UpgradeButton2"))
+		{
+			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton2);
+			upgradeButton2 = Cast<UButton>(children[i]);
 		}
 		UTextBlock *tempText = Cast<UTextBlock>(children[i]);
 		if (tempText != nullptr && tempText->GetName().Equals("BuyButtonText"))
 		{
 			buyButtonText = tempText;
+		}
+		UImage *tempImage = Cast<UImage>(children[i]);
+		if (tempImage != nullptr && tempImage->GetName().Equals("SelectedWeaponImage"))
+		{
+			weaponImage = tempImage;
 		}
 	}
 	OnClickedWeaponSlot(0);
@@ -111,8 +124,12 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	{
 		ChangeCurrentShopSlot((uint32)weapon->GetID());
 	}
+	//player has no weapon on this weapon slot
 	else
 	{
+		upgradeButton1->SetIsEnabled(false);
+		upgradeButton2->SetIsEnabled(true);
+		buyButton->SetIsEnabled(false);
 		FLinearColor color = FLinearColor(0.8f, 0.5f, 0.0f, 0.0f);
 		FSlateColor slateColor = FSlateColor(color);
 		ChangeShopSlotColor(currentShopIndex, slateColor);
@@ -171,6 +188,7 @@ void UShopLogic::ChangeWeaponSlotColor(uint32 index, FSlateColor color)
 }
 void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 {
+	buyButton->SetIsEnabled(true);
 	FLinearColor color = FLinearColor::Yellow;
 	color = FLinearColor(0.8f, 0.5f, 0.0f, 1.0f);
 	FSlateColor slateColor = FSlateColor(color);
@@ -192,7 +210,6 @@ void UShopLogic::OnClickedBuyButton()
 {
 	ACMPlayerController *player = Cast<ACMPlayerController>(world->GetFirstPlayerController());
 	player->BuyWeapon(currentWeaponIndex,AWeapon::GetIDFromInt(currentShopIndex));
-	//player->GetInventory().ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(currentShopIndex));
 	UpdateBuyButtonText();
 }
 void UShopLogic::UpdateBuyButtonText()
@@ -202,4 +219,13 @@ void UShopLogic::UpdateBuyButtonText()
 	{
 		buyButtonText->SetText(FText::FromString("1000$"));
 	}
+
+}
+void UShopLogic::OnClickedUpgradeButton1()
+{
+	//todo upgrade
+}
+void UShopLogic::OnClickedUpgradeButton2()
+{
+	//todo upgrade
 }
