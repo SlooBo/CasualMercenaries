@@ -44,10 +44,10 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	//	CharacterMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
 	Mesh->SetSkeletalMesh(MeshObj.Object);
-	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MAT_Playercharacter_Inst.MAT_Playercharacter_Inst'"));
+	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MAT_Playercharacter_Inst.MAT_Playercharacter_Inst'"));
 	Mesh->SetMaterial(0, MateriaObj.Object);
-	const ConstructorHelpers::FObjectFinder<UAnimBlueprintGeneratedClass> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/APB_PlayerCharacter.APB_PlayerCharacter'"));
-	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object;
+	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/APB_PlayerCharacter.APB_PlayerCharacter'"));
+	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
 
 
 
