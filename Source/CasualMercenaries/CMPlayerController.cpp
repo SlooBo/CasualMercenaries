@@ -4,6 +4,7 @@
 #include "CMPlayerController.h"
 #include "PlayerCharacter.h"
 #include "UnrealNetwork.h"
+#include "CMGameMode.h"
 
 ACMPlayerController::ACMPlayerController(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
@@ -47,6 +48,21 @@ void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerCo
 		{
 			UnPossess();
 		}
+	}
+}
+
+bool ACMPlayerController::RequestRespawn_Validate()
+{
+	return true;
+}
+
+void ACMPlayerController::RequestRespawn_Implementation()
+{
+	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (gameMode != NULL)
+	{
+		if (gameMode->CanPlayerRespawn(this))
+			gameMode->RespawnPlayer(this);
 	}
 }
 bool ACMPlayerController::BuyWeapon_Validate(uint8 weaponIndex,WEAPONID weaponid)

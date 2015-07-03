@@ -12,11 +12,15 @@ UCLASS()
 class CASUALMERCENARIES_API ACMPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	
+
 public:
 	ACMPlayerState(const FObjectInitializer& objectInitializer);
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
+	/************************************************************************/
+	/* Core States                                                          */
+	/************************************************************************/
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Reset Player States"), Category = "Gameplay")
 	void ResetStats();
@@ -26,12 +30,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Team Number"), Category = "Gameplay")
 	void SetTeam(int32 newTeam);
-
-	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Hunt Target"), Category = "Gameplay|Hunt")
-	APawn* GetHuntTarget();
-
-	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Hunt Target"), Category = "Gameplay|Hunt")
-	void SetHuntTarget(APawn* target);
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Frags"), Category = "Gameplay")
 	int32 GetFrags();
@@ -45,6 +43,22 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Add Deaths"), Category = "Gameplay")
 	void AddDeaths(int32 num);
 
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Is Alive"), Category = "Gameplay")
+	bool IsAlive();
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Alive"), Category = "Gameplay")
+	void SetAlive(bool alive);
+
+	/************************************************************************/
+	/* Hunt GameMode                                                        */
+	/************************************************************************/
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Hunt Target"), Category = "Gameplay|Hunt")
+	APawn* GetHuntTarget();
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Hunt Target"), Category = "Gameplay|Hunt")
+	void SetHuntTarget(APawn* target);
+
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Money"), Category = "Gameplay|Hunt")
 	int32 GetMoney();
 
@@ -55,6 +69,10 @@ public:
 	void SetMoney(int32 num);
 
 protected:
+
+	// Is alive
+	UPROPERTY()
+	bool alive;
 
 	// 0 = No Team, 1-4 = Teams
 	UPROPERTY(Replicated, EditAnywhere, Meta = (DisplayName = "Team Number", ClampMin = "0", UIMin = "0"))

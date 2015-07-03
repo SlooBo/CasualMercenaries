@@ -25,6 +25,9 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerInitInventory();
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void RequestRespawn();
+	
 	void OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/);
 
 	FInventory& GetInventory() { return inventory; }

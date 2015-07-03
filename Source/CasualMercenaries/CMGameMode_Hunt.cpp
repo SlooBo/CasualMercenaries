@@ -21,6 +21,9 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	huntMaxMoney = 20000;
 	huntKillRewardTarget = 2000;
 	huntKillRewardWrong = -1000;
+
+	playerRespawnTimeMinimum = 0;
+	warmupRespawnTimeMinimum = 0;
 }
 
 void ACMGameMode_Hunt::PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent)

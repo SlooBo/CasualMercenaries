@@ -37,6 +37,8 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 
 	playerRespawnTime = 2;
 	warmupRespawnTime = 1;
+	playerRespawnTimeMinimum = -1;
+	warmupRespawnTimeMinimum = -1;
 }
 
 
@@ -106,7 +108,7 @@ void ACMGameMode::StartMatch()
 {
 	if (inGameState != InGameState::Warmup)
 		MatchState = MatchState::WaitingToStart;
-
+	
 	Super::StartMatch();
 
 	if (inGameState == InGameState::Warmup)
@@ -226,6 +228,9 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
 	ACMPlayerState* killerState = (killer != NULL) ? static_cast<ACMPlayerState*>(killer->PlayerState) : NULL;
 
+	if (playerState != NULL)
+		playerState->SetAlive(false);
+
 	if (killerState != NULL)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" killed ") + killerState->PlayerName);
 	else if (killer == player)
@@ -264,10 +269,23 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	player->ChangeState(NAME_Spectating);
 	player->ClientGotoState(NAME_Spectating);
 
-	if (inGameState != InGameState::Warmup)
-		RespawnPlayer(player, playerRespawnTime);
-	else
-		RespawnPlayer(player, warmupRespawnTime);
+	const int32 respawnTime = (inGameState != InGameState::Warmup) ? playerRespawnTime : warmupRespawnTime;
+
+	// deny respawn requests
+	if (playerRespawnTimeMinimum != 0)
+	{
+		denyRespawnList.AddUnique(player);
+
+		// allow manual respawning after minimum period of time
+		if (playerRespawnTimeMinimum < respawnTime)
+		{
+			FTimerHandle timerHandle;
+			FTimerDelegate allowDelegate = FTimerDelegate::CreateUObject<ACMGameMode, APlayerController*>(this, &ACMGameMode::AllowPlayerRespawn, player);
+			GetWorld()->GetTimerManager().SetTimer(timerHandle, allowDelegate, playerRespawnTimeMinimum, false);
+		}
+	}
+
+	RespawnPlayer(player, respawnTime);
 }
 
 void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
@@ -283,6 +301,20 @@ void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 	GetWorld()->GetTimerManager().SetTimer(timerHandle, respawnDelegate, respawnDelay, false);
 }
 
+void ACMGameMode::AllowPlayerRespawn(APlayerController* player)
+{
+	if (denyRespawnList.Contains(player))
+		denyRespawnList.Remove(player);
+}
+
+bool ACMGameMode::CanPlayerRespawn(APlayerController* player)
+{
+	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
+	if (playerState != NULL && !playerState->IsAlive() && !denyRespawnList.Contains(player))
+		return true;
+	return false;
+}
+
 void ACMGameMode::RestartPlayer(AController* controller)
 {
 	ACMPlayerController* player = static_cast<ACMPlayerController*>(controller->CastToPlayerController());
@@ -292,13 +324,19 @@ void ACMGameMode::RestartPlayer(AController* controller)
 		return;
 	}
 
-	Super::RestartPlayer(controller);
+	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
+	if (playerState != NULL)
+		playerState->SetAlive(true);
 
 	player->PlayerState->bIsSpectator = false;
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
 
+	Super::RestartPlayer(controller);
+
 	player->ServerInitInventory();
+
+	AllowPlayerRespawn(player);
 }
 
 void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)

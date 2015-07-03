@@ -10,6 +10,7 @@
 ACMPlayerState::ACMPlayerState(const FObjectInitializer& objectInitializer)
 : Super(objectInitializer)
 {
+	alive = false;
 	huntTarget = NULL;
 	bReplicates = true;
 
@@ -20,6 +21,7 @@ void ACMPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(ACMPlayerState, alive);
 	DOREPLIFETIME(ACMPlayerState, team);
 	DOREPLIFETIME(ACMPlayerState, huntTarget);
 	DOREPLIFETIME(ACMPlayerState, frags);
@@ -98,4 +100,14 @@ void ACMPlayerState::SetMoney(int32 num)
 	
 	if (money > maxMoney)
 		money = maxMoney;
+}
+
+bool ACMPlayerState::IsAlive()
+{
+	return alive;
+}
+
+void ACMPlayerState::SetAlive(bool alive)
+{
+	this->alive = alive;
 }
