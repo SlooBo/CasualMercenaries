@@ -12,6 +12,7 @@
 #include "UberWeihmacher.h"
 #include "TwisterSister.h"
 #include "WaspNestCudgel.h"
+#include "Shotgun.h"
 void FInventory::ClearInventory()
 {
 	for (int i = 0; i < weapons.Num(); i++)
@@ -99,6 +100,12 @@ void FInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
 		{
 			weaponClass = ATwisterSister::StaticClass();
 			weapon = owningPlayer->GetWorld()->SpawnActor<ATwisterSister>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			break;
+		}
+		case WEAPONID::SHOT_GUN:
+		{
+			weaponClass = AShotgun::StaticClass();
+			weapon = owningPlayer->GetWorld()->SpawnActor<AShotgun>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
 			break;
 		}
 		default:

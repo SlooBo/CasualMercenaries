@@ -39,7 +39,7 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	bulletTrail = ParticleObj.Object;
 
 	//ID
-	id = WEAPONID::MASHINE_GUN;
+	id = WEAPONID::SHOT_GUN;
 	bReplicates = true;
 }
 
@@ -110,9 +110,9 @@ void AShotgun::Fire()
 
 	//Another effect
 	DrawLine(startTrace, endTrace);
-	ammo--;
+	
 	}
-
+	 ammo--;
 }
 
 void AShotgun::PrimaryFunction(APlayerCharacter* user)
