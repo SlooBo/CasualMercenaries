@@ -25,13 +25,24 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerInitInventory();
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void RequestRespawn();
+	
 	void OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/);
+	void OnAnnouncement(FString announceText/*, USoundCue* announceSoundCue*/);
+	void OnRoundStart();
+	void OnWarmupStart();
+	void OnShopAccessChanged(bool canShop);
 
+	bool CanAccessShop() { return canShop; }
 	FInventory& GetInventory() { return inventory; }
 
 	UFUNCTION(Reliable, Server, WithValidation)
 		void BuyWeapon(uint8 weaponIndex, WEAPONID weaponid);
 protected:
+
+	UPROPERTY(Replicated)
+	bool canShop;
 
 	UPROPERTY(Replicated)
 	FInventory inventory;

@@ -7,6 +7,14 @@
 
 ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
 {
+	//CollisionComponent
+	RootComponent = CapsuleComp;
+	CapsuleComp = ObjectInitializer.CreateDefaultSubobject<UCapsuleComponent>(this, TEXT("CapsuleComp"));
+	CapsuleComp->InitCapsuleSize(100.0f, 200.0f);
+	CapsuleComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	CapsuleComp->SetNotifyRigidBodyCollision(true);
+
+
 	//Movement
 	ProjectileMovement->InitialSpeed = 1200.0f;
 	ProjectileMovement->ProjectileGravityScale = 0.0;
@@ -20,16 +28,18 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	SetActorEnableCollision(true);
 
 
-	//CollisionComponent
-	CollisionComp->SetSphereRadius(30.0f);
+
+
+
 
 	//ParticleSystem
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Tornado.P_Tornado'"));
 	particleSystem->Template = ParticleObj.Object;
-	particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
+	//particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
 	particleSystem->Activate();
-
+	particleSystem->SetRelativeScale3D(FVector(4.0f, 4.0f, 1.0f));
+	particleSystem->SetRelativeLocation(FVector(0.0f, 0.0f, -100.0f));
 
 	//ParticleSystem2
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
@@ -53,14 +63,29 @@ void ATwister::BeginPlay()
 
 void ATwister::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Explode();
+	FlipShitUp();
 }
 
 void ATwister::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//Explode();
+	AProjectile* projectile = Cast<AProjectile>(OtherActor);
+	if (projectile)
+	{
+		float random1 = FMath::FRand();
+		float random2 = FMath::FRand();
+		float random3 = FMath::FRand();
+
+		FVector velocity = projectile->GetVelocity();
+		velocity.X *= random1;
+		velocity.Y *= random2;
+		velocity.Z *= random3;
+		projectile->InitVelocity(FVector(random1 ,random2, random3) * 1000);
+	}
+
 }
-void ATwister::Explode()
+void ATwister::FlipShitUp()
 {
-	//do something"!!! 
+	
+
+
 }

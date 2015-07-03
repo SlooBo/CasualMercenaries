@@ -53,9 +53,12 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Map Time Elapsed"), Category = "Gameplay|Level")
 	int32 MapTimeElapsed();
 
+	virtual bool CanPlayerRespawn(APlayerController* player);
+	void AllowPlayerRespawn(APlayerController* player);
+	
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Respawn Player"), Category = "Gameplay|Player")
 	void RespawnPlayer(APlayerController* player, float respawnDelay = 0.0f);
-
+	
 	// Event when warmup has started
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Warmup Start"), Category = "Gameplay")
 	void OnWarmupStart();
@@ -75,6 +78,8 @@ public:
 	virtual void OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer = NULL);
 
 protected:
+
+	TArray<APlayerController*> denyRespawnList;
 
 	// Timelimit in minutes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit", ClampMin = "0"), Category = "Gameplay|Level")
@@ -106,11 +111,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Warmup Time", ClampMin = "0"), Category = "Gameplay|Level")
 	int32 warmupTime;
 
-	// Player respawn time after death (negative values: respawning disabled)
+	// Player respawn time after death (-1: respawning disabled)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Respawn Time", ClampMin = "-1"), Category = "Gameplay|Level")
 	int32 playerRespawnTime;
 
-	// Player respawn time during warmup
+	// Player respawn time after death during warmup (-1: respawning disabled)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Warmup Respawn Time", ClampMin = "-1"), Category = "Gameplay|Level")
 	int32 warmupRespawnTime;
+
+	// Minimum player wait time before respawning is allowed (-1: wait until player is respawned by server)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Minimum Respawn Time", ClampMin = "-1"), Category = "Gameplay|Level")
+	int32 playerRespawnTimeMinimum;
+
+	// Minimum player wait time before respawning is allowed during warmup (-1: wait until player is respawned by server)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Minimum Warmup Respawn Time", ClampMin = "-1"), Category = "Gameplay|Level")
+	int32 warmupRespawnTimeMinimum;
 };

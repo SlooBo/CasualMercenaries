@@ -4,6 +4,7 @@
 #include "CMPlayerController.h"
 #include "PlayerCharacter.h"
 #include "UnrealNetwork.h"
+#include "CMGameMode.h"
 
 ACMPlayerController::ACMPlayerController(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
@@ -16,6 +17,7 @@ void ACMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACMPlayerController, inventory);
+	DOREPLIFETIME(ACMPlayerController, canShop);
 }
 
 void ACMPlayerController::BeginPlay()
@@ -47,6 +49,26 @@ void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerCo
 		{
 			UnPossess();
 		}
+	}
+}
+
+void ACMPlayerController::OnShopAccessChanged(bool canShop)
+{
+	this->canShop = canShop;
+}
+
+bool ACMPlayerController::RequestRespawn_Validate()
+{
+	return true;
+}
+
+void ACMPlayerController::RequestRespawn_Implementation()
+{
+	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (gameMode != NULL)
+	{
+		if (gameMode->CanPlayerRespawn(this))
+			gameMode->RespawnPlayer(this);
 	}
 }
 bool ACMPlayerController::BuyWeapon_Validate(uint8 weaponIndex,WEAPONID weaponid)

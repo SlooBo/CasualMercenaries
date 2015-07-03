@@ -84,6 +84,8 @@ void ARocket::Explode()
 
 		if (distance <= ExplosionRadius)
 		{
+			float x = distance / ExplosionRadius;
+			ExplosionDamage *= x;
 			UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
 			aItr->ABaseCharacter::TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(tempChar->GetController()));

@@ -16,6 +16,13 @@ class CASUALMERCENARIES_API ATwister : public AProjectile
 public:
 
 	/************************************************************************/
+	/* UProperties                                                          */
+	/************************************************************************/
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+		UCapsuleComponent* CapsuleComp;
+
+	/************************************************************************/
 	/* Defaults                                                             */
 	/************************************************************************/
 
@@ -40,10 +47,10 @@ public:
 private:
 
 	/************************************************************************/
-	/* Hidden functionality                                                        */
+	/* Hidden functionality                                                 */
 	/************************************************************************/
 
-	void Explode();
+	void FlipShitUp();
 	
 	
 };

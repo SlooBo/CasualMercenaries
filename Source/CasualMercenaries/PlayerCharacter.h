@@ -73,8 +73,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL);
 
-	//virtual float TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser) override;
-
 	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
@@ -129,6 +127,14 @@ public:
 	/************************************************************************/
 
 	UCameraComponent* GetCamera(){ return cameraComp; };
+
+	/************************************************************************/
+	/* Utility                                                              */
+	/************************************************************************/
+
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+	void ChangeShirtColor(FLinearColor color);
+
 
 private:
 

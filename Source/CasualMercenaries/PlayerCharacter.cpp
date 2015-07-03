@@ -17,7 +17,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	UCharacterMovementComponent* tempMoveComp = GetCharacterMovement();
 	//Addjusting jump and movement
 	tempMoveComp->GravityScale = 1.0;
@@ -40,6 +39,16 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	audioComp->bAutoActivate = false;
 	audioComp->bAutoDestroy = false;
 	audioComp->AttachParent = GetRootComponent();
+
+	//	CharacterMesh
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
+	Mesh->SetSkeletalMesh(MeshObj.Object);
+	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MAT_Playercharacter_Inst.MAT_Playercharacter_Inst'"));
+	Mesh->SetMaterial(0, MateriaObj.Object);
+	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/APB_PlayerCharacter.APB_PlayerCharacter'"));
+	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
+
+
 
 	rightShoulder = false;
 
@@ -64,7 +73,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	bReplicates = true;
 	/// pleasant surprise 
-
+	
 }
 
 // Called when the game starts or when spawned
@@ -262,7 +271,8 @@ void APlayerCharacter::ServerSwitchWeapon_Implementation(float cw, float pw)
 		inventory.GetWeapon(pw)->SetActorHiddenInGame(true);
 	if (inventory.GetWeapon(cw) != nullptr)
 		inventory.GetWeapon(cw)->SetActorHiddenInGame(false);
-
+	if (inventory.GetWeapon(cw) != nullptr)
+		inventory.GetWeapon(cw)->SetActorLocation(Mesh->GetSocketByName("GunSocket")->GetSocketLocation(Mesh));
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -279,7 +289,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(APlayerCharacter, stamina);
 	DOREPLIFETIME(APlayerCharacter, armor);
 	DOREPLIFETIME(APlayerCharacter, state);
-
 };
 
 void APlayerCharacter::OnStartJump()
@@ -287,8 +296,8 @@ void APlayerCharacter::OnStartJump()
 	if (IsMoveInputIgnored())
 		return;
 
+	if (state == CHARACTER_STATE::ALIVE)
 	bPressedJump = true;
-
 
 }
 
@@ -331,13 +340,10 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 void APlayerCharacter::RestoreActivity()
 {
 	SetState(CHARACTER_STATE::ALIVE);
+	canWalk = true;
+	canLook = true;
 	springArmComp->bUsePawnControlRotation = true;
 }
-
-//float APlayerCharacter::TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser)
-//{
-//	return 4.0f;
-//}
 
 void APlayerCharacter::OnDeath_Implementation(ACMPlayerController* killer)
 {
@@ -520,9 +526,7 @@ void APlayerCharacter::WallJumpServer_Implementation()
 			FVector tempVel = CharacterMovement->Velocity;
 			CharacterMovement->Velocity = FVector(tempVel.X, tempVel.Y, 0);
 
-			FVector tempResult = wallJumpNormal * 500.0f;
-
-
+			FVector tempResult = wallJumpNormal * 700.0f + FVector(0.0f,0.0f,600.0f);
 
 			LaunchCharacter(tempResult, false, false);
 			//Hox!
@@ -533,6 +537,7 @@ void APlayerCharacter::WallJumpServer_Implementation()
 
 void APlayerCharacter::InputDash()
 {
+	if (state == CHARACTER_STATE::ALIVE)
 	ServerDash(GetInputAxisValue("MoveForward") , GetInputAxisValue("MoveRight"));
 }
 
@@ -620,4 +625,14 @@ void APlayerCharacter::WeaponSlot4()
 	if (currentWeapon == tempLastWeapon)
 		return;
 	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+}
+bool APlayerCharacter::ChangeShirtColor_Validate(FLinearColor color)
+{
+	return true;
+}
+void APlayerCharacter::ChangeShirtColor_Implementation(FLinearColor color)
+{
+	UMaterialInstanceDynamic *dynamicMesh = Mesh->CreateDynamicMaterialInstance(0, Mesh->GetMaterial(0));
+	dynamicMesh->SetVectorParameterValue("ShirtColour", color);
+	Mesh->SetMaterial(0, dynamicMesh);
 }

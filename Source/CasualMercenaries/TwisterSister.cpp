@@ -30,7 +30,7 @@ ATwisterSister::ATwisterSister(const FObjectInitializer& FOI) : AWeapon(FOI)
 	firingInterval = 1;
 
 	//MuzzleOffset
-	muzzleOffset.Z = -100;
+	//muzzleOffset.Z = -100;
 
 	//particles
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
@@ -82,6 +82,8 @@ void ATwisterSister::Fire()
 
 	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
 	userLoc = this->GetOwner()->GetActorLocation();
+
+	cameraRot.Pitch = 0;
 
 	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(muzzleOffset);
 	muzzleOffset.X = 100;
