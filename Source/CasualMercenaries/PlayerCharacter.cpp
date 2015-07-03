@@ -17,7 +17,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	UCharacterMovementComponent* tempMoveComp = GetCharacterMovement();
 	//Addjusting jump and movement
 	tempMoveComp->GravityScale = 1.0;
@@ -74,7 +73,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	bReplicates = true;
 	/// pleasant surprise 
-
+	
 }
 
 // Called when the game starts or when spawned
@@ -297,8 +296,8 @@ void APlayerCharacter::OnStartJump()
 	if (IsMoveInputIgnored())
 		return;
 
+	if (state == CHARACTER_STATE::ALIVE)
 	bPressedJump = true;
-
 
 }
 
@@ -341,13 +340,10 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 void APlayerCharacter::RestoreActivity()
 {
 	SetState(CHARACTER_STATE::ALIVE);
+	canWalk = true;
+	canLook = true;
 	springArmComp->bUsePawnControlRotation = true;
 }
-
-//float APlayerCharacter::TakeDamage(float _damage, struct FDamageEvent const& _damageEvent, class AController* _eventInstigator, class AActor* _damageCauser)
-//{
-//	return 4.0f;
-//}
 
 void APlayerCharacter::OnDeath_Implementation(ACMPlayerController* killer)
 {
@@ -530,9 +526,7 @@ void APlayerCharacter::WallJumpServer_Implementation()
 			FVector tempVel = CharacterMovement->Velocity;
 			CharacterMovement->Velocity = FVector(tempVel.X, tempVel.Y, 0);
 
-			FVector tempResult = wallJumpNormal * 500.0f;
-
-
+			FVector tempResult = wallJumpNormal * 700.0f + FVector(0.0f,0.0f,600.0f);
 
 			LaunchCharacter(tempResult, false, false);
 			//Hox!
@@ -543,6 +537,7 @@ void APlayerCharacter::WallJumpServer_Implementation()
 
 void APlayerCharacter::InputDash()
 {
+	if (state == CHARACTER_STATE::ALIVE)
 	ServerDash(GetInputAxisValue("MoveForward") , GetInputAxisValue("MoveRight"));
 }
 
