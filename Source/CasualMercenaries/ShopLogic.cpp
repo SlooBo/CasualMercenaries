@@ -8,6 +8,30 @@
 #include "PlayerHud.h"
 UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
+	//FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice, FString name, FString description)
+	FWeaponData rocketLauncher = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Rocket Launcher", "shoots rockets");
+	weaponData.Add(WEAPONID::ROCKET_LAUNCHER, rocketLauncher);
+
+	FWeaponData waterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Water Gun", "shoots water");
+	weaponData.Add(WEAPONID::WATER_GUN, waterGun);
+
+	FWeaponData grenadeLauncher = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Grenade Launcher", "Shoots shit");
+	weaponData.Add(WEAPONID::GRENADE_LAUNCHER, grenadeLauncher);
+
+	FWeaponData mashineGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Mashine Gun", "shoots mashines");
+	weaponData.Add(WEAPONID::MASHINE_GUN, mashineGun);
+
+	FWeaponData mudbusterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Mudbuster Gun", "shoots mudbusters");
+	weaponData.Add(WEAPONID::MUDBUSTER_GUN, mudbusterGun);
+
+	FWeaponData waspGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Wasp Gun", "shoots wasps");
+	weaponData.Add(WEAPONID::WASP_GUN, waspGun);
+
+	FWeaponData twisterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, "Twister Torpedo", "shoots torpedo");
+	weaponData.Add(WEAPONID::TWISTER_GUN, twisterGun);
+
+	FWeaponData noWeapon = FWeaponData(-1, -1, -1, -1, RANGE_TYPE::CLOSE_RANGE, -1, "", "");
+	weaponData.Add(WEAPONID::NO_WEAPON, noWeapon);
 }
 UShopLogic::~UShopLogic()
 {

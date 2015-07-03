@@ -4,6 +4,7 @@
 
 #include "UILogicBase.h"
 #include "Inventory.h"
+#include "WeaponData.h"
 #include "ShopLogic.generated.h"
 
 
@@ -57,6 +58,8 @@ private:
 	void OnClickedBuyButton();
 	UFUNCTION()
 	void UpdateBuyButtonText();
+	UPROPERTY()
+	TMap<WEAPONID, FWeaponData> weaponData;
 };
 UCLASS()
 class UWeaponSlot: public UObject
