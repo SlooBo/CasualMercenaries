@@ -359,6 +359,7 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 			playerState->SetColorId(randomColor);
 		}
 
+		playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
 		//TODO: assign color to character here
 	}
 

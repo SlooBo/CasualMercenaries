@@ -100,11 +100,11 @@ public:
 protected:
 
 	// Is alive
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	bool alive;
 
 	// Customizable player model colors
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	FLinearColor colors[PlayerColor::Num];
 
 	// 0 = No Team, 1-4 = Teams
