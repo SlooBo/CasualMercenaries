@@ -222,16 +222,40 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 {
 	// respawn players
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-		RespawnPlayer(*iter);
+	{
+		ACMPlayerController* player = Cast<ACMPlayerController>((*iter).Get());
+
+		// deny shop access from players
+		player->OnShopAccessChanged(false);
+
+		RespawnPlayer(player);
+	}
 }
 
 void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 {
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 	{
+		ACMPlayerController* player = Cast<ACMPlayerController>((*iter).Get());
 		ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
 		if (playerState != NULL)
+		{
 			playerState->AddMoney(huntRoundReward);
+		}
+
+		// allow shop access
+		player->OnShopAccessChanged(true);
+	}
+}
+
+void ACMGameMode_Hunt::OnWarmupStart_Implementation()
+{
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	{
+		ACMPlayerController* player = Cast<ACMPlayerController>((*iter).Get());
+
+		// allow shop access
+		player->OnShopAccessChanged(true);
 	}
 }
 

@@ -75,6 +75,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Intermission Start"), Category = "Gameplay")
 	void OnIntermissionStart();
 
+	virtual void OnWarmupStart_Implementation() override;
+
 	int32 GetHuntMaxMoney() { return huntMaxMoney; };
 
 protected:

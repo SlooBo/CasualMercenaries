@@ -17,6 +17,7 @@ void ACMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACMPlayerController, inventory);
+	DOREPLIFETIME(ACMPlayerController, canShop);
 }
 
 void ACMPlayerController::BeginPlay()
@@ -49,6 +50,11 @@ void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerCo
 			UnPossess();
 		}
 	}
+}
+
+void ACMPlayerController::OnShopAccessChanged(bool canShop)
+{
+	this->canShop = canShop;
 }
 
 bool ACMPlayerController::RequestRespawn_Validate()
