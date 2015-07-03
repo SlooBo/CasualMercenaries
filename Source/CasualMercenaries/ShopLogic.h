@@ -73,6 +73,8 @@ private:
 	void OnClickedUpgradeButton1();
 	UFUNCTION()
 	void OnClickedUpgradeButton2();
+	UPROPERTY()
+	UTexture2D *Test;
 };
 UCLASS()
 class UWeaponSlot: public UObject

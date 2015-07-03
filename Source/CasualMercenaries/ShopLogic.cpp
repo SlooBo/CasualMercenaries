@@ -6,6 +6,7 @@
 #include "PlayerCharacter.h"
 #include "Weapon.h"
 #include "PlayerHud.h"
+#include "Util.h"
 UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
 	//	FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice,
@@ -33,6 +34,9 @@ UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 
 	FWeaponData noWeapon = FWeaponData(-1, -1, -1, -1, RANGE_TYPE::CLOSE_RANGE, -1,-1,-1, "", "","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::NO_WEAPON, noWeapon);
+
+	static ConstructorHelpers::FObjectFinder<UTexture2D> ServerBrowserBP(TEXT("Texture2D'/Game/Game/UI/Textures/watergunPic.watergunPic'"));
+	Test = ServerBrowserBP.Object;
 }
 UShopLogic::~UShopLogic()
 {
@@ -128,7 +132,7 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	else
 	{
 		upgradeButton1->SetIsEnabled(false);
-		upgradeButton2->SetIsEnabled(true);
+		upgradeButton2->SetIsEnabled(false);
 		buyButton->SetIsEnabled(false);
 		FLinearColor color = FLinearColor(0.8f, 0.5f, 0.0f, 0.0f);
 		FSlateColor slateColor = FSlateColor(color);
@@ -189,6 +193,8 @@ void UShopLogic::ChangeWeaponSlotColor(uint32 index, FSlateColor color)
 void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 {
 	buyButton->SetIsEnabled(true);
+	upgradeButton1->SetIsEnabled(true);
+	upgradeButton2->SetIsEnabled(true);
 	FLinearColor color = FLinearColor::Yellow;
 	color = FLinearColor(0.8f, 0.5f, 0.0f, 1.0f);
 	FSlateColor slateColor = FSlateColor(color);
@@ -223,6 +229,9 @@ void UShopLogic::UpdateBuyButtonText()
 }
 void UShopLogic::OnClickedUpgradeButton1()
 {
+
+	FName name = Util::GetObjPath(Test);
+	UTexture2D *test = Util::LoadObjFromPath<UTexture2D>("Texture2D'/Game/Game/UI/Textures/watergunPic.watergunPic'");
 	//todo upgrade
 }
 void UShopLogic::OnClickedUpgradeButton2()
