@@ -111,3 +111,32 @@ void ACMPlayerState::SetAlive(bool alive)
 {
 	this->alive = alive;
 }
+
+FLinearColor ACMPlayerState::GetColor(PlayerColor colorComponent)
+{
+	return colors[(uint8)colorComponent];
+}
+
+FLinearColor ACMPlayerState::GetColorId()
+{
+	return GetColor(PlayerColorIdentifier);
+}
+
+TArray<FLinearColor> ACMPlayerState::GetColors()
+{
+	TArray<FLinearColor> array;
+	for (FLinearColor color : colors)
+		array.Add(color);
+
+	return array;
+}
+
+void ACMPlayerState::SetColor(FLinearColor color, PlayerColor colorComponent)
+{
+	colors[(uint8)colorComponent] = color;
+}
+
+void ACMPlayerState::SetColorId(FLinearColor color)
+{
+	SetColor(color, PlayerColorIdentifier);
+}

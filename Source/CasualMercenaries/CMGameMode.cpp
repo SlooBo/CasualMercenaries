@@ -348,5 +348,19 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 		return;
 	}
 
-	// TODO: setup player character here after respawning
+	ACMPlayerController* player = Cast<ACMPlayerController>(playerCharacter->GetController());
+	if (player != NULL)
+	{
+		//TODO: this should be done when match starts
+		ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
+		if (playerState != NULL)
+		{
+			FLinearColor randomColor = FLinearColor::MakeRandomColor();
+			playerState->SetColorId(randomColor);
+		}
+
+		//TODO: assign color to character here
+	}
+
+	// TODO: setup player character here after respawning (character colors, ...)
 }

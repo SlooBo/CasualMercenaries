@@ -5,6 +5,20 @@
 #include "GameFramework/PlayerState.h"
 #include "CMPlayerState.generated.h"
 
+UENUM(BlueprintType)
+enum class PlayerColor : uint8
+{
+	Shirt,
+	Pants,
+	Skin,
+
+	// Do not change this, used for counting the number of components
+	Num,
+};
+
+// Identifier color for GetColorId(), used in gameplay (team colors, hunt target id color...)
+static const PlayerColor PlayerColorIdentifier = PlayerColor::Shirt;
+
 /**
  * 
  */
@@ -49,6 +63,21 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Alive"), Category = "Gameplay")
 	void SetAlive(bool alive);
 
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Color"), Category = "Gameplay")
+	FLinearColor GetColor(PlayerColor colorComponent);
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Color Id"), Category = "Gameplay")
+	FLinearColor GetColorId();
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get All Colors"), Category = "Gameplay")
+	TArray<FLinearColor> GetColors();
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Color"), Category = "Gameplay")
+	void SetColor(FLinearColor color, PlayerColor colorComponent);
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Color Id"), Category = "Gameplay")
+	void SetColorId(FLinearColor color);
+
 	/************************************************************************/
 	/* Hunt GameMode                                                        */
 	/************************************************************************/
@@ -73,6 +102,10 @@ protected:
 	// Is alive
 	UPROPERTY()
 	bool alive;
+
+	// Customizable player model colors
+	UPROPERTY()
+	FLinearColor colors[PlayerColor::Num];
 
 	// 0 = No Team, 1-4 = Teams
 	UPROPERTY(Replicated, EditAnywhere, Meta = (DisplayName = "Team Number", ClampMin = "0", UIMin = "0"))
