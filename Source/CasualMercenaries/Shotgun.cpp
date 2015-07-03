@@ -19,14 +19,14 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	//integer values
 	maxAmmo = 120;
 	clips = 999;
-	ammo = 30;
-	ammoInClip = 30;
+	ammo = 6;
+	ammoInClip = 6;
 	price = 600;
 
 	//float values
 	passedTimeReloading = 0;
-	reloadTime = 0.5;
-	firingInterval = .25;
+	reloadTime = 2;
+	firingInterval = .50;
 
 
 
@@ -68,26 +68,26 @@ void AShotgun::Fire()
 	userLoc = this->GetOwner()->GetActorLocation();
 
 	FVector shootDir = cameraRot.Vector();
+	for (int i = 0; i < 5; i++)
+	{
+		//Bullet spread
+		float random1 = FMath::FRand() * 0.1;
+		float random2 = FMath::FRand() * 0.1;
+		float random3 = FMath::FRand() * 0.1;
+		shootDir.Set(shootDir.X + random1, shootDir.Y + random2, shootDir.Z + random3);
 
-	//Bullet spread
-	float random1 = FMath::FRand() * 0.05;
-	float random2 = FMath::FRand() * 0.05;
-	float random3 = FMath::FRand() * 0.05;
-	shootDir.Set(shootDir.X + random1, shootDir.Y + random2, shootDir.Z + random3);
+		//LineTrace
+		const FVector startTrace = userLoc;
+		const FVector endTrace = startTrace + shootDir * 20000;
 
-	//LineTrace
-	const FVector startTrace = userLoc;
-	const FVector endTrace = startTrace + shootDir * 20000;
+		FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
+		traceParams.bTraceAsyncScene = true;
+		traceParams.bReturnPhysicalMaterial = true;
+		traceParams.AddIgnoredActor(this->GetOwner());
 
-	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
-	traceParams.bTraceAsyncScene = true;
-	traceParams.bReturnPhysicalMaterial = true;
-	traceParams.AddIgnoredActor(this->GetOwner());
+		FHitResult hit(ForceInit);
 
-	FHitResult hit(ForceInit);
-
-	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
-
+		GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
 	//weaponMesh->Soc
 
@@ -111,6 +111,8 @@ void AShotgun::Fire()
 	//Another effect
 	DrawLine(startTrace, endTrace);
 	ammo--;
+	}
+
 }
 
 void AShotgun::PrimaryFunction(APlayerCharacter* user)
@@ -139,10 +141,10 @@ bool AShotgun::ServerDrawLine_Validate(FVector begin, FVector end)
 
 void AShotgun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
-	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
+	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
 	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
-	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
-	particlen->SetVectorParameter("BulletTrailEnd", end);
+	//UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
+	//particlen->SetVectorParameter("BulletTrailEnd", end);
 }
 
 void AShotgun::SecondaryFunction(APlayerCharacter* user)
