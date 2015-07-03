@@ -29,6 +29,8 @@ public:
 
 	FInventory& GetInventory() { return inventory; }
 
+	UFUNCTION(Reliable, Server, WithValidation)
+		void BuyWeapon(uint8 weaponIndex, WEAPONID weaponid);
 protected:
 
 	UPROPERTY(Replicated)

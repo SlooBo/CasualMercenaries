@@ -97,7 +97,6 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 void UShopLogic::OnClickedShopSlot(uint32 slotIndex)
 {
 	ChangeCurrentShopSlot(slotIndex);
-
 }
 UButton* UShopLogic::getShopButton(uint32 index)
 {
@@ -167,8 +166,9 @@ void UShopLogic::OnClickedQuit()
 }
 void UShopLogic::OnClickedBuyButton()
 {
-	APlayerCharacter *player = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn());
-	player->GetInventory().ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(currentShopIndex));
+	ACMPlayerController *player = Cast<ACMPlayerController>(world->GetFirstPlayerController());
+	player->BuyWeapon(currentWeaponIndex,AWeapon::GetIDFromInt(currentShopIndex));
+	//player->GetInventory().ChangeWeaponAtSlot(currentWeaponIndex, AWeapon::GetIDFromInt(currentShopIndex));
 	UpdateBuyButtonText();
 }
 void UShopLogic::UpdateBuyButtonText()

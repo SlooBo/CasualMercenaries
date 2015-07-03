@@ -28,20 +28,13 @@ bool ACMPlayerController::ServerInitInventory_Validate()
 }
 void ACMPlayerController::ServerInitInventory_Implementation()
 {
-
 	APlayerCharacter* playerPawn = Cast<APlayerCharacter>(GetPawn());
-
-
-	//inventory = NewObject<UInventory>();
 	inventory.SetPlayer(playerPawn);
 	if (inventory.weapons.Num() < 1)
 	{
 		for (int i = 0; i < 4; i++)
 			inventory.AddWeaponToInventory(nullptr);
 	}
-
-	//inventory.GetWeapon(currentWeapon)->SetActorHiddenInGame(false);
-	//inventoryInitialized = true;
 }
 
 
@@ -55,4 +48,13 @@ void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerCo
 			UnPossess();
 		}
 	}
+}
+bool ACMPlayerController::BuyWeapon_Validate(uint8 weaponIndex,WEAPONID weaponid)
+{
+	return true;
+}
+void ACMPlayerController::BuyWeapon_Implementation(uint8 weaponIndex, WEAPONID weaponid)
+{
+	//TODO check that player has money for it
+	inventory.ChangeWeaponAtSlot(weaponIndex, weaponid);
 }
