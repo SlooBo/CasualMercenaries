@@ -272,7 +272,8 @@ void APlayerCharacter::ServerSwitchWeapon_Implementation(float cw, float pw)
 		inventory.GetWeapon(pw)->SetActorHiddenInGame(true);
 	if (inventory.GetWeapon(cw) != nullptr)
 		inventory.GetWeapon(cw)->SetActorHiddenInGame(false);
-
+	if (inventory.GetWeapon(cw) != nullptr)
+		inventory.GetWeapon(cw)->SetActorLocation(Mesh->GetSocketByName("GunSocket")->GetSocketLocation(Mesh));
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -289,7 +290,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(APlayerCharacter, stamina);
 	DOREPLIFETIME(APlayerCharacter, armor);
 	DOREPLIFETIME(APlayerCharacter, state);
-
 };
 
 void APlayerCharacter::OnStartJump()
