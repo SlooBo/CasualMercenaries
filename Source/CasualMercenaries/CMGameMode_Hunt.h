@@ -9,9 +9,9 @@ UENUM(BlueprintType)
 enum class HuntState : uint8
 {
 	Start = 0,
-	RoundStarting,	// during freeze time
-	Round,
 	Intermission,
+	Freeze,
+	Round,
 	End,
 };
 
@@ -42,22 +42,25 @@ public:
 	void SetPlayerHuntTarget(ACMPlayerController* player, ACMPlayerController* target);
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Time Elapsed"), Category = "Gameplay|Level")
-	int32 GetHuntTimeElapsed();
+	int32 GetHuntTimeElapsed() { return huntElapsed; }
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Round Time Elapsed"), Category = "Gameplay|Level")
-	int32 GetHuntRoundTimeElapsed();
+	int32 GetHuntRoundElapsed() { return huntRoundElapsed; }
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Intermission Time Elapsed"), Category = "Gameplay|Level")
-	int32 GetHuntIntermissionTimeElapsed();
+	int32 GetHuntIntermissionElapsed() { return huntIntermissionElapsed; }
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Time Left"), Category = "Gameplay|Level")
-	int32 GetHuntTimeLeft();
+	int32 GetHuntTimeLeft() { return huntTotalLength - huntElapsed; }
 
-	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Round Left"), Category = "Gameplay|Level")
-	int32 GetHuntRoundTimeLeft();
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Round Time Left"), Category = "Gameplay|Level")
+	int32 GetHuntRoundTimeLeft() { return huntRoundLength - huntRoundElapsed; }
 
-	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Intermission Left"), Category = "Gameplay|Level")
-	int32 GetHuntIntermissionTimeLeft();
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Intermission Time Left"), Category = "Gameplay|Level")
+	int32 GetHuntIntermissionTimeLeft() { return huntIntermissionLength - huntIntermissionElapsed; }
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Hunt Current Round"), Category = "Gameplay|Level")
+	int32 GetCurrentRound() { return huntCurrentRound; }
 
 	// Event when round freeze period starts
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Round Freeze Start"), Category = "Gameplay")
@@ -82,13 +85,10 @@ public:
 protected:
 	FTimerHandle huntTimerHandle;	// Ticks once every second during hunt
 	int32 huntElapsed;
-
-	int32 GetHuntTotalLength();
-	int32 GetCurrentRound();
-	int32 GetNextFreezeStartTime();
-	int32 GetNextRoundStartTime();
-	int32 GetNextIntermissionStartTime();
-	int32 GetNextIntermissionEndTime();
+	int32 huntCurrentRound;
+	int32 huntIntermissionElapsed;
+	int32 huntFreezeTimeElapsed;
+	int32 huntRoundElapsed;
 
 	// Internal game state of hunt mode
 	UPROPERTY(BlueprintReadOnly, Category=Enum)
@@ -104,15 +104,15 @@ protected:
 
 	// Length of one hunt round
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Round Length", ClampMin = "0"), Category = "Gameplay|Hunt")
-	int32 huntRoundTime;
+	int32 huntRoundLength;
 
 	// Freeze time length at the beginning of a round
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Freeze Time Length", ClampMin = "0"), Category = "Gameplay|Hunt")
-	int32 huntRoundFreezeTime;
+	int32 huntRoundFreezeLength;
 
 	// Intermission length between rounds
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Intermission Length", ClampMin = "0"), Category = "Gameplay|Hunt")
-	int32 huntIntermissionTime;
+	int32 huntIntermissionLength;
 
 	// Total length of hunt match (calculated from previous values)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (DisplayName = "Hunt Total Length"), Category = "Gameplay|Hunt")

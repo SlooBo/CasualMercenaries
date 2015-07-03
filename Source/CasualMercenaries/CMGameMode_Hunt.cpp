@@ -11,11 +11,12 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 {
 	minPlayersToStart = 1;
 
-	huntRounds = 2;
-	huntRoundTime = 5;
-	huntRoundFreezeTime = 2;
-	huntIntermissionTime = 3;
-	huntTotalLength = ((huntRoundTime + huntRoundFreezeTime) * huntRounds) + (huntIntermissionTime * (huntRounds - 1));
+	huntRounds = 3;
+	huntIntermissionLength = 4;
+	huntRoundFreezeLength = 1;
+	huntRoundLength = 10;
+	
+	huntTotalLength = huntTotalLength = ((huntRoundLength + huntRoundFreezeLength) * huntRounds) + (huntIntermissionLength * (huntRounds - 1));
 
 	huntStartMoney = 1500;
 	huntMaxMoney = 20000;
@@ -32,11 +33,11 @@ void ACMGameMode_Hunt::PostEditChangeProperty(FPropertyChangedEvent& propertyCha
 	{
 		FName propertyName = propertyChangedEvent.Property->GetFName();
 		if (propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntRounds) ||
-			propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntRoundTime) ||
-			propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntRoundFreezeTime) ||
-			propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntIntermissionTime))
+			propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntRoundLength) ||
+			propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntRoundFreezeLength) ||
+			propertyName == GET_MEMBER_NAME_CHECKED(ACMGameMode_Hunt, huntIntermissionLength))
 		{
-			huntTotalLength = ((huntRoundTime + huntRoundFreezeTime) * huntRounds) + (huntIntermissionTime * (huntRounds - 1));
+			huntTotalLength = ((huntRoundLength + huntRoundFreezeLength) * huntRounds) + (huntIntermissionLength * (huntRounds - 1));
 		}
 	}
 	
@@ -93,115 +94,67 @@ void ACMGameMode_Hunt::HuntTickSecond()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("End"));
 		huntState = HuntState::End;
+
+		//OnHuntEnd();
 		huntElapsed = 0;
 	}
 
-	GEngine->AddOnScreenDebugMessage(6765, 3.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(GetHuntTotalLength()) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
+	// removeme
+	if (huntState == HuntState::End)
+		huntState = HuntState::Start;
 
-	if (huntElapsed < GetNextRoundStartTime() && huntRoundFreezeTime > 0 && huntState != HuntState::RoundStarting)
+	if (huntState == HuntState::Start)
 	{
-		// freeze time started
-		huntState = HuntState::RoundStarting;
-		OnRoundStart();
-		OnRoundFreezeStart();
-		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundFreezeTime) + "s)");
+		huntState = HuntState::Intermission;
+		//OnHuntStart();
 	}
-	else if (huntElapsed >= GetNextRoundStartTime() && huntElapsed < GetNextIntermissionStartTime() && huntState != HuntState::Round)
+
+	GEngine->AddOnScreenDebugMessage(6765, 3.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(huntTotalLength) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
+
+	if (huntState == HuntState::Intermission)
 	{
-		// round started
+		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntIntermissionElapsed) + "s)");
+		huntIntermissionElapsed++;
+	}
+	else if (huntState == HuntState::Freeze)
+	{
+		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntFreezeTimeElapsed) + "s)");
+		huntFreezeTimeElapsed++;
+	}
+	else if (huntState == HuntState::Round)
+	{
+		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundElapsed) + "s)");
+		huntRoundElapsed++;
+	}
+
+	
+
+	if (huntIntermissionElapsed > huntIntermissionLength)
+	{
+		huntIntermissionElapsed = 0;
+		huntState = HuntState::Freeze;
+
+		if (huntRoundFreezeLength > 0)
+			OnRoundFreezeStart();
+	}
+	if (huntFreezeTimeElapsed > huntRoundFreezeLength)
+	{
+		huntFreezeTimeElapsed = 0;
 		huntState = HuntState::Round;
 
-		if (huntRoundFreezeTime > 0)
+		if (huntRoundFreezeLength > 0)
 			OnRoundFreezeEnd();
-		else
-			OnRoundStart();
 
-		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundTime) + "s)");
+		OnRoundStart();
 	}
-	else if (huntElapsed >= GetNextIntermissionStartTime() && huntElapsed < GetNextIntermissionEndTime() && huntState != HuntState::Intermission)
+	if (huntRoundElapsed > huntRoundLength)
 	{
-		// intermission started
-		huntState = HuntState::Intermission;	
+		huntRoundElapsed = 0;
+		huntState = HuntState::Intermission;
+		huntCurrentRound++;
+
 		OnIntermissionStart();
-
-		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntIntermissionTime) + "s)");
 	}
-}
-
-int32 ACMGameMode_Hunt::GetHuntTimeElapsed()
-{
-	return huntElapsed;
-}
-
-int32 ACMGameMode_Hunt::GetHuntTotalLength()
-{
-	return huntTotalLength;
-}
-
-int32 ACMGameMode_Hunt::GetCurrentRound()
-{
-	return huntElapsed / (huntRoundFreezeTime + huntRoundTime + huntIntermissionTime);
-}
-
-int32 ACMGameMode_Hunt::GetNextFreezeStartTime()
-{
-	return GetCurrentRound() * (huntRoundFreezeTime + huntRoundTime + huntIntermissionTime);
-}
-
-int32 ACMGameMode_Hunt::GetNextRoundStartTime()
-{
-	return GetNextFreezeStartTime() + huntRoundFreezeTime;
-}
-
-int32 ACMGameMode_Hunt::GetNextIntermissionStartTime()
-{
-	return GetNextRoundStartTime() + huntRoundTime;
-}
-
-int32 ACMGameMode_Hunt::GetNextIntermissionEndTime()
-{
-	return GetNextIntermissionStartTime() + huntIntermissionTime;
-}
-
-int32 ACMGameMode_Hunt::GetHuntRoundTimeElapsed()
-{
-	int32 roundStartTime = GetNextRoundStartTime();
-
-	if (huntElapsed < roundStartTime)
-		return -1;
-
-	return huntElapsed - roundStartTime;
-}
-
-int32 ACMGameMode_Hunt::GetHuntIntermissionTimeElapsed()
-{
-	int32 intermissionStartTime = GetNextIntermissionStartTime();
-
-	if (huntElapsed < intermissionStartTime)
-		return -1;
-
-	return huntElapsed - intermissionStartTime;
-}
-
-int32 ACMGameMode_Hunt::GetHuntTimeLeft()
-{
-	return GetHuntTotalLength() - huntElapsed;
-}
-
-int32 ACMGameMode_Hunt::GetHuntRoundTimeLeft()
-{
-	if (huntElapsed < GetNextRoundStartTime())
-		return -1;
-
-	return GetNextIntermissionStartTime() - huntElapsed;
-}
-
-int32 ACMGameMode_Hunt::GetHuntIntermissionTimeLeft()
-{
-	if (huntElapsed < GetNextIntermissionStartTime())
-		return -1;
-
-	return GetNextIntermissionEndTime() - huntElapsed;
 }
 
 void ACMGameMode_Hunt::OnRoundFreezeStart_Implementation()
@@ -227,8 +180,6 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 
 		// deny shop access from players
 		player->OnShopAccessChanged(false);
-
-		RespawnPlayer(player);
 	}
 }
 
