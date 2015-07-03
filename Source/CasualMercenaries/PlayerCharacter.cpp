@@ -59,6 +59,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	state = CHARACTER_STATE::ALIVE;
 	rounds = 0;
+	canLook = true;
+	canWalk = true;
 
 	bReplicates = true;
 	/// pleasant surprise 
