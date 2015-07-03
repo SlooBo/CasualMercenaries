@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CasualMercenaries.h"
-#include "MashineGun.h"
-#include "PlayerCharacter.h"//this should not be working...
+#include "Shotgun.h"
+#include "PlayerCharacter.h"
 #include "Projectile.h"
 
-AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
+AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
 	//skeletalMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/ToasterGun/MESH_Toaster_gun.MESH_Toaster_gun'"));
@@ -14,7 +14,7 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	//material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
-	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05)); 
+	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
 
 	//integer values
 	maxAmmo = 120;
@@ -28,7 +28,7 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	reloadTime = 0.5;
 	firingInterval = .25;
 
-	
+
 
 	//particles
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
@@ -43,17 +43,17 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	bReplicates = true;
 }
 
-void AMashineGun::BeginPlay()
+void AShotgun::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void AMashineGun::Tick(float DeltaTime)
+void AShotgun::Tick(float DeltaTime)
 {
 	AWeapon::Tick(DeltaTime);
 }
 
-void AMashineGun::Fire()
+void AShotgun::Fire()
 {
 	if (ammo < 1)
 	{
@@ -88,7 +88,9 @@ void AMashineGun::Fire()
 
 	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	
+
+	//weaponMesh->Soc
+
 
 	//Play effect 
 	ServerEffect(flavorParticleEffect, startTrace);
@@ -99,7 +101,7 @@ void AMashineGun::Fire()
 	if (player != nullptr)
 		player->TakeDamage(10, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
 	else
-	{ 
+	{
 		AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
 		if (projectile != nullptr)
 			projectile->TakeDamage(20);// , FDamageEvent::FDamageEvent(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), this);
@@ -111,7 +113,7 @@ void AMashineGun::Fire()
 	ammo--;
 }
 
-void AMashineGun::PrimaryFunction(APlayerCharacter* user)
+void AShotgun::PrimaryFunction(APlayerCharacter* user)
 {
 	this->SetOwner(user);
 	if (ammo > 0)
@@ -120,22 +122,22 @@ void AMashineGun::PrimaryFunction(APlayerCharacter* user)
 	}
 }
 
-void AMashineGun::PrimaryFunctionReleased(APlayerCharacter* user)
+void AShotgun::PrimaryFunctionReleased(APlayerCharacter* user)
 {
 	firing = false;
 }
 
-void AMashineGun::DrawLine(FVector begin, FVector end)
-{	
+void AShotgun::DrawLine(FVector begin, FVector end)
+{
 	ServerDrawLine(begin, end);
 }
 
-bool AMashineGun::ServerDrawLine_Validate(FVector begin, FVector end)
+bool AShotgun::ServerDrawLine_Validate(FVector begin, FVector end)
 {
 	return true;
 }
 
-void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
+void AShotgun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
 	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
 	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
@@ -143,12 +145,12 @@ void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 	particlen->SetVectorParameter("BulletTrailEnd", end);
 }
 
-void AMashineGun::SecondaryFunction(APlayerCharacter* user)
+void AShotgun::SecondaryFunction(APlayerCharacter* user)
 {
 
 }
 
-void AMashineGun::Reload()
+void AShotgun::Reload()
 {
 	if (clips > 0)
 	{
@@ -156,12 +158,14 @@ void AMashineGun::Reload()
 	}
 }
 
-bool AMashineGun::ServerEffect_Validate(UParticleSystem* particle, FVector location)
+bool AShotgun::ServerEffect_Validate(UParticleSystem* particle, FVector location)
 {
 	return true;
 }
 
-void AMashineGun::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
+void AShotgun::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
 {
 	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
 }
+
+

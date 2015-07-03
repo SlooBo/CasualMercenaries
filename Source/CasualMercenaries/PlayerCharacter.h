@@ -130,6 +130,14 @@ public:
 
 	UCameraComponent* GetCamera(){ return cameraComp; };
 
+	/************************************************************************/
+	/* Utility                                                              */
+	/************************************************************************/
+
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+	void ChangeShirtColor(FLinearColor color);
+
+
 private:
 
 

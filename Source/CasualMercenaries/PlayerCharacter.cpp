@@ -41,6 +41,16 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	audioComp->bAutoDestroy = false;
 	audioComp->AttachParent = GetRootComponent();
 
+	//	CharacterMesh
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
+	Mesh->SetSkeletalMesh(MeshObj.Object);
+	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MAT_Playercharacter_Inst.MAT_Playercharacter_Inst'"));
+	Mesh->SetMaterial(0, MateriaObj.Object);
+	const ConstructorHelpers::FObjectFinder<UAnimBlueprintGeneratedClass> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/APB_PlayerCharacter.APB_PlayerCharacter'"));
+	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object;
+
+
+
 	rightShoulder = false;
 
 	health_Max = 100.0f;
@@ -620,4 +630,14 @@ void APlayerCharacter::WeaponSlot4()
 	if (currentWeapon == tempLastWeapon)
 		return;
 	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+}
+bool APlayerCharacter::ChangeShirtColor_Validate(FLinearColor color)
+{
+	return true;
+}
+void APlayerCharacter::ChangeShirtColor_Implementation(FLinearColor color)
+{
+	UMaterialInstanceDynamic *dynamicMesh = Mesh->CreateDynamicMaterialInstance(0, Mesh->GetMaterial(0));
+	dynamicMesh->SetVectorParameterValue("ShirtColour", color);
+	Mesh->SetMaterial(0, dynamicMesh);
 }
