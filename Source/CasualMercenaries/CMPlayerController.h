@@ -34,6 +34,8 @@ public:
 	void OnWarmupStart();
 	void OnShopAccessChanged(bool canShop);
 
+	void MusicPlay();
+
 	bool CanAccessShop() { return canShop; }
 	FInventory& GetInventory() { return inventory; }
 
@@ -46,4 +48,10 @@ protected:
 
 	UPROPERTY(Replicated)
 	FInventory inventory;
+
+	UPROPERTY()
+	UAudioComponent* musicComponent;
+
+	UPROPERTY()
+	TArray<USoundWave*> musicList;
 };

@@ -10,6 +10,18 @@ ACMPlayerController::ACMPlayerController(const FObjectInitializer& objectInitial
 	: Super(objectInitializer)
 {
 	bReplicates = true;
+
+	// setup music
+	musicComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("MusicComponent"));
+	musicComponent->SetVolumeMultiplier(0.125f);
+	musicComponent->bIsMusic = true;
+	musicComponent->bIsUISound = true;
+	musicComponent->bAutoActivate = false;
+
+	//TODO: add all music automatically if possible
+	static ConstructorHelpers::FObjectFinder<USoundWave> Music1(TEXT("SoundWave'/Game/Game/Audio/Music/Artemisia_-_BiPilar.Artemisia_-_BiPilar'"));
+	if (Music1.Object)
+		musicList.AddUnique(Music1.Object);
 }
 
 void ACMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -22,6 +34,28 @@ void ACMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 void ACMPlayerController::BeginPlay()
 {
+	Super::BeginPlay();
+
+	MusicPlay();
+}
+
+void ACMPlayerController::MusicPlay()
+{
+	static int trackNumber = 0;
+
+	if (trackNumber < musicList.Num())
+	{
+		musicComponent->SetSound(musicList[trackNumber]);
+		musicComponent->Play();
+	}
+
+	trackNumber++;
+	if (trackNumber >= musicList.Num())
+		trackNumber = 0;
+
+	//enable looping with timer
+	FTimerHandle musicTimer;
+	GetWorld()->GetTimerManager().SetTimer(musicTimer, this, &ACMPlayerController::MusicPlay, musicList[trackNumber]->GetDuration(), false);
 }
 
 bool ACMPlayerController::ServerInitInventory_Validate()
