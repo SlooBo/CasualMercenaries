@@ -35,7 +35,7 @@ UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 	FWeaponData shotGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, 200, 300, "Shot Gun", "Shoots shots", "Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::SHOT_GUN, shotGun);
 
-	FWeaponData noWeapon = FWeaponData(-1, -1, -1, -1, RANGE_TYPE::CLOSE_RANGE, -1,-1,-1, "", "","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
+	FWeaponData noWeapon = FWeaponData(-1, -1, -1, -1, RANGE_TYPE::CLOSE_RANGE, -1,-1,-1, "", "","Texture2D'/Game/Game/UI/Textures/No_Weapon.No_Weapon'");
 	weaponData.Add(WEAPONID::NO_WEAPON, noWeapon);
 
 }
@@ -132,6 +132,8 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	//player has no weapon on this weapon slot
 	else
 	{
+		currentShopIndex = (uint32)WEAPONID::NO_WEAPON;
+		UpdateInfoBox();
 		upgradeButton1->SetIsEnabled(false);
 		upgradeButton2->SetIsEnabled(false);
 		buyButton->SetIsEnabled(false);
