@@ -75,7 +75,7 @@ public:
 
 	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 
-	UFUNCTION(Reliable, NetMulticast, WithValidation)
+	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerOnDeath(ACMPlayerController* killer = NULL);
 
 

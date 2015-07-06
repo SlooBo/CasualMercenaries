@@ -28,8 +28,20 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	reloadTime = 0.5;
 	firingInterval = .25;
 
-	
+	//Reload sound temp
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.125f);
+	audioComp->bIsMusic = true;
+	audioComp->bIsUISound = true;
+	audioComp->bAutoActivate = false;
 
+
+	//TODO: add all music automatically if possible
+	static ConstructorHelpers::FObjectFinder<USoundWave> Music1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot''"));
+	if (Music1.Object)
+		audioList.AddUnique(Music1.Object);
+	
+	
 	//particles
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
 	flavorParticleEffect = ParticleObj.Object;
@@ -137,7 +149,9 @@ bool AMashineGun::ServerDrawLine_Validate(FVector begin, FVector end)
 
 void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
-	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
+	//audioComp->SetSound(audioList[0]);
+	//audioComp->Play();
+	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
 	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
 	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
 	particlen->SetVectorParameter("BulletTrailEnd", end);

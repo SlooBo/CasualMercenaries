@@ -43,6 +43,8 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = Particles)
 	UParticleSystemComponent* particleSystem;
 
+	UPROPERTY()
+	UAudioComponent* audioComp;
 
 	/************************************************************************/
 	/* Defaults                                                             */
@@ -118,4 +120,10 @@ protected:
 
 	UParticleSystem* flavorParticleEffect;
 	
+	/************************************************************************/
+	/* Sounds                                                               */
+	/************************************************************************/
+
+	UPROPERTY()
+	TArray<USoundWave*> audioList;
 };
