@@ -48,6 +48,12 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/APB_PlayerCharacter.APB_PlayerCharacter'"));
 	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
 
+	// Values from blueprint
+	CapsuleComponent->SetRelativeScale3D(FVector(1.0f, 1.0f, 1.3f));
+	CapsuleComponent->bVisible = false;
+	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -83.0f));
+	Mesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+	Mesh->SetRelativeScale3D(FVector(0.6f, 0.6f, 0.6f));
 
 
 	rightShoulder = false;

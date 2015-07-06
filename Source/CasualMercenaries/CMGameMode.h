@@ -58,6 +58,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Respawn Player"), Category = "Gameplay|Player")
 	void RespawnPlayer(APlayerController* player, float respawnDelay = 0.0f);
+
+	void SpectatePlayer(ACMPlayerController* player);
 	
 	// Event when warmup has started
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Warmup Start"), Category = "Gameplay")

@@ -8,6 +8,7 @@
 #include "PlayerHud.h"
 #include "CMPlayerController.h"
 #include "CMSpectator.h"
+#include "GhostCharacter.h"
 
 ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
@@ -65,7 +66,9 @@ AActor* ACMGameMode::ChoosePlayerStart_Implementation(AController* player)
 		APlayerController* playerController = player->CastToPlayerController();
 		if (playerController != NULL)
 		{
-			spawnLocation = playerController->GetSpectatorPawn();
+			spawnLocation = playerController->GetPawnOrSpectator();;
+			if (spawnLocation == NULL)
+				GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Error: Unable to get ghost/spectator pawn, choosing best spawn point instead"));
 		}
 	}
 	
@@ -255,19 +258,7 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 		playerController->OnPlayerDeath(player, killer);
 	}
 
-	// disable player pawn instead of destroying it, and let player character destroy itself
-	// this fixes some movement related bugs between server and client right after death occured
-	if (player->GetPawn() != NULL)
-	{
-		player->GetPawn()->SetActorHiddenInGame(true);
-		player->GetPawn()->SetActorEnableCollision(false);
-		player->GetPawn()->SetActorTickEnabled(false);
-	}
-
-	// set player to spectator while waiting to respawn
-	player->PlayerState->bIsSpectator = true;
-	player->ChangeState(NAME_Spectating);
-	player->ClientGotoState(NAME_Spectating);
+	SpectatePlayer(player);
 
 	const int32 respawnTime = (inGameState != InGameState::Warmup) ? playerRespawnTime : warmupRespawnTime;
 
@@ -310,6 +301,41 @@ void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 	GetWorld()->GetTimerManager().SetTimer(respawnTimerList[player], respawnDelegate, respawnDelay, false);
 }
 
+void ACMGameMode::SpectatePlayer(ACMPlayerController* player)
+{
+	// disable player pawn instead of destroying it, and let player character destroy itself
+	// this fixes some movement related bugs between server and client right after death occured
+	if (player->GetPawn() != NULL)
+	{
+		player->GetPawn()->SetActorHiddenInGame(true);
+		player->GetPawn()->SetActorEnableCollision(false);
+		player->GetPawn()->SetActorTickEnabled(false);
+	}
+
+	// set player to spectator while waiting to respawn
+	if (respawnMode != RespawnMode::AtGhost)
+	{
+		player->PlayerState->bIsSpectator = true;
+		player->ChangeState(NAME_Spectating);
+		player->ClientGotoState(NAME_Spectating);
+	}
+	else
+	{
+		if (player->GetCharacter() != NULL)
+		{
+			FVector position = player->GetCharacter()->GetActorLocation();
+			FRotator rotation = player->GetCharacter()->GetActorRotation();
+			rotation.Roll = 0.0f;
+			player->UnPossess();
+
+			AGhostCharacter* pawn = GetWorld()->SpawnActor<AGhostCharacter>(AGhostCharacter::StaticClass(), position, rotation);
+			player->Possess(pawn);
+		}
+		//player->ClientSetRotation(NewPlayer->GetCharacter()->GetActorRotation(), true);
+		//player->SetControlRotation(NewControllerRot);
+	}
+}
+
 void ACMGameMode::AllowPlayerRespawn(APlayerController* player)
 {
 	if (denyRespawnList.Contains(player))
@@ -337,18 +363,43 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	if (respawnTimerList.Contains(player))
 		GetWorld()->GetTimerManager().ClearTimer(respawnTimerList[player]);
 
-	if (player->GetPawn() != NULL)
+	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(player->GetPawn());
+	AGhostCharacter* ghostCharacter = Cast<AGhostCharacter>(player->GetPawn());
+	if (playerCharacter != NULL && ghostCharacter == NULL)
 		return;
 
 	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
 	if (playerState != NULL)
 		playerState->SetAlive(true);
 
+	if (ghostCharacter != NULL)
+	{
+		ghostCharacter->SetActorHiddenInGame(true);
+		ghostCharacter->SetActorEnableCollision(false);
+		ghostCharacter->SetActorTickEnabled(false);
+	}
+
 	player->PlayerState->bIsSpectator = false;
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
 
-	Super::RestartPlayer(controller);
+	//Super::RestartPlayer(controller);
+	AActor* startPos = FindPlayerStart(player);
+	APawn* newPawn = SpawnDefaultPawnFor(player, startPos);
+
+	player->UnPossess();
+	player->SetPawn(newPawn);
+	player->Possess(newPawn);
+	player->ClientSetRotation(newPawn->GetActorRotation(), true);
+
+	FRotator NewControllerRot = startPos->GetActorRotation();
+	NewControllerRot.Roll = 0.f;
+	player->SetControlRotation(NewControllerRot);
+
+	SetPlayerDefaults(newPawn);
+
+	if (ghostCharacter != NULL)
+		ghostCharacter->Destroy();
 
 	player->ServerInitInventory();
 

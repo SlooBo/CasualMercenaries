@@ -90,7 +90,6 @@ void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerCo
 		APlayerCharacter* playerCharacter = static_cast<APlayerCharacter*>(GetPawn());
 		if (playerCharacter != NULL)
 		{
-			UnPossess();
 		}
 	}
 }
