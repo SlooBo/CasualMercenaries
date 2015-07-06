@@ -55,11 +55,8 @@ private:
 	UWorld *world;
 	UFUNCTION()
 	UButton* getShopButton(uint32 index);
-	UFUNCTION()
 	UButton* getWeaponSlotButton(uint32 index);
-	UFUNCTION()
 	void ChangeShopSlotColor(uint32 index, FSlateColor color);
-	UFUNCTION()
 	void ChangeWeaponSlotColor(uint32 index, FSlateColor color);
 	UFUNCTION()
 	void ChangeCurrentShopSlot(uint32 slotIndex);
@@ -73,8 +70,10 @@ private:
 	void OnClickedUpgradeButton1();
 	UFUNCTION()
 	void OnClickedUpgradeButton2();
-	UPROPERTY()
-	UTexture2D *Test;
+	void ChangeWeaponIconImage(UTexture2D *newImage);
+	
+	FWeaponData *GetWeaponData(WEAPONID weaponId);
+	void UpdateInfoBox();
 };
 UCLASS()
 class UWeaponSlot: public UObject

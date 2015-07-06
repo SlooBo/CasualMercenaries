@@ -32,11 +32,12 @@ UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 	FWeaponData twisterGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100,200,300, "Twister Torpedo", "shoots torpedo","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::TWISTER_GUN, twisterGun);
 
+	FWeaponData shotGun = FWeaponData(5, 10, 15, 20, RANGE_TYPE::CLOSE_RANGE, 100, 200, 300, "Shot Gun", "Shoots shots", "Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
+	weaponData.Add(WEAPONID::SHOT_GUN, shotGun);
+
 	FWeaponData noWeapon = FWeaponData(-1, -1, -1, -1, RANGE_TYPE::CLOSE_RANGE, -1,-1,-1, "", "","Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
 	weaponData.Add(WEAPONID::NO_WEAPON, noWeapon);
 
-	static ConstructorHelpers::FObjectFinder<UTexture2D> ServerBrowserBP(TEXT("Texture2D'/Game/Game/UI/Textures/watergunPic.watergunPic'"));
-	Test = ServerBrowserBP.Object;
 }
 UShopLogic::~UShopLogic()
 {
@@ -207,6 +208,7 @@ void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 	}
 	currentShopIndex = slotIndex;
 	UpdateBuyButtonText();
+	UpdateInfoBox();
 }
 void UShopLogic::OnClickedQuit()
 {
@@ -230,11 +232,29 @@ void UShopLogic::UpdateBuyButtonText()
 void UShopLogic::OnClickedUpgradeButton1()
 {
 
-	FName name = Util::GetObjPath(Test);
-	UTexture2D *test = Util::LoadObjFromPath<UTexture2D>("Texture2D'/Game/Game/UI/Textures/watergunPic.watergunPic'");
 	//todo upgrade
 }
 void UShopLogic::OnClickedUpgradeButton2()
 {
 	//todo upgrade
+}
+void UShopLogic::ChangeWeaponIconImage(UTexture2D *newImage)
+{
+	weaponImage->Brush.SetResourceObject(newImage);
+}
+FWeaponData *UShopLogic::GetWeaponData(WEAPONID weaponId)
+{
+	FWeaponData *result = nullptr;
+	result = weaponData.Find(weaponId);
+	return result;
+}
+void UShopLogic::UpdateInfoBox()
+{
+	WEAPONID weaponid = AWeapon::GetIDFromInt((int8)currentShopIndex);
+	FWeaponData *currentWeaponData = GetWeaponData(weaponid);
+	if (currentWeaponData != nullptr)
+	{
+		UTexture2D *test = Util::LoadObjFromPath<UTexture2D>(FName(*currentWeaponData->iconPath));
+		ChangeWeaponIconImage(test);
+	}
 }
