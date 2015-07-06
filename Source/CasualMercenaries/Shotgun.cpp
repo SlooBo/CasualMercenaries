@@ -68,17 +68,18 @@ void AShotgun::Fire()
 	userLoc = this->GetOwner()->GetActorLocation();
 
 	FVector shootDir = cameraRot.Vector();
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		//Bullet spread
 		float random1 = FMath::FRand() * 0.1;
 		float random2 = FMath::FRand() * 0.1;
 		float random3 = FMath::FRand() * 0.1;
-		shootDir.Set(shootDir.X + random1, shootDir.Y + random2, shootDir.Z + random3);
+		FVector random(random1, random2, random3);
+		shootDir.Set(shootDir.X, shootDir.Y, shootDir.Z);
 
 		//LineTrace
 		const FVector startTrace = userLoc;
-		const FVector endTrace = startTrace + shootDir * 20000;
+		const FVector endTrace = startTrace + (shootDir + random) * 20000;
 
 		FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
 		traceParams.bTraceAsyncScene = true;
@@ -89,27 +90,25 @@ void AShotgun::Fire()
 
 		GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	//weaponMesh->Soc
+
+		//Play effect 
+		ServerEffect(flavorParticleEffect, startTrace);
 
 
-	//Play effect 
-	ServerEffect(flavorParticleEffect, startTrace);
+		//Hit resolve
+		ABaseCharacter* player = Cast<ABaseCharacter>(hit.GetActor());
+		if (player != nullptr)
+			player->TakeDamage(10, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
+		else
+		{
+			AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
+			if (projectile != nullptr)
+				projectile->TakeDamage(20);// , FDamageEvent::FDamageEvent(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), this);
+		}
 
 
-	//Hit resolve
-	ABaseCharacter* player = Cast<ABaseCharacter>(hit.GetActor());
-	if (player != nullptr)
-		player->TakeDamage(10, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
-	else
-	{
-		AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
-		if (projectile != nullptr)
-			projectile->TakeDamage(20);// , FDamageEvent::FDamageEvent(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), this);
-	}
-
-
-	//Another effect
-	DrawLine(startTrace, endTrace);
+		//Another effect
+		DrawLine(startTrace, endTrace);
 	
 	}
 	 ammo--;
