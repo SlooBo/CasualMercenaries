@@ -37,15 +37,16 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 
 	//TODO: add all music automatically if possible
-	static ConstructorHelpers::FObjectFinder<USoundWave> Music1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot''"));
+	static ConstructorHelpers::FObjectFinder<USoundWave> Music1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
 	if (Music1.Object)
-		audioList.AddUnique(Music1.Object);
+		audioList.Add(Music1.Object);
 	
 	
 	//particles
+	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
-	flavorParticleEffect = ParticleObj.Object;
-
+	particleSystem->Template = ParticleObj.Object;
+	particleSystem->AttachTo(weaponMesh, "exhaustSocket");
 
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_BulletTrail.P_BulletTrail'"));
 	bulletTrail = ParticleObj.Object;
@@ -135,6 +136,7 @@ void AMashineGun::PrimaryFunction(APlayerCharacter* user)
 void AMashineGun::PrimaryFunctionReleased(APlayerCharacter* user)
 {
 	firing = false;
+	particleSystem->Deactivate();
 }
 
 void AMashineGun::DrawLine(FVector begin, FVector end)
@@ -149,8 +151,8 @@ bool AMashineGun::ServerDrawLine_Validate(FVector begin, FVector end)
 
 void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
-	//audioComp->SetSound(audioList[0]);
-	//audioComp->Play();
+	audioComp->SetSound(audioList[0]);
+	audioComp->Play();
 	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
 	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
 	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
@@ -177,5 +179,6 @@ bool AMashineGun::ServerEffect_Validate(UParticleSystem* particle, FVector locat
 
 void AMashineGun::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
 {
-	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
+	//UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
+	particleSystem->Activate();
 }
