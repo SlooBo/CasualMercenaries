@@ -21,6 +21,7 @@ public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type endPlayReason) override;
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerInitInventory();
@@ -34,6 +35,7 @@ public:
 	void OnWarmupStart();
 	void OnShopAccessChanged(bool canShop);
 
+	UFUNCTION()
 	void MusicPlay();
 
 	bool CanAccessShop() { return canShop; }

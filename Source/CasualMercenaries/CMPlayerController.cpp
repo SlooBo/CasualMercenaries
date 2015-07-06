@@ -11,9 +11,13 @@ ACMPlayerController::ACMPlayerController(const FObjectInitializer& objectInitial
 {
 	bReplicates = true;
 
+	//TODO: get music volume from options
+	const float musicVolume = 0.125f;
+
 	// setup music
 	musicComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("MusicComponent"));
-	musicComponent->SetVolumeMultiplier(0.125f);
+	musicComponent->OnAudioFinished.AddDynamic(this, &ACMPlayerController::MusicPlay);
+	musicComponent->SetVolumeMultiplier(musicVolume);
 	musicComponent->bIsMusic = true;
 	musicComponent->bIsUISound = true;
 	musicComponent->bAutoActivate = false;
@@ -36,7 +40,16 @@ void ACMPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MusicPlay();
+	// only play music for clients
+	if (GetNetMode() != NM_DedicatedServer)
+ 		MusicPlay();
+}
+void ACMPlayerController::EndPlay(const EEndPlayReason::Type endPlayReason)
+{
+	Super::EndPlay(endPlayReason);
+
+	musicComponent->OnAudioFinished.RemoveDynamic(this, &ACMPlayerController::MusicPlay);
+	musicComponent->Stop();
 }
 
 void ACMPlayerController::MusicPlay()
@@ -52,10 +65,6 @@ void ACMPlayerController::MusicPlay()
 	trackNumber++;
 	if (trackNumber >= musicList.Num())
 		trackNumber = 0;
-
-	//enable looping with timer
-	FTimerHandle musicTimer;
-	GetWorld()->GetTimerManager().SetTimer(musicTimer, this, &ACMPlayerController::MusicPlay, musicList[trackNumber]->GetDuration(), false);
 }
 
 bool ACMPlayerController::ServerInitInventory_Validate()

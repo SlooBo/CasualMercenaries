@@ -80,6 +80,7 @@ public:
 protected:
 
 	TArray<APlayerController*> denyRespawnList;
+	TMap<APlayerController*, FTimerHandle> respawnTimerList;
 
 	// Timelimit in minutes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Map Timelimit", ClampMin = "0"), Category = "Gameplay|Level")
