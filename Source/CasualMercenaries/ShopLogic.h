@@ -74,6 +74,26 @@ private:
 	
 	FWeaponData *GetWeaponData(WEAPONID weaponId);
 	void UpdateInfoBox();
+	template <typename type>
+	bool SetValueFromWidget(type **saveValueHere, FString name)
+	{
+		UWidgetTree *widgetTree = shopMenu->WidgetTree;
+		TArray<UWidget*> children;
+		widgetTree->GetAllWidgets(children);
+
+		int childcount = children.Num();
+		for (int i = 0; i < childcount; i++)
+		{
+			type *tempValue = Cast<type>(children[i]);
+			UWidget *userWidget = Cast<UWidget>(children[i]);
+			if (tempValue != nullptr && userWidget != nullptr && userWidget->GetName().Equals(name))
+			{
+				*saveValueHere = Cast<type>(children[i]);
+				return true;
+			}
+		}
+		return false;
+	}
 };
 UCLASS()
 class UWeaponSlot: public UObject

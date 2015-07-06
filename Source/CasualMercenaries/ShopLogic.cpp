@@ -47,75 +47,59 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 {
 	this->world = world;
 	shopMenu = shopWidget;
-	UWidgetTree *widgetTree = shopWidget->WidgetTree;
-	TArray<UWidget*> children;
-	widgetTree->GetAllWidgets(children);
 
-	int childcount = children.Num();
-	for (int i = 0; i < childcount; i++)
+	SetValueFromWidget<UButton>(&upgradeButton1, "UpgradeButton1");
+	upgradeButton1->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton1);
+
+	SetValueFromWidget<UButton>(&upgradeButton2, "UpgradeButton2");
+	upgradeButton2->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton2);
+
+	UButton* quitButton = nullptr;
+	SetValueFromWidget<UButton>(&quitButton, "QuitButton");
+	quitButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedQuit);
+
+	SetValueFromWidget<UButton>(&buyButton, "BuyButton");
+	buyButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedBuyButton);
+
+	SetValueFromWidget<UTextBlock>(&buyButtonText, "BuyButtonText");
+
+	SetValueFromWidget<UImage>(&weaponImage, "SelectedWeaponImage");
+
+	UButton *tempWeaponButton = nullptr;
+	for (int i = 0; i < 4; i++)
 	{
-		UButton *tempButton= Cast<UButton>(children[i]);
-		if (tempButton != nullptr && tempButton->GetName().StartsWith("Weapon"))
+		SetValueFromWidget<UButton>(&tempWeaponButton, "Weapon" + FString::FromInt(i));
+		if (tempWeaponButton == nullptr)
 		{
-			FString *left = new FString();
-			FString *right = new FString();
-			bool success = tempButton->GetName().Split("Weapon", left, right);
-			
-			UWeaponSlot* weaponSlot = NewObject<UWeaponSlot>();
-			uint32 index = FCString::Atoi(**right);
-			weaponSlot->slotIndex = index;
-			weaponSlot->shopLogic = this;
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Error during shop creation!");
+			return;
+		}
+		UWeaponSlot* weaponSlot = NewObject<UWeaponSlot>();
+		weaponSlot->slotIndex = i;
+		weaponSlot->shopLogic = this;
+		tempWeaponButton->OnClicked.AddDynamic(weaponSlot, &UWeaponSlot::OnClicked);
 
-			tempButton->OnClicked.AddDynamic(weaponSlot, &UWeaponSlot::OnClicked);
-
-			weaponSlotButtons.Add(Cast<UButton>(children[i]));
-			weaponSlots.Add(weaponSlot);
-		}
-		else if (tempButton != nullptr && tempButton->GetName().StartsWith("ShopItem"))
-		{
-			FString *left = new FString();
-			FString *right = new FString();
-			bool success = tempButton->GetName().Split("ShopItem", left, right);
-
-			UShopSlot* shopSlot = NewObject<UShopSlot>();
-			uint32 index = FCString::Atoi(**right);
-			shopSlot->slotIndex = index;
-			shopSlot->shopLogic = this;
-
-			tempButton->OnClicked.AddDynamic(shopSlot, &UShopSlot::OnClicked);
-			shopSlotButtons.Add(Cast<UButton>(children[i]));
-			shopSlots.Add(shopSlot);
-		}
-		else if (tempButton != nullptr && tempButton->GetName().Equals("QuitButton"))
-		{
-			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedQuit);
-		}
-		else if (tempButton != nullptr && tempButton->GetName().Equals("BuyButton"))
-		{
-			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedBuyButton);
-			buyButton = Cast<UButton>(children[i]);
-		}
-		else if (tempButton != nullptr && tempButton->GetName().Equals("UpgradeButton1"))
-		{
-			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton1);
-			upgradeButton1= Cast<UButton>(children[i]);
-		}
-		else if (tempButton != nullptr && tempButton->GetName().Equals("UpgradeButton2"))
-		{
-			tempButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton2);
-			upgradeButton2 = Cast<UButton>(children[i]);
-		}
-		UTextBlock *tempText = Cast<UTextBlock>(children[i]);
-		if (tempText != nullptr && tempText->GetName().Equals("BuyButtonText"))
-		{
-			buyButtonText = tempText;
-		}
-		UImage *tempImage = Cast<UImage>(children[i]);
-		if (tempImage != nullptr && tempImage->GetName().Equals("SelectedWeaponImage"))
-		{
-			weaponImage = tempImage;
-		}
+		weaponSlotButtons.Add(tempWeaponButton);
+		weaponSlots.Add(weaponSlot);
 	}
+	UButton *tempShopButton = nullptr;
+	for (int i = 0; i < (uint32)WEAPONID::NO_WEAPON - 1; i++)
+	{
+		SetValueFromWidget<UButton>(&tempShopButton, "ShopItem" + FString::FromInt(i));
+		if (tempShopButton == nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Not enough shop buttons!");
+			continue;
+		}
+		UShopSlot* shopSlot = NewObject<UShopSlot>();
+		shopSlot->slotIndex = i;
+		shopSlot->shopLogic = this;
+
+		tempShopButton->OnClicked.AddDynamic(shopSlot, &UShopSlot::OnClicked);
+		shopSlotButtons.Add(tempShopButton);
+		shopSlots.Add(shopSlot);
+	}
+
 	OnClickedWeaponSlot(0);
 }
 void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
@@ -132,14 +116,14 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	//player has no weapon on this weapon slot
 	else
 	{
-		currentShopIndex = (uint32)WEAPONID::NO_WEAPON;
-		UpdateInfoBox();
 		upgradeButton1->SetIsEnabled(false);
 		upgradeButton2->SetIsEnabled(false);
 		buyButton->SetIsEnabled(false);
 		FLinearColor color = FLinearColor(0.8f, 0.5f, 0.0f, 0.0f);
 		FSlateColor slateColor = FSlateColor(color);
 		ChangeShopSlotColor(currentShopIndex, slateColor);
+		currentShopIndex = (uint32)WEAPONID::NO_WEAPON;
+		UpdateInfoBox();
 	}
 }
 void UShopLogic::OnClickedShopSlot(uint32 slotIndex)
@@ -202,7 +186,7 @@ void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 	color = FLinearColor(0.8f, 0.5f, 0.0f, 1.0f);
 	FSlateColor slateColor = FSlateColor(color);
 	ChangeShopSlotColor(slotIndex, slateColor);
-	if (slotIndex != currentShopIndex && currentShopIndex != -1)
+	if (slotIndex != currentShopIndex && currentShopIndex != -1 && currentShopIndex != (uint32)WEAPONID::NO_WEAPON)
 	{
 		color = FLinearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		slateColor = FSlateColor(color);
