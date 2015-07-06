@@ -11,7 +11,7 @@
  */
 
 UENUM(BlueprintType)
-enum class RANGE_TYPE : uint8
+enum class ERANGE_TYPE : uint8
 {
 	CLOSE_RANGE = 1,
 	CLOSE_MID_RANGE = 2,
@@ -41,7 +41,7 @@ struct CASUALMERCENARIES_API FWeaponData
 	FString description;
 
 	UPROPERTY()
-	RANGE_TYPE range;
+	ERANGE_TYPE range;
 
 	UPROPERTY()
 	uint32 buyPrice;
@@ -65,7 +65,7 @@ struct CASUALMERCENARIES_API FWeaponData
 	{
 
 	}
-	FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice,
+	FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, ERANGE_TYPE range, uint32 buyPrice,
 		uint32 upgradePrice1,uint32 upgradePrice2, FString name,FString description,FString iconPath)
 	{
 		this->clipSize = clipSize;

@@ -120,7 +120,11 @@ void FInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
 void FInventory::ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon)
 {
 	if (weapons.Num() > 0 && weapons.IsValidIndex(slot))
-	weapons[slot] = newWeapon;
+	{
+		if (weapons[slot] != nullptr)
+		weapons[slot]->Destroy();
+		weapons[slot] = newWeapon;
+	}
 }
 void FInventory::SetPlayer(APlayerCharacter *player)
 {

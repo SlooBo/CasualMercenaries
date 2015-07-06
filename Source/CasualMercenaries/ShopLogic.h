@@ -42,6 +42,10 @@ private:
 	UPROPERTY()
 	UImage* weaponImage;
 	UPROPERTY()
+	UMultiLineEditableTextBox* descriptionTextBox;
+	UPROPERTY()
+	UMultiLineEditableTextBox* statTextBox;
+	UPROPERTY()
 	uint32 currentShopIndex;
 	UPROPERTY()
 	uint32 currentWeaponIndex;
@@ -51,7 +55,6 @@ private:
 	TArray<class UShopSlot*> shopSlots;
 	UPROPERTY()
 	TArray<class UWeaponSlot*> weaponSlots;
-	UPROPERTY()
 	UWorld *world;
 	UFUNCTION()
 	UButton* getShopButton(uint32 index);
@@ -71,7 +74,7 @@ private:
 	UFUNCTION()
 	void OnClickedUpgradeButton2();
 	void ChangeWeaponIconImage(UTexture2D *newImage);
-	
+	FString GetRangeEnumString(ERANGE_TYPE value);
 	FWeaponData *GetWeaponData(WEAPONID weaponId);
 	void UpdateInfoBox();
 	template <typename type>
