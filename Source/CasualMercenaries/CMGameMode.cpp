@@ -290,15 +290,24 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 
 void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 {
+	if (player == NULL)
+		return;
+
 	if (respawnDelay <= 0.0f)
 	{
 		RestartPlayer(player);
 		return;
 	}
 
-	FTimerHandle timerHandle;
+	
+	if (!respawnTimerList.Contains(player))
+	{
+		FTimerHandle timerHandle;
+		respawnTimerList.Add(player, timerHandle);
+	}
+
 	FTimerDelegate respawnDelegate = FTimerDelegate::CreateUObject<ACMGameMode, AController*>(this, &ACMGameMode::RestartPlayer, player);
-	GetWorld()->GetTimerManager().SetTimer(timerHandle, respawnDelegate, respawnDelay, false);
+	GetWorld()->GetTimerManager().SetTimer(respawnTimerList[player], respawnDelegate, respawnDelay, false);
 }
 
 void ACMGameMode::AllowPlayerRespawn(APlayerController* player)
@@ -323,6 +332,13 @@ void ACMGameMode::RestartPlayer(AController* controller)
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer controller is not PlayerController"));
 		return;
 	}
+
+	//clear respawn timers if player respawned early
+	if (respawnTimerList.Contains(player))
+		GetWorld()->GetTimerManager().ClearTimer(respawnTimerList[player]);
+
+	if (player->GetPawn() != NULL)
+		return;
 
 	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
 	if (playerState != NULL)

@@ -17,5 +17,7 @@ public:
 
 	ACMSpectator(const FObjectInitializer& ObjectInitializer);
 	
-	
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+	void TryRespawn();
 };
