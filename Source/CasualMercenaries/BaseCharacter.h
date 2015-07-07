@@ -14,7 +14,8 @@ enum class CHARACTER_STATE : uint8
 	ALIVE UMETA(DisplayName = "Alive"),
 	DEAD UMETA(DisplayName = "Dead"),
 	STUNNED UMETA(DisplayName = "Stunned"),
-	ROOTED UMETA(DisplayName = "Rooted")
+	ROOTED UMETA(DisplayName = "Rooted"),
+	POISONED UMETA(DisplayName = "Poisoned")
 };
 
 UCLASS()
