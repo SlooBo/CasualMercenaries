@@ -49,7 +49,8 @@ void APlayerHud::changeUIElement(MenuType menu)
 	currentMenu = menu;
 	for (int i = 0; i < logicClasses.Num(); i++)
 	{
-		logicClasses[i] = nullptr;
+		logicClasses[i]->ConditionalBeginDestroy();
+		logicClasses[i] = NULL;
 	}
 	logicClasses.Empty();
 	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;

@@ -82,10 +82,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	
 }
 
-// Called when the game starts or when spawned
-void APlayerCharacter::BeginPlayCplusplus()
-{
-}
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
