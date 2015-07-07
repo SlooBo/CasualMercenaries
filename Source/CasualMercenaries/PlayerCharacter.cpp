@@ -3,6 +3,7 @@
 #include "CasualMercenaries.h"
 #include "UnrealNetwork.h"
 #include "PlayerCharacter.h"
+#include "GhostCharacter.h"
 #include "PlayerHud.h"
 #include "CMGameMode.h"
 #include "UberWeihmacher.h"
@@ -349,7 +350,8 @@ void APlayerCharacter::RestoreActivity()
 
 void APlayerCharacter::OnDeath_Implementation(ACMPlayerController* killer)
 {
-	ServerOnDeath(killer);
+	if (Role >= ROLE_AutonomousProxy)
+		ServerOnDeath(killer);
 }
 
 bool APlayerCharacter::ServerOnDeath_Validate(ACMPlayerController* killer)
@@ -637,4 +639,15 @@ void APlayerCharacter::ChangeShirtColor_Implementation(FLinearColor color)
 	UMaterialInstanceDynamic *dynamicMesh = Mesh->CreateDynamicMaterialInstance(0, Mesh->GetMaterial(0));
 	dynamicMesh->SetVectorParameterValue("ShirtColour", color);
 	Mesh->SetMaterial(0, dynamicMesh);
+}
+
+bool APlayerCharacter::IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const
+{
+	bool relevant = Super::IsNetRelevantFor(realViewer, viewTarget, srcLocation);
+
+	// deny actor updates for ghost characters
+	if (viewTarget != this && Cast<AGhostCharacter>(viewTarget) != NULL)
+		relevant = false;
+
+	return relevant;
 }

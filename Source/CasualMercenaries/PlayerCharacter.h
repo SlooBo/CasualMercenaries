@@ -134,6 +134,8 @@ public:
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ChangeShirtColor(FLinearColor color);
 
+	virtual bool IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const override;
+
 
 private:
 

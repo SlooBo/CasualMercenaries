@@ -6,7 +6,7 @@
 AGhostCharacter::AGhostCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	//hide from other players
+	// hide from other players
 	bReplicates = false;
 	bOnlyRelevantToOwner = true;
 
@@ -14,12 +14,16 @@ AGhostCharacter::AGhostCharacter(const FObjectInitializer& ObjectInitializer)
 	//characterMovement->GravityScale *= 0.5f;
 	characterMovement->JumpZVelocity *= 2;
 	characterMovement->MaxWalkSpeed *= 2;
+
+	CapsuleComponent->SetCollisionProfileName(TEXT("Spectator"));
 }
 
 void AGhostCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
+	// use same input bindings as player character
 	Super::SetupPlayerInputComponent(InputComponent);
 
+	// remove all weapon related bindings
 	for (int i = 0; i < InputComponent->GetNumActionBindings(); i++)
 	{
 		FInputActionBinding binding = InputComponent->GetActionBinding(i);
@@ -32,6 +36,7 @@ void AGhostCharacter::SetupPlayerInputComponent(class UInputComponent* InputComp
 		}
 	}
 
+	// spectator bindings
 	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &AGhostCharacter::TryRespawn);
 }
 
