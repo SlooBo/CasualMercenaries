@@ -28,7 +28,22 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	reloadTime = 2;
 	firingInterval = .50;
 
+	//Audio
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.125f);
+	audioComp->bAutoActivate = false;
 
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Reload_Magazine.Reload_Magazine'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio3(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio3.Object)
+		audioList.Add(audio3.Object);
 
 	//particles
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
@@ -140,6 +155,9 @@ bool AShotgun::ServerDrawLine_Validate(FVector begin, FVector end)
 
 void AShotgun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
+	audioComp->SetSound(audioList[0]);
+	audioComp->Play();
+
 	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
 	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
 	//UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
@@ -156,6 +174,8 @@ void AShotgun::Reload()
 	if (clips > 0)
 	{
 		reloading = true;
+		audioComp->SetSound(audioList[1]);
+		audioComp->Play();
 	}
 }
 

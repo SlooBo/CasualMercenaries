@@ -25,6 +25,23 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	ammoInClip = 10;
 	price = 1200;
 
+	//Audio
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.125f);
+	audioComp->bAutoActivate = false;
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Reload_Magazine.Reload_Magazine'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio3(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio3.Object)
+		audioList.Add(audio3.Object);
+
 	// floats
 	firingInterval = .75;
 	reloadTime = 0.5;
@@ -59,7 +76,8 @@ void AMUDbuster::BeginPlay()
 
 void AMUDbuster::Reload()
 {
-
+	audioComp->SetSound(audioList[1]);
+	audioComp->Play();
 }
 
 void AMUDbuster::Tick(float DeltaSeconds)

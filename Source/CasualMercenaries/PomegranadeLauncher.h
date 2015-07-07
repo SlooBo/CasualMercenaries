@@ -37,7 +37,7 @@ public:
 
 	void SecondaryFunction(APlayerCharacter* user);
 
-	void Reload(){};
+	void Reload();
 
 private:
 

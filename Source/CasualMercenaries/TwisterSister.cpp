@@ -29,8 +29,22 @@ ATwisterSister::ATwisterSister(const FObjectInitializer& FOI) : AWeapon(FOI)
 	reloadTime = 5;
 	firingInterval = 1;
 
-	//MuzzleOffset
-	//muzzleOffset.Z = -100;
+	//Audio
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.125f);
+	audioComp->bAutoActivate = false;
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Reload_Magazine.Reload_Magazine'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio3(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio3.Object)
+		audioList.Add(audio3.Object);
 
 	//particles
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
@@ -72,11 +86,15 @@ void ATwisterSister::SecondaryFunction(APlayerCharacter* user)
 
 void ATwisterSister::Reload()
 {
-
+	audioComp->SetSound(audioList[1]);
+	audioComp->Play();
 }
 
 void ATwisterSister::Fire()
 {
+	audioComp->SetSound(audioList[0]);
+	audioComp->Play();
+
 	FVector userLoc;
 	FRotator cameraRot;
 

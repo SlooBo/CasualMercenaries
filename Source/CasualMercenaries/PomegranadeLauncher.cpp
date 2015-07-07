@@ -27,6 +27,22 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 	ammoInClip = 6;
 	price = 900;
 
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.125f);
+	audioComp->bAutoActivate = false;
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Reload_Magazine.Reload_Magazine'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio3(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio3.Object)
+		audioList.Add(audio3.Object);
+
 
 	//floats
 	reloadTime = 2;
@@ -48,6 +64,9 @@ void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
 
 void APomeGranadeLauncher::Fire()
 {
+	audioComp->SetSound(audioList[0]);
+	audioComp->Play();
+
 	FVector userLoc;
 	FRotator cameraRot;
 
@@ -93,4 +112,11 @@ void APomeGranadeLauncher::BeginPlay()
 void APomeGranadeLauncher::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+}
+
+void APomeGranadeLauncher::Reload()
+{
+	Super::Reload();
+	audioComp->SetSound(audioList[1]);
+	audioComp->Play();
 }

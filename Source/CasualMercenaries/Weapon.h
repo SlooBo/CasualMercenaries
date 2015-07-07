@@ -4,6 +4,7 @@
 
 #include "GameFramework/Actor.h"
 #include "DamageTypes.h"
+#include "WeaponData.h"
 #include "Weapon.generated.h"
 
 

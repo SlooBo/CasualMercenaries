@@ -28,26 +28,30 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	reloadTime = 0.5;
 	firingInterval = .25;
 
-	//Reload sound temp
+	//Audio
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	audioComp->SetVolumeMultiplier(0.125f);
-	audioComp->bIsMusic = true;
-	audioComp->bIsUISound = true;
 	audioComp->bAutoActivate = false;
 
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+	
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Reload_Magazine.Reload_Magazine'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
 
-	//TODO: add all music automatically if possible
-	static ConstructorHelpers::FObjectFinder<USoundWave> Music1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
-	if (Music1.Object)
-		audioList.Add(Music1.Object);
-	
-	
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio3(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	if (audio3.Object)
+		audioList.Add(audio3.Object);
+
+
 	//particles
 	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
 	particleSystem->Template = ParticleObj.Object;
 	particleSystem->AttachTo(weaponMesh, "exhaustSocket");
-
+										  
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_BulletTrail.P_BulletTrail'"));
 	bulletTrail = ParticleObj.Object;
 
@@ -169,6 +173,8 @@ void AMashineGun::Reload()
 	if (clips > 0)
 	{
 		reloading = true;
+		audioComp->SetSound(audioList[1]);
+		audioComp->Play();
 	}
 }
 
