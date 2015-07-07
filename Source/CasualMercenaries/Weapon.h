@@ -86,6 +86,8 @@ public:
 	WEAPONID GetID(){ return id; };
 	static WEAPONID GetIDFromInt(uint8 value);
 
+	void SuperFunctioAlaMiika();
+
 
 protected:
 
@@ -93,6 +95,7 @@ protected:
 	/* Kept values                                                          */
 	/************************************************************************/
 	
+	int damage;
 	int ammo;
 	int clips;
 	int ammoInClip; 

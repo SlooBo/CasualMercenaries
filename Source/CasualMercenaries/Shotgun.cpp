@@ -55,6 +55,7 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 	//ID
 	id = WEAPONID::SHOT_GUN;
+	SuperFunctioAlaMiika();
 	bReplicates = true;
 }
 

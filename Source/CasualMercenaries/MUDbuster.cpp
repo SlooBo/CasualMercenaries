@@ -49,7 +49,7 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 
 	//ID
 	id = WEAPONID::MUDBUSTER_GUN;
-
+	SuperFunctioAlaMiika();
 	//replication
 	bReplicates = true;
 }

@@ -34,6 +34,9 @@ struct CASUALMERCENARIES_API FWeaponStruct
 		uint16 damage;
 
 	UPROPERTY()
+		uint16 projectileLimit;
+
+	UPROPERTY()
 		float fireRate;
 
 	UPROPERTY()
