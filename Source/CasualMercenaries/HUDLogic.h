@@ -13,7 +13,45 @@ class CASUALMERCENARIES_API UHUDLogic : public UUILogicBase
 {
 	GENERATED_BODY()
 	
+public:
+	UHUDLogic();
+	~UHUDLogic();
+	UFUNCTION()
+	void SetUp(UUserWidget *widget, UWorld *world);
 	
 	
-	
+private:
+	UUserWidget *thisWidget;
+	UWorld *world;
+	UPROPERTY()
+	UProgressBar *healthProgressBar;
+	UProgressBar *staminaProgressBar;
+	UProgressBar *armorProgressBar;
+	UTextBlock *healthText;
+	UTextBlock *staminaText;
+	UTextBlock *armorText;
+
+	UTextBlock *currentAmmo;
+	UTextBlock *clipSize;
+	void Update() override;
+	template <typename type>
+	bool SetValueFromWidget(type **saveValueHere, FString name)
+	{
+		UWidgetTree *widgetTree = thisWidget->WidgetTree;
+		TArray<UWidget*> children;
+		widgetTree->GetAllWidgets(children);
+
+		int childcount = children.Num();
+		for (int i = 0; i < childcount; i++)
+		{
+			type *tempValue = Cast<type>(children[i]);
+			UWidget *userWidget = Cast<UWidget>(children[i]);
+			if (tempValue != nullptr && userWidget != nullptr && userWidget->GetName().Equals(name))
+			{
+				*saveValueHere = Cast<type>(children[i]);
+				return true;
+			}
+		}
+		return false;
+	}
 };

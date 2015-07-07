@@ -4,7 +4,7 @@
 #include "PlayerHud.h"
 #include "ServerBrowserLogic.h"
 #include "ShopLogic.h"
-
+#include "HUDLogic.h"
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
 	currentMenu = MenuType::NO_UI;
@@ -28,9 +28,16 @@ APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 			shopClass = (UClass*)ShopBP.Object;
 	}
 }
-void APlayerHud::DrawHud()
+void APlayerHud::DrawHUD()
 {
 	Super::DrawHUD();
+	for (int i = 0; i < logicClasses.Num(); i++)
+	{
+		if (logicClasses[i]->IsValidLowLevel())
+		{
+			logicClasses[i]->Update();
+		}
+	}
 }
 void APlayerHud::BeginPlayCplusplus()
 {
@@ -57,13 +64,22 @@ void APlayerHud::changeUIElement(MenuType menu)
 	switch (menu)
 	{
 	case MenuType::MAIN_MENU:
+	{
 		changeUIElement(mainMenuClass);
 		//this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		break;
+	}
 	case MenuType::GAME_UI:
+	{
 		//this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
-		changeUIElement(gameUIClass);
+		UUserWidget* widget;
+
+		widget = changeUIElement(gameUIClass);
+		UHUDLogic* hudLogic = NewObject<UHUDLogic>();
+		hudLogic->SetUp(widget, GetWorld());
+		logicClasses.Add(hudLogic);
 		break;
+	}
 	case MenuType::SERVER_BROWSER:
 	{
 		UUserWidget* widget;

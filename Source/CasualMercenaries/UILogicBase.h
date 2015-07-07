@@ -15,6 +15,7 @@ class CASUALMERCENARIES_API UUILogicBase : public UObject
 	public:
 		UUILogicBase();
 		~UUILogicBase();
+		virtual void Update(){}
 private:
 	
 	

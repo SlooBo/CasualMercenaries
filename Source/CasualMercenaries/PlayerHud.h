@@ -36,8 +36,8 @@ public:
 	
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
-
-	void DrawHud();
+	UFUNCTION()
+	void DrawHUD() override;
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void changeUIElement(MenuType menu);
 	MenuType GetCurrentUI();

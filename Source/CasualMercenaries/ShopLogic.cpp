@@ -54,7 +54,6 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 		weaponSlot->slotIndex = i;
 		weaponSlot->shopLogic = this;
 		tempWeaponButton->OnClicked.AddDynamic(weaponSlot, &UWeaponSlot::OnClicked);
-
 		weaponSlotButtons.Add(tempWeaponButton);
 		weaponSlots.Add(weaponSlot);
 	}
