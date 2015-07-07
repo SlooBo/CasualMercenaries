@@ -56,6 +56,7 @@ ATwisterSister::ATwisterSister(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 	//ID
 	id = WEAPONID::TWISTER_GUN;
+	SuperFunctioAlaMiika();
 	bReplicates = true;
 }
 

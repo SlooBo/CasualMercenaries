@@ -58,6 +58,8 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 
 	//ID
 	id = WEAPONID::WASP_GUN;
+	SuperFunctioAlaMiika();
+
 	//replication
 	bReplicates = true;
 }

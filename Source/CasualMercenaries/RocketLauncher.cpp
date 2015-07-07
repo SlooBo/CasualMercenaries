@@ -26,7 +26,7 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 	audioComp->SetVolumeMultiplier(0.125f);
 	audioComp->bAutoActivate = false;
 
-	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/RocketLauncher_Shoot.RocketLauncher_Shoot'"));
 	if (audio1.Object)
 		audioList.Add(audio1.Object);
 
@@ -47,7 +47,7 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 	//ID
 	id = WEAPONID::ROCKET_LAUNCHER;
-
+	SuperFunctioAlaMiika();
 	//replication
 	bReplicates = true;
 }
@@ -68,8 +68,10 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 	this->SetOwner(user);
 	if (ammo > 0)
 	{
-		firing = true;
 		
+		audioComp->SetSound(audioList[0]);
+		audioComp->Play();
+		firing = true;
 	}
 	else
 	{	
@@ -94,7 +96,7 @@ void ARocketLauncher::Fire()
 		return;
 	}
 	ammo--;
-
+	
 	FVector userLoc;
 	FRotator cameraRot;
 
@@ -106,7 +108,7 @@ void ARocketLauncher::Fire()
 	
 
 	//Play effect
-	ServerEffect(flavorParticleEffect, MuzzleLocation);
+	ServerEffect(flavorParticleEffect, this->GetActorLocation());
 
 	FRotator MuzzleRotation = cameraRot;
 
@@ -144,4 +146,6 @@ bool ARocketLauncher::ServerEffect_Validate(UParticleSystem* particle, FVector l
 void ARocketLauncher::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
 {
 	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
+	audioComp->SetSound(audioList[0]);
+	audioComp->Play();
 }

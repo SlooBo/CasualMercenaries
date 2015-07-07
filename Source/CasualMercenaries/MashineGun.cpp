@@ -57,6 +57,7 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 	//ID
 	id = WEAPONID::MASHINE_GUN;
+	SuperFunctioAlaMiika();
 	bReplicates = true;
 }
 

@@ -27,7 +27,18 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	//Stuff
 	SetActorEnableCollision(true);
 
+	//Audio
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.525f);
+	audioComp->bAutoActivate = false;
 
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/AC_Hum_1.AC_Hum_1'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Explosion_4.Explosion_4'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
 
 
 

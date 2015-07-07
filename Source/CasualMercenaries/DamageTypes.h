@@ -11,4 +11,5 @@ enum class DAMAGE_TYPE : uint8
 	NORMAL UMETA(DisplayName = "Normal"),
 	STUN UMETA(DisplayName = "Stun"),
 	ROOT UMETA(DisplayName = "Root"),
+	POISON UMETA(DisplayName = "Poison")
 };

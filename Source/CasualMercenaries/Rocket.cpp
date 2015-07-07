@@ -27,6 +27,18 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	//Stuff
 	SetActorEnableCollision(true);
 
+	//Audio
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.525f);
+	audioComp->bAutoActivate = false;
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/AC_Hum_1.AC_Hum_1'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Explosion_4.Explosion_4'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
 
 	//ParticleSystem
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
@@ -75,6 +87,10 @@ void ARocket::Explode()
 {
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
 
+	audioComp->SetSound(audioList[1]);
+
+
+	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, 0, 0);
 	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;
 	//UGameplayStatics::ApplyRadialDamage(GetWorld(), 25, this->GetActorLocation(), 200, UDamageType::DamageFalloff(), this->GetOwner(), this->GetOwner(), );
@@ -102,5 +118,8 @@ void ARocket::Explode()
 			aItr->TakeDamage(ExplosionDamage * 2);
 		}
 	}
+
+
+
 	Destroy();
 }

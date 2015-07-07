@@ -2,6 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "Weapon.h"
+#include "WeaponData.h"
 #include "PlayerCharacter.h"
 
 
@@ -20,6 +21,21 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	firing = false;
 
 	bReplicates = true;
+
+	
+	
+	
+
+}
+
+void AWeapon::SuperFunctioAlaMiika()
+{
+	FWeaponStruct* data	= WeaponData::Get()->GetWeaponData(id);
+	price = data->buyPrice;
+	ammoInClip = data->clipSize;
+	damage = data->damage;
+	firingInterval = data->fireRate;
+	reloadTime = data->reloadTime;
 }
 
 // Called when the game starts or when spawned

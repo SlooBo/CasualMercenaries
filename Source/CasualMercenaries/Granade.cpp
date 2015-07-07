@@ -29,6 +29,18 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	//Integers
 	lifeTime = 3;
 
+	//Audio
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.525f);
+	audioComp->bAutoActivate = false;
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/AC_Hum_1.AC_Hum_1'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Explosion_4.Explosion_4'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
 
 	//Particles
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
@@ -39,6 +51,9 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	//Replication
 	bReplicates = true;
 	bReplicateMovement = true;
+
+	audioComp->SetSound(audioList[0]);
+	audioComp->Play();
 }
 
 AGranade::~AGranade()
@@ -66,8 +81,12 @@ void AGranade::Explode_Implementation()
 {
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
 	particle->SetRelativeScale3D(FVector(2, 2, 2));
+
 	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;
+
+	audioComp->SetSound(audioList[1]);
+	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, 0, 0);
 
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 	{
@@ -91,6 +110,10 @@ void AGranade::Explode_Implementation()
 			aItr->TakeDamage(ExplosionDamage*2);
 		}
 	}
+
+	audioComp->SetSound(audioList[1]);
+	audioComp->Play();
+
 	Destroy();
 }
 

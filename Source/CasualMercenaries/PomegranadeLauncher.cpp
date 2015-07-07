@@ -50,7 +50,7 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 
 	//ID
 	id = WEAPONID::GRENADE_LAUNCHER;
-
+	SuperFunctioAlaMiika();
 	//replication
 	bReplicates = true;
 }
