@@ -185,7 +185,7 @@ void UShopLogic::OnClickedBuyButton()
 void UShopLogic::UpdateBuyButtonText()
 {
 	WEAPONID weaponid = AWeapon::GetIDFromInt((int8)currentShopIndex);
-	FWeaponStruct *currentWeaponData = WeaponData::GetWeaponData(weaponid);
+	FWeaponStruct *currentWeaponData = WeaponData::Get()->GetWeaponData(weaponid);
 	if (currentWeaponData!= nullptr)
 	{
 		buyButtonText->SetText(FText::FromString(FString::FromInt(currentWeaponData->buyPrice) + "$"));
@@ -209,7 +209,7 @@ void UShopLogic::ChangeWeaponIconImage(UTexture2D *newImage)
 void UShopLogic::UpdateInfoBox()
 {
 	WEAPONID weaponid = AWeapon::GetIDFromInt((int8)currentShopIndex);
-	FWeaponStruct *currentWeaponData = WeaponData::GetWeaponData(weaponid);
+	FWeaponStruct *currentWeaponData = WeaponData::Get()->GetWeaponData(weaponid);
 	if (currentWeaponData != nullptr)
 	{
 		UTexture2D *test = Util::LoadObjFromPath<UTexture2D>(FName(*currentWeaponData->iconPath));
@@ -223,7 +223,7 @@ void UShopLogic::UpdateInfoBox()
 			"\nReload Time: " + FString::FromInt(currentWeaponData->reloadTime) +
 			"\nDamage: " + FString::FromInt(currentWeaponData->damage) +
 			"\nFire rate: " + FString::FromInt(currentWeaponData->fireRate) +
-			"\nRange: " + WeaponData::GetRangeEnumString(currentWeaponData->range);
+			"\nRange: " + WeaponData::Get()->GetRangeEnumString(currentWeaponData->range);
 		statTextBox->SetText(FText::FromString(statText));
 	}
 }

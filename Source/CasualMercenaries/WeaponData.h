@@ -9,10 +9,18 @@
 class CASUALMERCENARIES_API WeaponData
 {
 public:
-	static void Initialize(); 
-	static FWeaponStruct *GetWeaponData(WEAPONID weaponId);
-	static FString GetRangeEnumString(ERANGE_TYPE value);
+	static WeaponData *Get()
+	{
+		if (instance == nullptr)
+			instance = new WeaponData();
+		return instance;
+	}
+	void Initialize(); 
+	FWeaponStruct *GetWeaponData(WEAPONID weaponId);
+	FString GetRangeEnumString(ERANGE_TYPE value);
 private:
-	static bool initialized;
-	static TMap<WEAPONID, FWeaponStruct> weaponData;
+	static WeaponData *instance;
+	WeaponData();
+	~WeaponData();
+	TMap<WEAPONID, FWeaponStruct> weaponData;
 };

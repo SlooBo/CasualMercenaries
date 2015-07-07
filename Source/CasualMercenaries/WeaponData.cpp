@@ -3,8 +3,7 @@
 #include "CasualMercenaries.h"
 #include "WeaponData.h"
 
-TMap<WEAPONID, FWeaponStruct> WeaponData::weaponData;
-bool WeaponData::initialized = false;
+WeaponData *WeaponData::instance;
 void WeaponData::Initialize()
 {
 	//	FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice,
@@ -84,22 +83,25 @@ void WeaponData::Initialize()
 
 	FWeaponStruct noWeapon = FWeaponStruct(0, 0, 0, 0, ERANGE_TYPE::CLOSE_RANGE, 0, 0, 0, "fud", "fudud", "Texture2D'/Game/Game/UI/Textures/No_Weapon.No_Weapon'");
 	weaponData.Add(WEAPONID::NO_WEAPON, noWeapon);
-	initialized = true;
 }
 FWeaponStruct *WeaponData::GetWeaponData(WEAPONID weaponId)
 {
-	if (!initialized)
-		Initialize();
 	FWeaponStruct *result = nullptr;
 	result = weaponData.Find(weaponId);
 	return result;
 }
 FString WeaponData::GetRangeEnumString(ERANGE_TYPE value)
 {
-	if (!initialized)
-		Initialize();
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("ERANGE_TYPE"), true);
 	if (!EnumPtr) return FString("Invalid");
 
 	return EnumPtr->GetEnumName((int32)value);
+}
+WeaponData::WeaponData()
+{
+	Initialize();
+}
+WeaponData::~WeaponData()
+{
+
 }
