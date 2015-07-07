@@ -4,7 +4,7 @@
 
 #include "UILogicBase.h"
 #include "Inventory.h"
-#include "WeaponData.h"
+#include "WeaponStruct.h"
 #include "ShopLogic.generated.h"
 
 
@@ -50,7 +50,7 @@ private:
 	UPROPERTY()
 	uint32 currentWeaponIndex;
 	UPROPERTY()
-	TMap<WEAPONID, FWeaponData> weaponData;
+	TMap<WEAPONID, FWeaponStruct> weaponData;
 	UPROPERTY()
 	TArray<class UShopSlot*> shopSlots;
 	UPROPERTY()
@@ -74,8 +74,6 @@ private:
 	UFUNCTION()
 	void OnClickedUpgradeButton2();
 	void ChangeWeaponIconImage(UTexture2D *newImage);
-	FString GetRangeEnumString(ERANGE_TYPE value);
-	FWeaponData *GetWeaponData(WEAPONID weaponId);
 	void UpdateInfoBox();
 	template <typename type>
 	bool SetValueFromWidget(type **saveValueHere, FString name)
