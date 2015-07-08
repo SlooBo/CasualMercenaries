@@ -36,6 +36,11 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 	startTime = 1;
 	warmupTime = 0;
 
+	playerStartMoney = 5000;
+	playerMaxMoney = 20000;
+	playerKillRewardTarget = 2000;
+	playerKillRewardWrong = -1000;
+
 	playerRespawnTime = 2;
 	warmupRespawnTime = 1;
 	playerRespawnTimeMinimum = -1;
@@ -223,7 +228,22 @@ int32 ACMGameMode::MapTimeElapsed()
 
 void ACMGameMode::OnWarmupStart_Implementation()
 {
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	{
+		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
+		if (playerState != NULL)
+			playerState->SetMoney(playerMaxMoney);
+	}
+}
 
+void ACMGameMode::OnMatchStart_Implementation()
+{
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	{
+		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
+		if (playerState != NULL)
+			playerState->SetMoney(playerStartMoney);
+	}
 }
 
 void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer)
@@ -241,13 +261,25 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" died"));
 
-	// adjust scores
+	// adjust scores and money
 	if (killerState != NULL)
 	{
-		if (killer != player)
-			killerState->AddFrags(1);
-		else
+		ACMPlayerController* killerTarget = NULL;
+
+		if (killerState->GetHuntTarget() != NULL && killerState->GetHuntTarget()->GetNetOwningPlayer() != NULL)
+			killerTarget = Cast<ACMPlayerController>(killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController);
+
+		// killer killed their target?
+		if (killerTarget == player)
+			killerState->AddMoney(playerKillRewardTarget);	
+		else if (killerTarget != NULL)
+			killerState->AddMoney(playerKillRewardWrong);
+
+		// negative frag for suicide
+		if (killer == player)
 			killerState->AddFrags(-1);
+		else
+			killerState->AddFrags(1);
 	}
 	playerState->AddDeaths(1);
 
@@ -258,11 +290,12 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 		playerController->OnPlayerDeath(player, killer);
 	}
 
+	// turn player into spectator
 	SpectatePlayer(player);
 
 	const int32 respawnTime = (inGameState != InGameState::Warmup) ? playerRespawnTime : warmupRespawnTime;
 
-	// deny respawn requests
+	// deny further respawn requests
 	if (playerRespawnTimeMinimum != 0)
 	{
 		denyRespawnList.AddUnique(player);
@@ -290,7 +323,6 @@ void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 		return;
 	}
 
-	
 	if (!respawnTimerList.Contains(player))
 	{
 		FTimerHandle timerHandle;

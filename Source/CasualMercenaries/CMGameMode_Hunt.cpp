@@ -18,10 +18,10 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	
 	huntTotalLength = huntTotalLength = ((huntRoundLength + huntRoundFreezeLength) * huntRounds) + (huntIntermissionLength * (huntRounds - 1));
 
-	huntStartMoney = 1500;
-	huntMaxMoney = 20000;
-	huntKillRewardTarget = 2000;
-	huntKillRewardWrong = -1000;
+	playerStartMoney = 5000;
+	playerMaxMoney = 20000;
+	playerKillRewardTarget = 2000;
+	playerKillRewardWrong = -1000;
 
 	playerRespawnTimeMinimum = 0;
 	warmupRespawnTimeMinimum = 0;
@@ -60,17 +60,8 @@ void ACMGameMode_Hunt::StartMatch()
 	{
 		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
 		if (playerState != NULL)
-		{
-			if (inGameState != InGameState::Warmup)
-			{
-				if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
-					SetRandomPlayerHuntTarget(Cast<ACMPlayerController>((*iter).Get()));
-
-				playerState->SetMoney(huntStartMoney);
-			}
-			else
-				playerState->SetMoney(huntMaxMoney);
-		}
+			if (inGameState != InGameState::Warmup && Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
+				SetRandomPlayerHuntTarget(Cast<ACMPlayerController>((*iter).Get()));
 	}
 
 	if (inGameState != InGameState::Warmup)
@@ -190,9 +181,7 @@ void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 		ACMPlayerController* player = Cast<ACMPlayerController>((*iter).Get());
 		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
 		if (playerState != NULL)
-		{
 			playerState->AddMoney(huntRoundReward);
-		}
 
 		// allow shop access
 		player->OnShopAccessChanged(true);
@@ -226,16 +215,9 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(ACMPlayerController* player,
 			if (killerState->GetHuntTarget() != NULL && killerState->GetHuntTarget()->GetNetOwningPlayer() != NULL)
 				killerTarget = Cast<ACMPlayerController>(killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController);
 
-			// killer killed their target?
+			// give new target if correct target was killed
 			if (killerTarget == player)
-			{
-				killerState->AddMoney(huntKillRewardTarget);
 				SetRandomPlayerHuntTarget(killer);
-			}
-			else if (killerTarget != NULL)
-			{
-				killerState->AddMoney(huntKillRewardWrong);
-			}
 		}
 	}
 }
