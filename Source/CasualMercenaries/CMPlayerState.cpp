@@ -27,6 +27,7 @@ void ACMPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ACMPlayerState, huntTarget);
 	DOREPLIFETIME(ACMPlayerState, frags);
 	DOREPLIFETIME(ACMPlayerState, deaths);
+	DOREPLIFETIME(ACMPlayerState, money);
 };
 
 void ACMPlayerState::ResetStats()
