@@ -88,7 +88,7 @@ void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerCo
 {
 	if (killed == this)
 	{
-		APlayerCharacter* playerCharacter = static_cast<APlayerCharacter*>(GetPawn());
+		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(GetPawn());
 		if (playerCharacter != NULL)
 		{
 		}
@@ -107,7 +107,7 @@ bool ACMPlayerController::RequestRespawn_Validate()
 
 void ACMPlayerController::RequestRespawn_Implementation()
 {
-	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
+	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != NULL)
 	{
 		if (gameMode->CanPlayerRespawn(this))

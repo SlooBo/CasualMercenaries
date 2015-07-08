@@ -58,13 +58,13 @@ void ACMGameMode_Hunt::StartMatch()
 
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 	{
-		ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
+		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
 		if (playerState != NULL)
 		{
 			if (inGameState != InGameState::Warmup)
 			{
 				if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
-					SetRandomPlayerHuntTarget(static_cast<ACMPlayerController*>((*iter).Get()));
+					SetRandomPlayerHuntTarget(Cast<ACMPlayerController>((*iter).Get()));
 
 				playerState->SetMoney(huntStartMoney);
 			}
@@ -188,7 +188,7 @@ void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 	{
 		ACMPlayerController* player = Cast<ACMPlayerController>((*iter).Get());
-		ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
+		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
 		if (playerState != NULL)
 		{
 			playerState->AddMoney(huntRoundReward);
@@ -220,11 +220,11 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(ACMPlayerController* player,
 
 		if (killer != NULL)
 		{
-			ACMPlayerState* killerState = static_cast<ACMPlayerState*>(killer->PlayerState);
+			ACMPlayerState* killerState = Cast<ACMPlayerState>(killer->PlayerState);
 			ACMPlayerController* killerTarget = NULL;
 
 			if (killerState->GetHuntTarget() != NULL && killerState->GetHuntTarget()->GetNetOwningPlayer() != NULL)
-				killerTarget = static_cast<ACMPlayerController*>(killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController);
+				killerTarget = Cast<ACMPlayerController>(killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController);
 
 			// killer killed their target?
 			if (killerTarget == player)
@@ -244,7 +244,7 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(ACMPlayerController* player, ACMPlaye
 {
 	// TODO: move huntTarget to PlayerCharacter in order to prevent cheating (every player can read PlayerState)
 
-	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 
 	playerState->SetHuntTarget(killer->GetPawn());
 	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killer->GetName());
@@ -257,7 +257,7 @@ void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(ACMPlayerController* player)
 
 	TArray<ACMPlayerController*> players;
 	for (auto iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-		players.Add(static_cast<ACMPlayerController*>((*iter).Get()));
+		players.Add(Cast<ACMPlayerController>((*iter).Get()));
 
 	ACMPlayerController* target = NULL;
 	uint32 targetId = 0;
