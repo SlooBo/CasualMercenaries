@@ -24,7 +24,8 @@ public:
 
 	/** Left Upper Leg Offset, Set in Character.cpp Tick */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FootPlacement)
-		FVector SkelControl_LeftUpperLegPos;
-	
+		bool wasJustShooting;
+	UFUNCTION(BLueprintCallable, Category = FootPlacement)
+	void UpdateWasJustShooting();
 	
 };
