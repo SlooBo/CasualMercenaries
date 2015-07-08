@@ -44,9 +44,9 @@ void ADestructibleObject::TakeDamage(float _damage)
 	}
 }
 
-void ADestructibleObject::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& _outLifeTimeProps) const
+void ADestructibleObject::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	Super::GetLifetimeReplicatedProps(_outLifeTimeProps);
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// Value is already updated locally, skip in replication step
 	//DOREPLIFETIME_CONDITION(APlayerCharacter, value, COND_SkipOwner);
@@ -68,11 +68,11 @@ void ADestructibleObject::CheckStatus()
 
 void ADestructibleObject::Respawn()
 {
-	mesh->SetMaterial(0, &normalMaterial);
+	mesh->SetMaterial(0, normalMaterial);
 	GetWorld()->GetTimerManager().ClearTimer(respawnTimerHandle);
 }
 
 void ADestructibleObject::GoInvisible()
 {
-	mesh->SetMaterial(0, &invisibleMaterial);
+	mesh->SetMaterial(0, invisibleMaterial);
 }

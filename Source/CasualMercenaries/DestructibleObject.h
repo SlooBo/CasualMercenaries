@@ -26,7 +26,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ObjectCondition")
 		virtual void TakeDamage(float _damage);
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& _outLifetimeProps) const;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 	UPROPERTY(EditDefaultsOnly, Replicated, Category = "ObjectCondition")
 		float health;
@@ -38,10 +38,10 @@ public:
 		USkeletalMeshComponent* mesh;
 
 	UPROPERTY(EditDefaultsOnly, Replicated, Category = "ObjectCondition")
-		UMaterialInterface normalMaterial;
+		UMaterialInterface* normalMaterial;
 
 	UPROPERTY(EditDefaultsOnly, Replicated, Category = "ObjectCondition")
-	UMaterialInterface invisibleMaterial;
+	UMaterialInterface* invisibleMaterial;
 private:
 
 	void CheckStatus();
