@@ -115,7 +115,7 @@ void ABaseCharacter::AddHealth(float _health)
 
 void ABaseCharacter::TakeDamage(float _health, DAMAGE_TYPE _type, APlayerController* _damageSource)
 {
-	if (!IsAlive() || Role < ROLE_AutonomousProxy) //skip if not owner
+	if (!IsAlive() || GetController() == NULL || Role < ROLE_AutonomousProxy) //skip if not owner
 		return;
 
 	health = health - _health;
