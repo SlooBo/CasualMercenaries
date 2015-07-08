@@ -136,14 +136,14 @@ public:
 
 	virtual bool IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const override;
 
-
+	int32 GetCurrentWeapon(){ return GetInventory().currentWeapon; }
+	void SetCurrentWeapon(int32 newValue){ GetInventory().currentWeapon = newValue; }
 private:
 
 
 	
 	bool inventoryInitialized;
 
-	int currentWeapon;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* springArmComp;

@@ -88,6 +88,7 @@ public:
 
 	void SuperFunctioAlaMiika();
 
+	uint32 GetAmmo(){ return ammo; }
 
 protected:
 

@@ -45,8 +45,9 @@ public:
 	class APlayerCharacter *owningPlayer;
 	UPROPERTY()
 	uint16 maxInventorySize;
+	int32 currentWeapon;
+private:
 
-	
 	
 	
 };

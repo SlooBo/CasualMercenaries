@@ -71,7 +71,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	wallTouch = false;
 	dash_Multiplier = 0;
 
-	currentWeapon = 0;
+	//SetCurrentWeapon(0);
 
 	state = CHARACTER_STATE::ALIVE;
 	rounds = 0;
@@ -146,8 +146,8 @@ bool APlayerCharacter::ServerReloadWeapon_Validate()
 void APlayerCharacter::ServerReloadWeapon_Implementation()
 {
 	FInventory& inventory = GetInventory();
-	if (inventory.GetWeapon(currentWeapon) != nullptr)
-		inventory.GetWeapon(currentWeapon)->Reload();
+	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
+		inventory.GetWeapon(GetCurrentWeapon())->Reload();
 }
 
 void APlayerCharacter::AddWeapon(AWeapon* _weapon)
@@ -182,8 +182,8 @@ void APlayerCharacter::ServerUseWeapon1_Implementation()
 {
 	FInventory& inventory = GetInventory();
 
-	if (inventory.GetWeapon(currentWeapon) != nullptr)
-		inventory.GetWeapon(currentWeapon)->PrimaryFunction(this);
+	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
+		inventory.GetWeapon(GetCurrentWeapon())->PrimaryFunction(this);
 }
 
 void APlayerCharacter::UseWeapon1Release()
@@ -199,8 +199,8 @@ bool APlayerCharacter::ServerUseWeapon1Release_Validate()
 void APlayerCharacter::ServerUseWeapon1Release_Implementation()
 {
 	FInventory& inventory = GetInventory();
-	if (inventory.GetWeapon(currentWeapon) != nullptr)
-		inventory.GetWeapon(currentWeapon)->PrimaryFunctionReleased(this);
+	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
+		inventory.GetWeapon(GetCurrentWeapon())->PrimaryFunctionReleased(this);
 }
 
 void APlayerCharacter::UseWeapon2()
@@ -219,8 +219,8 @@ void APlayerCharacter::ServerUseWeapon2_Implementation()
 {
 	FInventory& inventory = GetInventory();
 
-	if (inventory.GetWeapon(currentWeapon) != nullptr)
-		inventory.GetWeapon(currentWeapon)->SecondaryFunction(this);
+	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
+		inventory.GetWeapon(GetCurrentWeapon())->SecondaryFunction(this);
 }
 
 void APlayerCharacter::UseWeapon2Release()
@@ -236,26 +236,26 @@ bool APlayerCharacter::ServerUseWeapon2Release_Validate()
 void APlayerCharacter::ServerUseWeapon2Release_Implementation()
 {
 	FInventory& inventory = GetInventory();
-	if (inventory.GetWeapon(currentWeapon) != nullptr)
-		inventory.GetWeapon(currentWeapon)->SecondaryFunctionReleased(this);
+	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
+		inventory.GetWeapon(GetCurrentWeapon())->SecondaryFunctionReleased(this);
 }
 
 void APlayerCharacter::SwitchWeaponUp()
 {
-	int tempLastWeapon = currentWeapon;
-	currentWeapon++;
-	if (currentWeapon > 3)
-		currentWeapon = 0;
-	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+	int tempLastWeapon = GetCurrentWeapon();
+	SetCurrentWeapon(GetCurrentWeapon()+1);
+	if (GetCurrentWeapon() > 3)
+		SetCurrentWeapon(0);
+	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
 }
 
 void APlayerCharacter::SwitchWeaponDown()
 {
-	int tempLastWeapon = currentWeapon;
-	currentWeapon--;
-	if (currentWeapon < 0)
-		currentWeapon = 3;
-	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+	int tempLastWeapon = GetCurrentWeapon();
+	SetCurrentWeapon(GetCurrentWeapon() -1);
+	if (GetCurrentWeapon() < 0)
+		SetCurrentWeapon(3);
+	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
 }
 
 
@@ -266,7 +266,7 @@ bool APlayerCharacter::ServerSwitchWeapon_Validate(float cw, float pw)
 
 void APlayerCharacter::ServerSwitchWeapon_Implementation(float cw, float pw)
 {
-	currentWeapon = cw;
+	SetCurrentWeapon(cw);
 
 	FInventory& inventory = GetInventory();
 
@@ -599,36 +599,36 @@ void APlayerCharacter::OpenAllChat()
 }
 void APlayerCharacter::WeaponSlot1()
 {
-	int tempLastWeapon = currentWeapon;
-	currentWeapon = 0;
-	if (currentWeapon == tempLastWeapon)
+	int tempLastWeapon = GetCurrentWeapon();
+	SetCurrentWeapon(0);
+	if (GetCurrentWeapon() == tempLastWeapon)
 		return;
-	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
 	//TODO make these into one function
 }
 void APlayerCharacter::WeaponSlot2()
 {
-	int tempLastWeapon = currentWeapon;
-	currentWeapon = 1;
-	if (currentWeapon == tempLastWeapon)
+	int tempLastWeapon = GetCurrentWeapon();
+	SetCurrentWeapon(1);
+	if (GetCurrentWeapon() == tempLastWeapon)
 		return;
-	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
 }
 void APlayerCharacter::WeaponSlot3()
 {
-	int tempLastWeapon = currentWeapon;
-	currentWeapon = 2;
-	if (currentWeapon == tempLastWeapon)
+	int tempLastWeapon = GetCurrentWeapon();
+	SetCurrentWeapon(2);
+	if (GetCurrentWeapon() == tempLastWeapon)
 		return;
-	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
 }
 void APlayerCharacter::WeaponSlot4()
 {
-	int tempLastWeapon = currentWeapon;
-	currentWeapon = 3;
-	if (currentWeapon == tempLastWeapon)
+	int tempLastWeapon = GetCurrentWeapon();
+	SetCurrentWeapon(3);
+	if (GetCurrentWeapon() == tempLastWeapon)
 		return;
-	ServerSwitchWeapon(currentWeapon, tempLastWeapon);
+	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
 }
 bool APlayerCharacter::ChangeShirtColor_Validate(FLinearColor color)
 {

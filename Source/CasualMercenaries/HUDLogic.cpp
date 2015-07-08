@@ -5,7 +5,7 @@
 
 #include "PlayerCharacter.h"
 #include "CMPlayerController.h"
-
+#include "WeaponData.h"
 UHUDLogic::UHUDLogic()
 {
 
@@ -27,8 +27,8 @@ void UHUDLogic::SetUp(UUserWidget *widget, UWorld *world)
 	SetValueFromWidget(&staminaText, "StaminaText");
 	SetValueFromWidget(&armorText, "ArmorText");
 
-	SetValueFromWidget(&currentAmmo, "CurrentAmmo");
-	SetValueFromWidget(&clipSize, "ClipSize");
+	SetValueFromWidget(&currentAmmoText, "CurrentAmmo");
+	SetValueFromWidget(&clipSizeText, "ClipSize");
 }
 
 void UHUDLogic::Update()
@@ -45,6 +45,17 @@ void UHUDLogic::Update()
 	armorText->SetText(FText::FromString(FString::FromInt((int32)player->GetArmor())));
 
 	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
-	//uint32 currentAmmo = controller->GetInventory().GetWeapon(player->current)
+	AWeapon *currentWeapon = controller->GetInventory().GetWeapon(controller->GetInventory().currentWeapon);
+	if (currentWeapon != nullptr)
+	{
+		FWeaponStruct *weaponStruct = WeaponData::Get()->GetWeaponData(currentWeapon->GetID());
+		currentAmmoText->SetText(FText::FromString(FString::FromInt(currentWeapon->GetAmmo())));
+		clipSizeText->SetText(FText::FromString(FString::FromInt(weaponStruct->clipSize)));
+	}
+	else
+	{
+		currentAmmoText->SetText(FText::FromString(FString::FromInt(0)));
+		clipSizeText->SetText(FText::FromString(FString::FromInt(0)));
+	}
 	//currentAmmo->SetText(cont)
 }

@@ -21,6 +21,7 @@ void FInventory::ClearInventory()
 		weapons[i]->Destroy();
 	}  
 	weapons.Reset();
+	currentWeapon = 0;
 }
 
 void FInventory::AddWeaponToInventory(AWeapon* weapon)
@@ -129,4 +130,5 @@ void FInventory::ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon)
 void FInventory::SetPlayer(APlayerCharacter *player)
 {
 	owningPlayer = player;
+	currentWeapon = 0;
 }

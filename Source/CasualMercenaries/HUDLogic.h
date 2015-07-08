@@ -31,8 +31,8 @@ private:
 	UTextBlock *staminaText;
 	UTextBlock *armorText;
 
-	UTextBlock *currentAmmo;
-	UTextBlock *clipSize;
+	UTextBlock *currentAmmoText;
+	UTextBlock *clipSizeText;
 	void Update() override;
 	template <typename type>
 	bool SetValueFromWidget(type **saveValueHere, FString name)
