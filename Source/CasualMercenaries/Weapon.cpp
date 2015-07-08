@@ -22,7 +22,7 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 
 	bReplicates = true;
 
-	
+	passedTimeFiring = 1;
 	
 	
 
@@ -66,6 +66,8 @@ void AWeapon::Tick( float DeltaTime )
 	{
 		if (passedTimeFiring > firingInterval)
 		{
+			NotifyFireStartJP();
+
 			Fire();
 			passedTimeFiring = 0;
 		}

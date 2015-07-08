@@ -51,9 +51,14 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
 	particleSystem->Template = ParticleObj.Object;
 	particleSystem->AttachTo(weaponMesh, "exhaustSocket");
-										  
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_BulletTrail.P_BulletTrail'"));
-	bulletTrail = ParticleObj.Object;
+					
+	//particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
+	//const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
+	//particleSystem->Template = ParticleObj.Object;
+	//particleSystem->AttachTo(weaponMesh, "exhaustSocket");
+
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj3(TEXT("ParticleSystem'/Game/Game/Particles/P_BulletTrail.P_BulletTrail'"));
+	bulletTrail = ParticleObj3.Object;
 
 	//ID
 	id = WEAPONID::MASHINE_GUN;
@@ -106,7 +111,7 @@ void AMashineGun::Fire()
 
 	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	
+
 
 	//Play effect 
 	ServerEffect(flavorParticleEffect, startTrace);
@@ -123,9 +128,11 @@ void AMashineGun::Fire()
 			projectile->TakeDamage(20);// , FDamageEvent::FDamageEvent(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), this);
 	}
 
+	muzzleOffset.X = 100;
+	FVector const muzzleLocation = userLoc + FTransform(cameraRot).TransformVector(muzzleOffset);
 
 	//Another effect
-	DrawLine(startTrace, endTrace);
+	DrawLine(muzzleLocation, endTrace);
 	ammo--;
 }
 
@@ -158,7 +165,7 @@ void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
-	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
+	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
 	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
 	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
 	particlen->SetVectorParameter("BulletTrailEnd", end);
@@ -186,6 +193,6 @@ bool AMashineGun::ServerEffect_Validate(UParticleSystem* particle, FVector locat
 
 void AMashineGun::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
 {
-	//UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
 	particleSystem->Activate();
 }

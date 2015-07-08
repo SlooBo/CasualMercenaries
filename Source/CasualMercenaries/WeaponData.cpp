@@ -37,7 +37,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::GRENADE_LAUNCHER, grenadeLauncher);
 
 	FWeaponStruct mashineGun = FWeaponStruct(
-		30, 3, 10, .25,
+		30, 2, 10, .10,
 		ERANGE_TYPE::CLOSE_MID_RANGE,
 		200, 200, 300,
 		"Mashine Gun 'Budda bud'",

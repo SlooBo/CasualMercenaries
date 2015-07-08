@@ -46,6 +46,9 @@ public:
 	UPROPERTY()
 	UAudioComponent* audioComp;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = Animation)
+	void NotifyFireStartJP();
+
 	/************************************************************************/
 	/* Defaults                                                             */
 	/************************************************************************/
@@ -89,6 +92,17 @@ public:
 	void SuperFunctioAlaMiika();
 
 	uint32 GetAmmo(){ return ammo; }
+
+	bool GetReloading(){return reloading;};
+
+	bool GetFiring(){return firing;};
+
+	bool GetJustFired()
+	{ 
+		return passedTimeFiring == 0;
+	};
+
+
 
 protected:
 

@@ -145,7 +145,7 @@ bool ARocketLauncher::ServerEffect_Validate(UParticleSystem* particle, FVector l
 
 void ARocketLauncher::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
 {
-	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, -this->GetActorRotation(), true);
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
 }
