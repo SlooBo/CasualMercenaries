@@ -23,6 +23,7 @@ public:
 	void OnClickedWeaponSlot(uint32 slotIndex);
 	UFUNCTION()
 	void OnClickedShopSlot(uint32 slotIndex);
+	void Update() override;
 private:
 	UPROPERTY()
 	UUserWidget *shopMenu;
@@ -39,6 +40,8 @@ private:
 	UButton* upgradeButton2;
 	UPROPERTY()
 	UTextBlock *buyButtonText;
+	UPROPERTY()
+	UTextBlock *cashText;
 	UPROPERTY()
 	UImage* weaponImage;
 	UPROPERTY()

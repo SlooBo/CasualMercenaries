@@ -94,7 +94,7 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Add Money"), Category = "Gameplay|Hunt")
 	void AddMoney(int32 num);
 
-	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Money"), Category = "Gameplay|Hunt")
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Money"), Category = "Gameplay|Hunt",Exec)
 	void SetMoney(int32 num);
 
 protected:

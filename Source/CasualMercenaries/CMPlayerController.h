@@ -43,6 +43,8 @@ public:
 
 	UFUNCTION(Reliable, Server, WithValidation)
 		void BuyWeapon(uint8 weaponIndex, WEAPONID weaponid);
+	UFUNCTION(Exec)
+	void AddMoney(int32 value);
 protected:
 
 	UPROPERTY(Replicated)

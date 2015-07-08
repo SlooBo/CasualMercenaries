@@ -19,7 +19,7 @@ public:
 	UFUNCTION()
 	void SetUp(UUserWidget *widget, UWorld *world);
 	
-	
+	void Update() override;
 private:
 	UUserWidget *thisWidget;
 	UWorld *world;
@@ -33,7 +33,9 @@ private:
 
 	UTextBlock *currentAmmoText;
 	UTextBlock *clipSizeText;
-	void Update() override;
+	UTextBlock *cashText;
+	UImage *weaponIcon;
+	
 	template <typename type>
 	bool SetValueFromWidget(type **saveValueHere, FString name)
 	{

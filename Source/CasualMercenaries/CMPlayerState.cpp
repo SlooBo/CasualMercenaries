@@ -34,7 +34,7 @@ void ACMPlayerState::ResetStats()
 	frags = 0;
 	deaths = 0;
 	huntTarget = NULL;
-	money = 0;
+	money = 5000;
 }
 
 int32 ACMPlayerState::GetTeam()
@@ -90,7 +90,7 @@ void ACMPlayerState::AddMoney(int32 num)
 void ACMPlayerState::SetMoney(int32 num)
 {
 	int32 maxMoney = MAX_int32;
-	ACMGameMode_Hunt* gameModeHunt = static_cast<ACMGameMode_Hunt*>(UGameplayStatics::GetGameMode(GetWorld()));
+	ACMGameMode_Hunt* gameModeHunt = Cast<ACMGameMode_Hunt>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameModeHunt != NULL)
 		maxMoney = gameModeHunt->GetHuntMaxMoney();
 

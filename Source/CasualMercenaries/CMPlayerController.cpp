@@ -5,7 +5,8 @@
 #include "PlayerCharacter.h"
 #include "UnrealNetwork.h"
 #include "CMGameMode.h"
-
+#include "CMPlayerState.h"
+#include "WeaponData.h"
 ACMPlayerController::ACMPlayerController(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
 {
@@ -120,5 +121,35 @@ bool ACMPlayerController::BuyWeapon_Validate(uint8 weaponIndex,WEAPONID weaponid
 void ACMPlayerController::BuyWeapon_Implementation(uint8 weaponIndex, WEAPONID weaponid)
 {
 	//TODO check that player has money for it
-	inventory.ChangeWeaponAtSlot(weaponIndex, weaponid);
+	ACMPlayerState *playerState = Cast<ACMPlayerState>(PlayerState);
+	AWeapon *currentWeapon = GetInventory().GetWeapon(weaponIndex);
+	if (playerState == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Major error during buy!" );
+		return;
+	}
+	FWeaponStruct *weaponStruct = WeaponData::Get()->GetWeaponData(weaponid);
+	FWeaponStruct *previousWeaponStruct = nullptr;
+	if (currentWeapon != nullptr)
+		previousWeaponStruct = WeaponData::Get()->GetWeaponData(currentWeapon->GetID());
+	if ((uint32)playerState->GetMoney() >= weaponStruct->buyPrice)
+	{
+		if (currentWeapon != nullptr)
+		{
+			playerState->AddMoney((int32)weaponStruct->buyPrice / 2);
+		}
+		playerState->AddMoney(-(int32)weaponStruct->buyPrice);
+	
+			inventory.ChangeWeaponAtSlot(weaponIndex, weaponid);
+		
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Nut enuff cash!");
+	}
+}
+void ACMPlayerController::AddMoney(int32 value)
+{
+	ACMPlayerState *playerState = Cast<ACMPlayerState>(PlayerState);
+	playerState->AddMoney(value);
 }

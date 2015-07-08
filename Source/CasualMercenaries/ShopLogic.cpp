@@ -8,6 +8,7 @@
 #include "PlayerHud.h"
 #include "Util.h"
 #include "WeaponData.h"
+#include "CMPlayerState.h"
 UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
 
@@ -22,24 +23,26 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 	this->world = world;
 	shopMenu = shopWidget;
 
-	SetValueFromWidget<UButton>(&upgradeButton1, "UpgradeButton1");
+	SetValueFromWidget(&upgradeButton1, "UpgradeButton1");
 	upgradeButton1->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton1);
 
-	SetValueFromWidget<UButton>(&upgradeButton2, "UpgradeButton2");
+	SetValueFromWidget(&upgradeButton2, "UpgradeButton2");
 	upgradeButton2->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton2);
 
 	UButton* quitButton = nullptr;
-	SetValueFromWidget<UButton>(&quitButton, "QuitButton");
+	SetValueFromWidget(&quitButton, "QuitButton");
 	quitButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedQuit);
 
-	SetValueFromWidget<UButton>(&buyButton, "BuyButton");
+	SetValueFromWidget(&buyButton, "BuyButton");
 	buyButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedBuyButton);
 
-	SetValueFromWidget<UTextBlock>(&buyButtonText, "BuyButtonText");
+	SetValueFromWidget(&buyButtonText, "BuyButtonText");
 
-	SetValueFromWidget<UImage>(&weaponImage, "SelectedWeaponImage");
-	SetValueFromWidget<UMultiLineEditableTextBox>(&descriptionTextBox, "DescriptionTextBox");
-	SetValueFromWidget<UMultiLineEditableTextBox>(&statTextBox, "StatText");
+	SetValueFromWidget(&weaponImage, "SelectedWeaponImage");
+	SetValueFromWidget(&descriptionTextBox, "DescriptionTextBox");
+	SetValueFromWidget(&statTextBox, "StatText");
+
+	SetValueFromWidget(&cashText, "CashText");
 
 	UButton *tempWeaponButton = nullptr;
 	for (int i = 0; i < 4; i++)
@@ -225,4 +228,11 @@ void UShopLogic::UpdateInfoBox()
 			"\nRange: " + WeaponData::Get()->GetRangeEnumString(currentWeaponData->range);
 		statTextBox->SetText(FText::FromString(statText));
 	}
+}
+
+void UShopLogic::Update()
+{
+	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
+	ACMPlayerState *playerState = Cast<ACMPlayerState>(controller->PlayerState);
+	cashText->SetText(FText::FromString(FString::FromInt(playerState->GetMoney()) + " $"));
 }
