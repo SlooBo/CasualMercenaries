@@ -12,7 +12,7 @@ class CASUALMERCENARIES_API ADestructibleObject : public AActor
 	
 public:	
 	// Sets default values for this actor's properties
-	ADestructibleObject();
+	ADestructibleObject(const FObjectInitializer& FOI);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -28,19 +28,19 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, Category = "ObjectCondition")
+	UPROPERTY(EditAnywhere, Replicated, Category = "ObjectCondition")
 		float health;
 	
-	UPROPERTY(EditDefaultsOnly, Replicated, Category = "ObjectCondition")
+	UPROPERTY(EditAnywhere, Replicated, Category = "ObjectCondition")
 		float healthMax;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, Category = "ObjectCondition")
-		USkeletalMeshComponent* mesh;
+	UPROPERTY(VisibleDefaultsOnly, Category = "ObjectCondition")
+	UStaticMeshComponent* meshComponent;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, Category = "ObjectCondition")
-		UMaterialInterface* normalMaterial;
+	UPROPERTY(EditAnywhere, Category = "ObjectCondition")
+		UMaterial* normalMaterial;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, Category = "ObjectCondition")
+	UPROPERTY(EditAnywhere, Category = "ObjectCondition")
 	UMaterialInterface* invisibleMaterial;
 private:
 
