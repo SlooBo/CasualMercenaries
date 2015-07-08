@@ -311,7 +311,7 @@ void APlayerCharacter::OnStopJump()
 
 void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* damageSource)
 {
-	if (!IsAlive())
+	if (!IsAlive() || GetController() == NULL)
 		return;
 
 	health = health - _damage;
