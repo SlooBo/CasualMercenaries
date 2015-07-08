@@ -2,7 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "DestructibleObject.h"
-
+#include "UnrealNetwork.h"
 
 // Sets default values
 ADestructibleObject::ADestructibleObject(const FObjectInitializer& FOI) : AActor(FOI)
