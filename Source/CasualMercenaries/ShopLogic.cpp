@@ -86,7 +86,7 @@ void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 	if (slotIndex != currentWeaponIndex)
 		ChangeWeaponSlotColor(currentWeaponIndex, FLinearColor::White);
 	currentWeaponIndex = slotIndex;
-	AWeapon *weapon = Cast<APlayerCharacter>(world->GetFirstPlayerController()->GetPawn())->GetInventory().GetWeapon(slotIndex);
+	AWeapon *weapon = Cast<ACMPlayerController>(world->GetFirstPlayerController())->GetInventory().GetWeapon(slotIndex);
 	if (weapon != nullptr)
 	{
 		ChangeCurrentShopSlot((uint32)weapon->GetID());
