@@ -8,7 +8,7 @@ public class CasualMercenaries : ModuleRules
 	{
 		OptimizeCode = CodeOptimization.InShippingBuildsOnly;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore",
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule",
             "OnlineSubsystem",
 			"OnlineSubsystemUtils", 
             "Slate","SlateCore","UMG",
