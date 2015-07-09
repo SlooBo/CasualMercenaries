@@ -263,6 +263,10 @@ void ACMGameMode::SetupNewPlayer(APlayerController* newPlayer)
 			playerState->SetMoney(playerMaxMoney);
 		else
 			playerState->SetMoney(playerStartMoney);
+
+		// assign random color for the player
+		FLinearColor randomColor = FLinearColor::MakeRandomColor();
+		playerState->SetColorId(randomColor);
 	}
 }
 
@@ -422,14 +426,17 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	if (respawnTimerList.Contains(player))
 		GetWorld()->GetTimerManager().ClearTimer(respawnTimerList[player]);
 
-	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(player->GetPawn());
-	AGhostCharacter* ghostCharacter = Cast<AGhostCharacter>(player->GetPawn());
-	if (playerCharacter != NULL && ghostCharacter == NULL)
-		return;
-
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 	if (playerState != NULL)
 		playerState->SetAlive(true);
+
+	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(player->GetPawn());
+	AGhostCharacter* ghostCharacter = Cast<AGhostCharacter>(player->GetPawn());
+	if (playerCharacter != NULL && ghostCharacter == NULL)
+	{
+		// do nothing if player is already alive
+		return;
+	}
 
 	if (ghostCharacter != NULL)
 	{
@@ -474,20 +481,12 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 		return;
 	}
 
+	// setup character here
 	ACMPlayerController* player = Cast<ACMPlayerController>(playerCharacter->GetController());
 	if (player != NULL)
 	{
-		//TODO: this should be done when match starts
 		ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 		if (playerState != NULL)
-		{
-			FLinearColor randomColor = FLinearColor::MakeRandomColor();
-			playerState->SetColorId(randomColor);
-		}
-
-		playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
-		//TODO: assign color to character here
+			playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
 	}
-
-	// TODO: setup player character here after respawning (character colors, ...)
 }
