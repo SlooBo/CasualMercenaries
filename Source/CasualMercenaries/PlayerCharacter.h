@@ -70,7 +70,7 @@ public:
 	/************************************************************************/
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL);
+	virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL) override;
 
 	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 

@@ -104,7 +104,7 @@ void ARocket::Explode()
 			ExplosionDamage *= x;
 			UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			aItr->ABaseCharacter::TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(tempChar->GetController()));
+			aItr->TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(tempChar->GetController()));
 		}
 	}
 	for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)

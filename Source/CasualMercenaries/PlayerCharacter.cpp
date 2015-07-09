@@ -158,8 +158,6 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 	if (!IsAlive() || GetController() == NULL)
 		return;
 
-	health = health - _damage;
-
 	switch (_type)
 	{
 	case DAMAGE_TYPE::NORMAL:
@@ -179,9 +177,7 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 		break;
 	}
 
-	//Temp fix
-	if (!IsAlive())
-		OnDeath(Cast<ACMPlayerController>(damageSource));
+	Super::TakeDamage(_damage, _type, damageSource);
 }
 
 void APlayerCharacter::RestoreActivity()
