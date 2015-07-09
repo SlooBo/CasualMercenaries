@@ -36,6 +36,11 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 	startTime = 1;
 	warmupTime = 0;
 
+	playerStartMoney = 5000;
+	playerMaxMoney = 20000;
+	playerKillRewardTarget = 2000;
+	playerKillRewardWrong = -1000;
+
 	playerRespawnTime = 2;
 	warmupRespawnTime = 1;
 	playerRespawnTimeMinimum = -1;
@@ -128,7 +133,7 @@ void ACMGameMode::StartMatch()
 		if ((*iter)->GetPawn() != NULL)
 			(*iter)->GetPawn()->Reset();
 
-		ACMPlayerState* playerState = static_cast<ACMPlayerState*>((*iter)->PlayerState);
+		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
 		if (playerState != NULL)
 			playerState->ResetStats();
 
@@ -223,13 +228,28 @@ int32 ACMGameMode::MapTimeElapsed()
 
 void ACMGameMode::OnWarmupStart_Implementation()
 {
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	{
+		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
+		if (playerState != NULL)
+			playerState->SetMoney(playerMaxMoney);
+	}
+}
 
+void ACMGameMode::OnMatchStart_Implementation()
+{
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	{
+		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
+		if (playerState != NULL)
+			playerState->SetMoney(playerStartMoney);
+	}
 }
 
 void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer)
 {
-	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
-	ACMPlayerState* killerState = (killer != NULL) ? static_cast<ACMPlayerState*>(killer->PlayerState) : NULL;
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
+	ACMPlayerState* killerState = (killer != NULL) ? Cast<ACMPlayerState>(killer->PlayerState) : NULL;
 
 	if (playerState != NULL)
 		playerState->SetAlive(false);
@@ -241,28 +261,41 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" died"));
 
-	// adjust scores
+	// adjust scores and money
 	if (killerState != NULL)
 	{
-		if (killer != player)
-			killerState->AddFrags(1);
-		else
+		ACMPlayerController* killerTarget = NULL;
+
+		if (killerState->GetHuntTarget() != NULL && killerState->GetHuntTarget()->GetNetOwningPlayer() != NULL)
+			killerTarget = Cast<ACMPlayerController>(killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController);
+
+		// killer killed their target?
+		if (killerTarget == player)
+			killerState->AddMoney(playerKillRewardTarget);	
+		else if (killerTarget != NULL)
+			killerState->AddMoney(playerKillRewardWrong);
+
+		// negative frag for suicide
+		if (killer == player)
 			killerState->AddFrags(-1);
+		else
+			killerState->AddFrags(1);
 	}
 	playerState->AddDeaths(1);
 
 	// broadcast death for everyone
 	for (auto iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 	{
-		ACMPlayerController* playerController = static_cast<ACMPlayerController*>((*iter).Get());
+		ACMPlayerController* playerController = Cast<ACMPlayerController>((*iter).Get());
 		playerController->OnPlayerDeath(player, killer);
 	}
 
+	// turn player into spectator
 	SpectatePlayer(player);
 
 	const int32 respawnTime = (inGameState != InGameState::Warmup) ? playerRespawnTime : warmupRespawnTime;
 
-	// deny respawn requests
+	// deny further respawn requests
 	if (playerRespawnTimeMinimum != 0)
 	{
 		denyRespawnList.AddUnique(player);
@@ -290,7 +323,6 @@ void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 		return;
 	}
 
-	
 	if (!respawnTimerList.Contains(player))
 	{
 		FTimerHandle timerHandle;
@@ -344,7 +376,7 @@ void ACMGameMode::AllowPlayerRespawn(APlayerController* player)
 
 bool ACMGameMode::CanPlayerRespawn(APlayerController* player)
 {
-	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 	if (playerState != NULL && !playerState->IsAlive() && !denyRespawnList.Contains(player))
 		return true;
 	return false;
@@ -352,7 +384,7 @@ bool ACMGameMode::CanPlayerRespawn(APlayerController* player)
 
 void ACMGameMode::RestartPlayer(AController* controller)
 {
-	ACMPlayerController* player = static_cast<ACMPlayerController*>(controller->CastToPlayerController());
+	ACMPlayerController* player = Cast<ACMPlayerController>(controller->CastToPlayerController());
 	if (player == NULL)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer controller is not PlayerController"));
@@ -368,7 +400,7 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	if (playerCharacter != NULL && ghostCharacter == NULL)
 		return;
 
-	ACMPlayerState* playerState = static_cast<ACMPlayerState*>(player->PlayerState);
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 	if (playerState != NULL)
 		playerState->SetAlive(true);
 
@@ -408,7 +440,7 @@ void ACMGameMode::RestartPlayer(AController* controller)
 
 void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 {
-	APlayerCharacter* playerCharacter = static_cast<APlayerCharacter*>(playerPawn);
+	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(playerPawn);
 	if (playerCharacter == NULL)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: SetPlayerDefaults player pawn is not PlayerCharacter"));

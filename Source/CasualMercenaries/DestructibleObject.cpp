@@ -2,17 +2,23 @@
 
 #include "CasualMercenaries.h"
 #include "DestructibleObject.h"
-
+#include "UnrealNetwork.h"
 
 // Sets default values
-ADestructibleObject::ADestructibleObject()
+ADestructibleObject::ADestructibleObject(const FObjectInitializer& FOI) : AActor(FOI)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	healthMax = 100;
 	health = healthMax;
-
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Props/Firehydrant/firehydrant.firehydrant'"));
+	
+	meshComponent = FOI.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMeshComponent"));
+	if (MeshObj.Object != NULL)
+	{
+		meshComponent->SetStaticMesh(MeshObj.Object);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -68,11 +74,11 @@ void ADestructibleObject::CheckStatus()
 
 void ADestructibleObject::Respawn()
 {
-	mesh->SetMaterial(0, normalMaterial);
+	meshComponent->SetMaterial(0, normalMaterial);
 	GetWorld()->GetTimerManager().ClearTimer(respawnTimerHandle);
 }
 
 void ADestructibleObject::GoInvisible()
 {
-	mesh->SetMaterial(0, invisibleMaterial);
+	meshComponent->SetMaterial(0, invisibleMaterial);
 }

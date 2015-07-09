@@ -4,8 +4,7 @@
 #include "CMPlayerState.h"
 #include "CMGameMode.h"
 #include "CMGameMode_Hunt.h"
-
-#include "Net/UnrealNetwork.h"
+#include "UnrealNetwork.h"
 
 ACMPlayerState::ACMPlayerState(const FObjectInitializer& objectInitializer)
 : Super(objectInitializer)
@@ -27,6 +26,7 @@ void ACMPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ACMPlayerState, huntTarget);
 	DOREPLIFETIME(ACMPlayerState, frags);
 	DOREPLIFETIME(ACMPlayerState, deaths);
+	DOREPLIFETIME(ACMPlayerState, money);
 };
 
 void ACMPlayerState::ResetStats()
@@ -34,7 +34,7 @@ void ACMPlayerState::ResetStats()
 	frags = 0;
 	deaths = 0;
 	huntTarget = NULL;
-	money = 5000;
+	money = 0;
 }
 
 int32 ACMPlayerState::GetTeam()
@@ -90,9 +90,9 @@ void ACMPlayerState::AddMoney(int32 num)
 void ACMPlayerState::SetMoney(int32 num)
 {
 	int32 maxMoney = MAX_int32;
-	ACMGameMode_Hunt* gameModeHunt = Cast<ACMGameMode_Hunt>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (gameModeHunt != NULL)
-		maxMoney = gameModeHunt->GetHuntMaxMoney();
+	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (gameMode != NULL)
+		maxMoney = gameMode->GetPlayerMaxMoney();
 
 	money = num;
 

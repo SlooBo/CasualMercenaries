@@ -10,7 +10,7 @@ APlayerCharacter* Util::GetLocalPlayer(UWorld* world)
 
 APlayerCharacter* Util::GetPlayerCharacter(APlayerController* player)
 {
-	return static_cast<APlayerCharacter*>(player->GetPawn());
+	return Cast<APlayerCharacter>(player->GetPawn());
 }
 
 int32 Util::GetNumPlayers(UWorld* world)

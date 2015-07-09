@@ -364,8 +364,8 @@ void APlayerCharacter::ServerOnDeath_Implementation(ACMPlayerController* killer)
 	FInventory& inventory = GetInventory();
 	inventory.ClearInventory();
 
-	ACMGameMode* gameMode = static_cast<ACMGameMode*>(UGameplayStatics::GetGameMode(GetWorld()));
-	ACMPlayerController* playerController = static_cast<ACMPlayerController*>(GetController());
+	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	ACMPlayerController* playerController = Cast<ACMPlayerController>(GetController());
 
 	if (gameMode != NULL && playerController != NULL)
 		gameMode->OnPlayerDeath(playerController, killer);

@@ -67,8 +67,9 @@ public:
 	virtual void OnWarmupStart_Implementation();
 
 	// Event when match has started
-	UFUNCTION(BlueprintImplementableEvent, Meta = (DisplayName = "On Match Start"), Category = "Gameplay")
-	virtual void OnMatchStart();
+	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Match Start"), Category = "Gameplay")
+	void OnMatchStart();
+	virtual void OnMatchStart_Implementation();
 
 	// Event when map time has reached zero
 	UFUNCTION(BlueprintImplementableEvent, Meta = (DisplayName = "On Map Timeout"), Category = "Gameplay|Level")
@@ -78,6 +79,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Player Death"), Category = "Gameplay|Player")
 	void OnPlayerDeath(ACMPlayerController* player, ACMPlayerController* killer = NULL);
 	virtual void OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer = NULL);
+
+	int32 GetPlayerMaxMoney() { return playerMaxMoney; };
 
 protected:
 
@@ -129,4 +132,24 @@ protected:
 	// Minimum player wait time before respawning is allowed during warmup (-1: wait until player is respawned by server)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Minimum Warmup Respawn Time", ClampMin = "-1"), Category = "Gameplay|Level")
 	int32 warmupRespawnTimeMinimum;
+
+	//
+	//	Money / Kill Rewards
+	//
+
+	// Start money for each player
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Start Money"), Category = "Gameplay|Money")
+	int32 playerStartMoney;
+
+	// Limit maximum money players can have
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Max Money"), Category = "Gameplay|Money")
+	int32 playerMaxMoney;
+
+	// Reward for killing the right target
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Kill Reward Target"), Category = "Gameplay|Money")
+	int32 playerKillRewardTarget;
+
+	// Reward for killing a wrong target
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Player Kill Reward Wrong Target"), Category = "Gameplay|Money")
+	int32 playerKillRewardWrong;
 };

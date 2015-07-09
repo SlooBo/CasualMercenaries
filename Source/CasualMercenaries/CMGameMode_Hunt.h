@@ -80,8 +80,6 @@ public:
 
 	virtual void OnWarmupStart_Implementation() override;
 
-	int32 GetHuntMaxMoney() { return huntMaxMoney; };
-
 protected:
 	FTimerHandle huntTimerHandle;	// Ticks once every second during hunt
 	int32 huntElapsed;
@@ -119,26 +117,10 @@ protected:
 	int32 huntTotalLength;
 
 	//
-	//	Money / Kill Rewards
+	//	Hunt Money / Kill Rewards
 	//
 
-	// Start money for each player
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Start Money"), Category = "Gameplay|Hunt|Money")
-	int32 huntStartMoney;
-
-	// Limit maximum money players can have
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Max Money"), Category = "Gameplay|Hunt|Money")
-	int32 huntMaxMoney;
-
 	// Money given at the end of round
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Round Reward"), Category = "Gameplay|Hunt|Money")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Round Reward"), Category = "Gameplay|Hunt")
 	int32 huntRoundReward;
-
-	// Reward for killing the right target
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Kill Reward Target"), Category = "Gameplay|Hunt|Money")
-	int32 huntKillRewardTarget;
-	
-	// Reward for killing a wrong target
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (DisplayName = "Hunt Kill Reward Wrong Target"), Category = "Gameplay|Hunt|Money")
-	int32 huntKillRewardWrong;
 };
