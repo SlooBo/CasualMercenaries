@@ -102,6 +102,13 @@ AActor* ACMGameMode::ChoosePlayerStart_Implementation(AController* player)
 	return spawnLocation;
 }
 
+void ACMGameMode::StartNewPlayer(APlayerController* newPlayer)
+{
+	Super::StartNewPlayer(newPlayer);
+
+	SetupNewPlayer(newPlayer);
+}
+
 void ACMGameMode::HandleMatchIsWaitingToStart()
 {
 	Super::HandleMatchIsWaitingToStart();
@@ -228,20 +235,28 @@ int32 ACMGameMode::MapTimeElapsed()
 
 void ACMGameMode::OnWarmupStart_Implementation()
 {
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
-		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
-		if (playerState != NULL)
-			playerState->SetMoney(playerMaxMoney);
+		SetupNewPlayer(*iter);
 	}
 }
 
 void ACMGameMode::OnMatchStart_Implementation()
 {
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
-		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
-		if (playerState != NULL)
+		SetupNewPlayer(*iter);
+	}
+}
+
+void ACMGameMode::SetupNewPlayer(APlayerController* newPlayer)
+{
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(newPlayer->PlayerState);
+	if (playerState != NULL)
+	{
+		if (inGameState == InGameState::Warmup)
+			playerState->SetMoney(playerMaxMoney);
+		else
 			playerState->SetMoney(playerStartMoney);
 	}
 }

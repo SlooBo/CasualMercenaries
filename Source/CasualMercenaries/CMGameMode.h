@@ -36,6 +36,7 @@ public:
 	static FString GetInGameStateAsString(InGameState state);
 	InGameState GetInGameState() { return inGameState; };
 
+	virtual void StartNewPlayer(APlayerController* newPlayer) override;
 	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void StartMatch() override;
 
@@ -70,6 +71,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Match Start"), Category = "Gameplay")
 	void OnMatchStart();
 	virtual void OnMatchStart_Implementation();
+
+	virtual void SetupNewPlayer(APlayerController* newPlayer);
 
 	// Event when map time has reached zero
 	UFUNCTION(BlueprintImplementableEvent, Meta = (DisplayName = "On Map Timeout"), Category = "Gameplay|Level")
