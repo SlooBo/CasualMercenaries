@@ -77,6 +77,8 @@ void ACMPlayerController::SetupInputComponent()
 	InputComponent->BindAction("WeaponSlot2", IE_Pressed, this, &ACMPlayerController::WeaponSlot2);
 	InputComponent->BindAction("WeaponSlot3", IE_Pressed, this, &ACMPlayerController::WeaponSlot3);
 	InputComponent->BindAction("WeaponSlot4", IE_Pressed, this, &ACMPlayerController::WeaponSlot4);
+
+	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &ACMPlayerController::TryRespawn);
 }
 
 void ACMPlayerController::MusicPlay()
@@ -124,6 +126,14 @@ void ACMPlayerController::OnShopAccessChanged(bool canShop)
 	this->canShop = canShop;
 }
 
+void ACMPlayerController::TryRespawn()
+{
+	if (IsAlive())
+		return;
+
+	RequestRespawn();
+}
+
 bool ACMPlayerController::RequestRespawn_Validate()
 {
 	return true;
@@ -147,6 +157,12 @@ void ACMPlayerController::BuyWeapon_Implementation(uint8 weaponIndex, WEAPONID w
 	//TODO check that player has money for it
 	ACMPlayerState *playerState = Cast<ACMPlayerState>(PlayerState);
 	AWeapon *currentWeapon = GetInventory().GetWeapon(weaponIndex);
+
+	if (currentWeapon != nullptr)
+	{
+		if (weaponid == currentWeapon->GetID())
+			return;
+	}
 	if (playerState == nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Major error during buy!" );
@@ -158,9 +174,9 @@ void ACMPlayerController::BuyWeapon_Implementation(uint8 weaponIndex, WEAPONID w
 		previousWeaponStruct = WeaponData::Get()->GetWeaponData(currentWeapon->GetID());
 	if ((uint32)playerState->GetMoney() >= weaponStruct->buyPrice)
 	{
-		if (currentWeapon != nullptr)
+		if (previousWeaponStruct != nullptr)
 		{
-			playerState->AddMoney((int32)weaponStruct->buyPrice / 2);
+			playerState->AddMoney((int32)previousWeaponStruct->buyPrice / 2);
 		}
 		playerState->AddMoney(-(int32)weaponStruct->buyPrice);
 	
@@ -177,6 +193,14 @@ void ACMPlayerController::AddMoney(int32 value)
 {
 	ACMPlayerState *playerState = Cast<ACMPlayerState>(PlayerState);
 	playerState->AddMoney(value);
+}
+
+bool ACMPlayerController::IsAlive()
+{
+	ACMPlayerState *playerState = Cast<ACMPlayerState>(PlayerState);
+	if (playerState != NULL)
+		return playerState->IsAlive();
+	return false;
 }
 
 void ACMPlayerController::OpenTeamChat()
@@ -213,6 +237,9 @@ bool ACMPlayerController::ServerReloadWeapon_Validate()
 
 void ACMPlayerController::ServerReloadWeapon_Implementation()
 {
+	if (!IsAlive())
+		return;
+
 	if (inventory.GetCurrentWeapon() != nullptr)
 		inventory.GetCurrentWeapon()->Reload();
 }
@@ -245,6 +272,9 @@ bool ACMPlayerController::ServerUseWeapon1_Validate()
 
 void ACMPlayerController::ServerUseWeapon1_Implementation()
 {
+	if (!IsAlive())
+		return;
+
 	if (inventory.GetCurrentWeapon() != nullptr)
 		inventory.GetCurrentWeapon()->PrimaryFunction(Cast<APlayerCharacter>(GetPawn()));
 }
@@ -261,6 +291,9 @@ bool ACMPlayerController::ServerUseWeapon1Release_Validate()
 
 void ACMPlayerController::ServerUseWeapon1Release_Implementation()
 {
+	if (!IsAlive())
+		return;
+
 	if (inventory.GetCurrentWeapon() != nullptr)
 		inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(GetPawn()));
 }
@@ -279,6 +312,9 @@ bool ACMPlayerController::ServerUseWeapon2_Validate()
 
 void ACMPlayerController::ServerUseWeapon2_Implementation()
 {
+	if (!IsAlive())
+		return;
+
 	if (inventory.GetCurrentWeapon() != nullptr)
 		inventory.GetCurrentWeapon()->SecondaryFunction(Cast<APlayerCharacter>(GetPawn()));
 }
@@ -295,6 +331,9 @@ bool ACMPlayerController::ServerUseWeapon2Release_Validate()
 
 void ACMPlayerController::ServerUseWeapon2Release_Implementation()
 {
+	if (!IsAlive())
+		return;
+
 	if (inventory.GetCurrentWeapon() != nullptr)
 		inventory.GetCurrentWeapon()->SecondaryFunctionReleased(Cast<APlayerCharacter>(GetPawn()));
 }
@@ -327,6 +366,9 @@ void ACMPlayerController::WeaponSlot4()
 
 void ACMPlayerController::SwitchWeapon(int newWeapon)
 {
+	if (!IsAlive())
+		return;
+
 	if (newWeapon >= inventory.weapons.Num())
 		newWeapon = 0;
 	else if (newWeapon < 0)
@@ -334,9 +376,8 @@ void ACMPlayerController::SwitchWeapon(int newWeapon)
 
 	if (newWeapon != inventory.currentWeapon)
 	{
-		int tempLastWeapon = inventory.currentWeapon;
+		ServerSwitchWeapon(newWeapon, inventory.currentWeapon);
 		inventory.currentWeapon = newWeapon;
-		ServerSwitchWeapon(inventory.currentWeapon, tempLastWeapon);
 	}
 }
 

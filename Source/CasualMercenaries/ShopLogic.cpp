@@ -3,12 +3,12 @@
 #include "CasualMercenaries.h"
 #include "ShopLogic.h"
 #include "Inventory.h"
-#include "PlayerCharacter.h"
 #include "Weapon.h"
 #include "PlayerHud.h"
 #include "Util.h"
 #include "WeaponData.h"
 #include "CMPlayerState.h"
+#include "CMPlayerController.h"
 UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
 
@@ -77,6 +77,36 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 		shopSlotButtons.Add(tempShopButton);
 		shopSlots.Add(shopSlot);
 	}
+	/*
+	Setting buyButton's Tooltip widget
+	*/
+	/*UTextBlock *text = NewObject<UTextBlock>();
+	text->SetText(FText::FromString("0 $"));
+	text->Font.Size = 24;
+	if (text != nullptr && buyButton != nullptr)
+	buyButton->SetToolTip(text);
+	*/
+	UUserWidget *tooltipWidget = CreateWidget<UUserWidget>(world, Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/ToolTip.ToolTip_C'")));
+	if (tooltipWidget != nullptr && buyButton != nullptr)
+	buyButton->SetToolTip(tooltipWidget);
+
+	TArray<UWidget*> children;
+	tooltipWidget->WidgetTree->GetAllWidgets(children);
+	UTextBlock* tooltipTextTemp = nullptr;
+	int childcount = children.Num();
+	for (int i = 0; i < childcount; i++)
+	{
+		tooltipTextTemp = Cast<UTextBlock>(children[i]);
+		if (tooltipTextTemp != nullptr)
+
+		{
+			this->tooltipText = tooltipTextTemp;
+			break;
+		}
+	}
+
+
+
 
 	OnClickedWeaponSlot(0);
 }
@@ -171,7 +201,7 @@ void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 		ChangeShopSlotColor(currentShopIndex, slateColor);
 	}
 	currentShopIndex = slotIndex;
-	UpdateBuyButtonText();
+	UpdateBuyButton();
 	UpdateInfoBox();
 }
 void UShopLogic::OnClickedQuit()
@@ -182,15 +212,63 @@ void UShopLogic::OnClickedBuyButton()
 {
 	ACMPlayerController *player = Cast<ACMPlayerController>(world->GetFirstPlayerController());
 	player->BuyWeapon(currentWeaponIndex,AWeapon::GetIDFromInt(currentShopIndex));
-	UpdateBuyButtonText();
+	UpdateBuyButton();
 }
-void UShopLogic::UpdateBuyButtonText()
+void UShopLogic::UpdateBuyButton()
 {
-	WEAPONID weaponid = AWeapon::GetIDFromInt((int8)currentShopIndex);
-	FWeaponStruct *currentWeaponData = WeaponData::Get()->GetWeaponData(weaponid);
-	if (currentWeaponData!= nullptr)
+	//UTextBlock *text = NewObject<UTextBlock>();
+	//text->SetText(FText::FromString("YAYAYAY"));
+	//text->setSi
+	//Cast<UTextBlock>(buyButton->ToolTipWidget)->Font.Size = 20;
+	
+
+	if (tooltipText == nullptr)
 	{
-		buyButtonText->SetText(FText::FromString(FString::FromInt(currentWeaponData->buyPrice) + "$"));
+		return;
+	}
+		//UUserWidget *tooltipWidget = CreateWidget<UUserWidget>(world,  Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/ToolTip.ToolTip_C'")));
+	
+	//buyButton->SetToolTipText(FText::FromString("Weapon: 1500 $ \n Weapon2: 200 $"));
+	
+	WEAPONID weaponid = AWeapon::GetIDFromInt((int8)currentShopIndex);
+	FWeaponStruct *shopWeaponData = WeaponData::Get()->GetWeaponData(weaponid);
+
+	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
+	if (controller == nullptr)
+		return;
+	ACMPlayerState *playerState = Cast<ACMPlayerState>(controller->PlayerState);
+	if (playerState == nullptr)
+		return;
+	if (shopWeaponData!= nullptr)
+	{
+		
+		AWeapon *weapon = Cast<ACMPlayerController>(world->GetFirstPlayerController())->GetInventory().GetWeapon(currentWeaponIndex);
+		if (weapon == nullptr)
+		{
+			bool hasMoney = playerState->GetMoney() >= (int32)shopWeaponData->buyPrice;
+				buyButton->WidgetStyle.Normal.TintColor = FSlateColor(hasMoney ? FLinearColor::Green: FLinearColor::Red);
+		
+			buyButtonText->SetText(FText::FromString(FString::FromInt(shopWeaponData->buyPrice) + " $"));
+			tooltipText->SetText(FText::FromString("New weapon price: " + FString::FromInt(shopWeaponData->buyPrice)));
+			return;
+		}
+		FWeaponStruct *currentWeaponData = WeaponData::Get()->GetWeaponData(weapon->GetID());
+		if (currentWeaponData != nullptr)
+		{
+			bool hasMoney = playerState->GetMoney() >= (int32)shopWeaponData->buyPrice - (int32)currentWeaponData->buyPrice / 2;
+				buyButton->WidgetStyle.Normal.TintColor = FSlateColor(hasMoney ?FLinearColor::Green : FLinearColor::Red);
+			
+				int32 totalPrice = (int32)shopWeaponData->buyPrice - (int32)currentWeaponData->buyPrice / 2;
+			buyButtonText->SetText(FText::FromString(FString::FromInt(totalPrice)+ " $"));
+			
+			tooltipText->SetText(FText::FromString("New weapon price: " + FString::FromInt(shopWeaponData->buyPrice) + "\n" + 
+				"You will gain from old weapon: " + FString::FromInt(currentWeaponData->buyPrice / 2) + +"\n"+
+				"Total price: " + FString::FromInt(shopWeaponData->buyPrice) + " - " + FString::FromInt(currentWeaponData->buyPrice/2) + 
+				" = " + FString::FromInt(totalPrice)
+				));
+		}
+
+		
 	}
 
 }
@@ -235,4 +313,9 @@ void UShopLogic::Update()
 	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
 	ACMPlayerState *playerState = Cast<ACMPlayerState>(controller->PlayerState);
 	cashText->SetText(FText::FromString(FString::FromInt(playerState->GetMoney()) + " $"));
+
+	
+	if (controller->GetInventory().currentWeapon != currentWeaponIndex)
+		OnClickedWeaponSlot(controller->GetInventory().currentWeapon);
+	
 }

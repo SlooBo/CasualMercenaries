@@ -45,6 +45,8 @@ private:
 	UPROPERTY()
 	UImage* weaponImage;
 	UPROPERTY()
+	UTextBlock* tooltipText;
+	UPROPERTY()
 	UMultiLineEditableTextBox* descriptionTextBox;
 	UPROPERTY()
 	UMultiLineEditableTextBox* statTextBox;
@@ -71,7 +73,7 @@ private:
 	UFUNCTION()
 	void OnClickedBuyButton();
 	UFUNCTION()
-	void UpdateBuyButtonText();
+	void UpdateBuyButton();
 	UFUNCTION()
 	void OnClickedUpgradeButton1();
 	UFUNCTION()
