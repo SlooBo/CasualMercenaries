@@ -123,6 +123,12 @@ void ACMPlayerController::BuyWeapon_Implementation(uint8 weaponIndex, WEAPONID w
 	//TODO check that player has money for it
 	ACMPlayerState *playerState = Cast<ACMPlayerState>(PlayerState);
 	AWeapon *currentWeapon = GetInventory().GetWeapon(weaponIndex);
+
+	if (currentWeapon != nullptr)
+	{
+		if (weaponid == currentWeapon->GetID())
+			return;
+	}
 	if (playerState == nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Major error during buy!" );
@@ -134,9 +140,9 @@ void ACMPlayerController::BuyWeapon_Implementation(uint8 weaponIndex, WEAPONID w
 		previousWeaponStruct = WeaponData::Get()->GetWeaponData(currentWeapon->GetID());
 	if ((uint32)playerState->GetMoney() >= weaponStruct->buyPrice)
 	{
-		if (currentWeapon != nullptr)
+		if (previousWeaponStruct != nullptr)
 		{
-			playerState->AddMoney((int32)weaponStruct->buyPrice / 2);
+			playerState->AddMoney((int32)previousWeaponStruct->buyPrice / 2);
 		}
 		playerState->AddMoney(-(int32)weaponStruct->buyPrice);
 	

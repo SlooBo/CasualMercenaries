@@ -39,7 +39,10 @@ void UCharacterAnimationBase::UpdateWasJustShooting()
 		return;
 	AWeapon *weapon = controller->GetInventory().GetWeapon(controller->GetInventory().currentWeapon);
 	if (weapon != nullptr)
-		wasJustShooting = weapon->GetJustFired();
+		wasJustShooting = weapon->GetJustFired() && weapon->GetAmmo() != 0;
 	else
 		wasJustShooting = false;
+	if (wasJustShooting)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "WasJustSHooting = true");
+
 }
