@@ -66,8 +66,11 @@ void AWeapon::Tick( float DeltaTime )
 	{
 		if (passedTimeFiring > firingInterval)
 		{
-			NotifyFireStartJP();
-
+			if (ammo < 1)
+			{
+				firing = false;
+				return;
+			}
 			Fire();
 			passedTimeFiring = 0;
 		}

@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CasualMercenaries.h"
+#include "CMGameMode.h"
 #include "GhostCharacter.h"
 
 AGhostCharacter::AGhostCharacter(const FObjectInitializer& ObjectInitializer)
@@ -56,4 +57,18 @@ void AGhostCharacter::EndPlay(const EEndPlayReason::Type endPlayReason)
 
 void AGhostCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer)
 {
+}
+
+void AGhostCharacter::FellOutOfWorld(const class UDamageType& DmgType)
+{
+	if (Role < ROLE_Authority)
+		return;
+
+	// reset ghost location
+
+	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	ACMPlayerController* playerController = Cast<ACMPlayerController>(GetController());
+
+	if (gameMode != NULL && playerController != NULL)
+		gameMode->SpectatePlayer(playerController);
 }
