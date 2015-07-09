@@ -27,6 +27,31 @@ void AGhostCharacter::SetupPlayerInputComponent(class UInputComponent* InputComp
 void AGhostCharacter::BeginPlay()
 {
 	this->ChangeShirtColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+
+	// hide other players
+	if (Role < ROLE_Authority)
+	{
+		for (TActorIterator<APlayerCharacter> iter(GetWorld()); iter; ++iter)
+		{
+			if (*iter != this && Cast<AGhostCharacter>(*iter) == NULL)
+				(*iter)->SetActorHiddenInGame(true);
+		}
+	}
+}
+
+void AGhostCharacter::EndPlay(const EEndPlayReason::Type endPlayReason)
+{
+	// reveal all players
+	if (Role < ROLE_Authority)
+	{
+		for (TActorIterator<APlayerCharacter> iter(GetWorld()); iter; ++iter)
+		{
+			if (*iter != this && Cast<AGhostCharacter>(*iter) == NULL)
+				(*iter)->SetActorHiddenInGame(false);
+		}
+	}
+
+	Super::EndPlay(endPlayReason);
 }
 
 void AGhostCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer)

@@ -33,7 +33,7 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 
 	bDelayedStart = true;
 
-	startTime = 1;
+	startTime = 0;
 	warmupTime = 0;
 
 	playerStartMoney = 5000;
@@ -41,9 +41,10 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 	playerKillRewardTarget = 2000;
 	playerKillRewardWrong = -1000;
 
-	playerRespawnTime = 2;
+	respawnMode = RespawnMode::AtGhost;
+	playerRespawnTime = 15;
 	warmupRespawnTime = 1;
-	playerRespawnTimeMinimum = -1;
+	playerRespawnTimeMinimum = 0;
 	warmupRespawnTimeMinimum = -1;
 }
 
