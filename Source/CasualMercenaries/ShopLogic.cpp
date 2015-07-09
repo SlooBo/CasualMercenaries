@@ -226,6 +226,8 @@ void UShopLogic::UpdateBuyButton()
 	{
 		return;
 	}
+	//tooltipText->GetParent()->SetRenderTransformPivot(FVector2D(0.5f, -20.0f));
+	//tooltipText->GetParent()->wid
 		//UUserWidget *tooltipWidget = CreateWidget<UUserWidget>(world,  Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/ToolTip.ToolTip_C'")));
 	
 	//buyButton->SetToolTipText(FText::FromString("Weapon: 1500 $ \n Weapon2: 200 $"));
@@ -250,6 +252,10 @@ void UShopLogic::UpdateBuyButton()
 		
 			buyButtonText->SetText(FText::FromString(FString::FromInt(shopWeaponData->buyPrice) + " $"));
 			tooltipText->SetText(FText::FromString("New weapon price: " + FString::FromInt(shopWeaponData->buyPrice)));
+			UCanvasPanelSlot *canvas = Cast<UCanvasPanelSlot>(tooltipText->GetParent()->GetParent()->GetParent()->Slot);
+			FVector2D size = canvas->GetSize();
+			//canvas-
+			canvas->Parent->RenderTransform.Translation = FVector2D(0.5f, size.Y * 2);;
 			return;
 		}
 		FWeaponStruct *currentWeaponData = WeaponData::Get()->GetWeaponData(weapon->GetID());
@@ -266,6 +272,7 @@ void UShopLogic::UpdateBuyButton()
 				"Total price: " + FString::FromInt(shopWeaponData->buyPrice) + " - " + FString::FromInt(currentWeaponData->buyPrice/2) + 
 				" = " + FString::FromInt(totalPrice)
 				));
+			tooltipText->GetParent()->RenderTransform.Translation = FVector2D(0.5f, tooltipText->GetParent()->GetDesiredSize().Y);
 		}
 
 		
