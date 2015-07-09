@@ -49,7 +49,7 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	particleSystem->Template = ParticleObj.Object;
 	//particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
 	particleSystem->Activate();
-	particleSystem->SetRelativeScale3D(FVector(4.0f, 4.0f, 1.0f));
+	particleSystem->SetRelativeScale3D(FVector(4.0f, 4.0f, 2.0f));
 	particleSystem->SetRelativeLocation(FVector(0.0f, 0.0f, -100.0f));
 
 	//ParticleSystem2
