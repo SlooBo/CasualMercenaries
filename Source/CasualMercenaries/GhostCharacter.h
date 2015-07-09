@@ -20,8 +20,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-	void TryRespawn();
-
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 	virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL);
 };

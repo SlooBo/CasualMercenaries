@@ -28,6 +28,8 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerInitInventory();
 
+	void TryRespawn();
+
 	UFUNCTION(Reliable, Server, WithValidation)
 	void RequestRespawn();
 	
@@ -47,6 +49,8 @@ public:
 		void BuyWeapon(uint8 weaponIndex, WEAPONID weaponid);
 	UFUNCTION(Exec)
 	void AddMoney(int32 value);
+
+	bool IsAlive();
 
 	/************************************************************************/
 	/* Weapons                                                              */
