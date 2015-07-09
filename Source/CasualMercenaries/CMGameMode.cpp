@@ -359,6 +359,15 @@ void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 
 void ACMGameMode::SpectatePlayer(ACMPlayerController* player)
 {
+	if (Cast<AGhostCharacter>(player->GetPawn()) != NULL)
+	{
+		// reset ghost location if player fell out of level
+		AActor* spawnActor = GetRandomSpawnPoint(player);
+		if (spawnActor != NULL)
+			Cast<AGhostCharacter>(player->GetPawn())->SetActorLocation(spawnActor->GetActorLocation());
+		return;
+	}
+
 	// disable player pawn instead of destroying it, and let player character destroy itself
 	// this fixes some movement related bugs between server and client right after death occured
 	if (player->GetPawn() != NULL)
