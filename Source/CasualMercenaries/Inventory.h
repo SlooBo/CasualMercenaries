@@ -34,6 +34,7 @@ public:
 
 	//count begins from 0
 	AWeapon* GetWeapon(int number);
+	AWeapon* GetCurrentWeapon();
 
 	void SetPlayer(APlayerCharacter *player);
 

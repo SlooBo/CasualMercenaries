@@ -13,6 +13,7 @@
 #include "TwisterSister.h"
 #include "WaspNestCudgel.h"
 #include "Shotgun.h"
+
 void FInventory::ClearInventory()
 {
 	for (int i = 0; i < weapons.Num(); i++)
@@ -51,6 +52,12 @@ AWeapon* FInventory::GetWeapon(int number)
 		return nullptr;
 	return weapons[number];
 }
+
+AWeapon* FInventory::GetCurrentWeapon()
+{
+	return GetWeapon(currentWeapon);
+}
+
 void FInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
 {
 	if (weapons.Num() <= 0 || !weapons.IsValidIndex(slot))
