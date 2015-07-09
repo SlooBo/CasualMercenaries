@@ -21,8 +21,11 @@ enum class RespawnMode : uint8
 	// Default mode, spawns at random (team) spawn point
 	AtSpawnPoint = 0,
 
-	// Player is spawned at ghost location
+	// Player may spawn at ghost location
 	AtGhost,
+
+	// Player may spawn at ghost location, but is placed to random spawn point after death
+	AtGhostNearSpawn,
 };
 
 UCLASS()
@@ -42,6 +45,7 @@ public:
 
 	virtual bool ShouldSpawnAtStartSpot(AController* player) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* player) override;
+	virtual AActor* GetRandomSpawnPoint(AController* player);
 	virtual void SetPlayerDefaults(APawn* playerPawn) override;
 	virtual void RestartPlayer(AController* controller) override;
 
