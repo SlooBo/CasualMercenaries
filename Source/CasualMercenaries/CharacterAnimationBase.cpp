@@ -10,7 +10,10 @@ void UCharacterAnimationBase::UpdateCameraRotation()
 {
 	if (GetWorld() == nullptr)
 		return;
-	APlayerCharacter *player = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	ACMPlayerController *controller = Cast<ACMPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller == nullptr)
+		return;
+	 APlayerCharacter *player = Cast<APlayerCharacter>(controller->GetPawn());
 	if (player == nullptr)
 	{
 		cameraRot = 0.0f;
@@ -35,5 +38,8 @@ void UCharacterAnimationBase::UpdateWasJustShooting()
 	if (controller == nullptr)
 		return;
 	AWeapon *weapon = controller->GetInventory().GetWeapon(controller->GetInventory().currentWeapon);
-	wasJustShooting = weapon->GetJustFired();
+	if (weapon != nullptr)
+		wasJustShooting = weapon->GetJustFired();
+	else
+		wasJustShooting = false;
 }
