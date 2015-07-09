@@ -70,57 +70,13 @@ public:
 	/************************************************************************/
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL);
+	virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL) override;
 
 	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerOnDeath(ACMPlayerController* killer = NULL);
 
-
-
-
-	/************************************************************************/
-	/* Weapons                                                              */
-	/************************************************************************/
-	UFUNCTION()
-	FInventory& GetInventory() { return Cast<ACMPlayerController>(GetController())->GetInventory(); }
-
-	void AddWeapon(AWeapon* _weapon);
-
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerAddWeapon(AWeapon* _weapon);
-
-	void ReloadWeapon();
-	void UseWeapon1();
-	void UseWeapon1Release();
-	void UseWeapon2();
-	void UseWeapon2Release();
-	void SwitchWeaponUp();
-	void SwitchWeaponDown();
-
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerUseWeapon1();
-
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerUseWeapon2();
-
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerSwitchWeapon(float cw, float cp);
-
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerUseWeapon1Release();
-
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerUseWeapon2Release();
-
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerReloadWeapon();
-	
-	void WeaponSlot1();
-	void WeaponSlot2();
-	void WeaponSlot3();
-	void WeaponSlot4();
 	/************************************************************************/
 	/* Camera                                                               */
 	/************************************************************************/
@@ -136,14 +92,7 @@ public:
 
 	virtual bool IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const override;
 
-	int32 GetCurrentWeapon(){ return GetInventory().currentWeapon; }
-	void SetCurrentWeapon(int32 newValue){ GetInventory().currentWeapon = newValue; }
 private:
-
-
-	
-	bool inventoryInitialized;
-
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* springArmComp;
@@ -178,9 +127,6 @@ private:
 
 	void WallCheck();
 	void InputDash();
-
-	void OpenTeamChat();
-	void OpenAllChat();
 
 	int rounds;
 };

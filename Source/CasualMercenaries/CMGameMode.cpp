@@ -33,7 +33,7 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 
 	bDelayedStart = true;
 
-	startTime = 1;
+	startTime = 0;
 	warmupTime = 0;
 
 	playerStartMoney = 5000;
@@ -41,9 +41,10 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 	playerKillRewardTarget = 2000;
 	playerKillRewardWrong = -1000;
 
-	playerRespawnTime = 2;
+	respawnMode = RespawnMode::AtGhost;
+	playerRespawnTime = 15;
 	warmupRespawnTime = 1;
-	playerRespawnTimeMinimum = -1;
+	playerRespawnTimeMinimum = 0;
 	warmupRespawnTimeMinimum = -1;
 }
 
@@ -66,40 +67,51 @@ AActor* ACMGameMode::ChoosePlayerStart_Implementation(AController* player)
 {
 	AActor* spawnLocation = NULL;
 
-	if (respawnMode == RespawnMode::AtGhost)
+	if (respawnMode == RespawnMode::AtGhost || respawnMode == RespawnMode::AtGhostNearSpawn)
 	{
 		APlayerController* playerController = player->CastToPlayerController();
 		if (playerController != NULL)
 		{
-			spawnLocation = playerController->GetPawnOrSpectator();;
+			spawnLocation = playerController->GetPawnOrSpectator();
 			if (spawnLocation == NULL)
-				GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Error: Unable to get ghost/spectator pawn, choosing best spawn point instead"));
+				GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Warning: Unable to get ghost/spectator pawn, choosing best spawn point instead"));
 		}
 	}
 	
 	if (respawnMode == RespawnMode::AtSpawnPoint ||
-		(respawnMode == RespawnMode::AtGhost && spawnLocation == NULL))
+		((respawnMode == RespawnMode::AtGhost || respawnMode == RespawnMode::AtGhostNearSpawn) && spawnLocation == NULL))
 	{
-		APlayerStart* best = NULL;
-		TArray<APlayerStart*> spawns;
-
-		for (TActorIterator<APlayerStart> iter(GetWorld()); iter; ++iter)
-			spawns.Add(*iter);
-
-		// TODO: choose spawn point which is furthest away from any enemy player
-
-		// choose the random spawn
-		int random = FMath::RandRange(0, spawns.Num() - 1);
-		if (spawns.IsValidIndex(random))
-			best = spawns[random];
-
-		if (best == NULL)
+		spawnLocation = GetRandomSpawnPoint(player);
+		if (spawnLocation == NULL)
 			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: No spawn points were found, add PlayerStart to level"));
-
-		spawnLocation = (AActor*)best;
 	}
 
 	return spawnLocation;
+}
+
+AActor* ACMGameMode::GetRandomSpawnPoint(AController* player)
+{
+	APlayerStart* best = NULL;
+	TArray<APlayerStart*> spawns;
+
+	for (TActorIterator<APlayerStart> iter(GetWorld()); iter; ++iter)
+		spawns.Add(*iter);
+
+	// TODO: choose spawn point which is furthest away from any enemy player
+
+	// choose the random spawn
+	int random = FMath::RandRange(0, spawns.Num() - 1);
+	if (spawns.IsValidIndex(random))
+		return spawns[random];
+
+	return NULL;
+}
+
+void ACMGameMode::StartNewPlayer(APlayerController* newPlayer)
+{
+	Super::StartNewPlayer(newPlayer);
+
+	SetupNewPlayer(newPlayer);
 }
 
 void ACMGameMode::HandleMatchIsWaitingToStart()
@@ -228,20 +240,28 @@ int32 ACMGameMode::MapTimeElapsed()
 
 void ACMGameMode::OnWarmupStart_Implementation()
 {
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
-		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
-		if (playerState != NULL)
-			playerState->SetMoney(playerMaxMoney);
+		SetupNewPlayer(*iter);
 	}
 }
 
 void ACMGameMode::OnMatchStart_Implementation()
 {
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
-		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
-		if (playerState != NULL)
+		SetupNewPlayer(*iter);
+	}
+}
+
+void ACMGameMode::SetupNewPlayer(APlayerController* newPlayer)
+{
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(newPlayer->PlayerState);
+	if (playerState != NULL)
+	{
+		if (inGameState == InGameState::Warmup)
+			playerState->SetMoney(playerMaxMoney);
+		else
 			playerState->SetMoney(playerStartMoney);
 	}
 }
@@ -345,7 +365,7 @@ void ACMGameMode::SpectatePlayer(ACMPlayerController* player)
 	}
 
 	// set player to spectator while waiting to respawn
-	if (respawnMode != RespawnMode::AtGhost)
+	if (respawnMode == RespawnMode::AtSpawnPoint)
 	{
 		player->PlayerState->bIsSpectator = true;
 		player->ChangeState(NAME_Spectating);
@@ -353,16 +373,23 @@ void ACMGameMode::SpectatePlayer(ACMPlayerController* player)
 	}
 	else
 	{
-		if (player->GetCharacter() != NULL)
+		AActor* spawnActor = player->GetCharacter();
+		if (player->GetCharacter() == NULL || respawnMode == RespawnMode::AtGhostNearSpawn)
+			spawnActor = GetRandomSpawnPoint(player);
+		if (spawnActor == NULL)
 		{
-			FVector position = player->GetCharacter()->GetActorLocation();
-			FRotator rotation = player->GetCharacter()->GetActorRotation();
-			rotation.Roll = 0.0f;
-			player->UnPossess();
-
-			AGhostCharacter* pawn = GetWorld()->SpawnActor<AGhostCharacter>(AGhostCharacter::StaticClass(), position, rotation);
-			player->Possess(pawn);
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: No spawn points were found, add PlayerStart to level"));
+			return;
 		}
+
+		FVector position = spawnActor->GetActorLocation();
+		FRotator rotation = spawnActor->GetActorRotation();
+		rotation.Roll = 0.0f;
+		player->UnPossess();
+
+		AGhostCharacter* pawn = GetWorld()->SpawnActor<AGhostCharacter>(AGhostCharacter::StaticClass(), position, rotation);
+		player->Possess(pawn);
+
 		//player->ClientSetRotation(NewPlayer->GetCharacter()->GetActorRotation(), true);
 		//player->SetControlRotation(NewControllerRot);
 	}

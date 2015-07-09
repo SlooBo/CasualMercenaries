@@ -114,7 +114,7 @@ void AShotgun::Fire()
 		//Hit resolve
 		ABaseCharacter* player = Cast<ABaseCharacter>(hit.GetActor());
 		if (player != nullptr)
-			player->TakeDamage(10, DAMAGE_TYPE::NORMAL, Cast<class APlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
+			player->TakeDamage(10, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
 		else
 		{
 			AProjectile* projectile = Cast<AProjectile>(hit.GetActor());

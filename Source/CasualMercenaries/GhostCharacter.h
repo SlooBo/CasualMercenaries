@@ -19,8 +19,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 	virtual void BeginPlay() override;
-
-	void TryRespawn();
+	virtual void EndPlay(const EEndPlayReason::Type endPlayReason) override;
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 	virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL);

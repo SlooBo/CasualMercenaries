@@ -98,7 +98,7 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type _endPlayReason)
 }
 
 // Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
+void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
 
@@ -116,167 +116,11 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::WallJump);
 
 	InputComponent->BindAction("SwitchShoulder", IE_Pressed, this, &APlayerCharacter::SwitchShoulder);
-
-	InputComponent->BindAction("AllChat", IE_Pressed, this, &APlayerCharacter::OpenAllChat);
-	InputComponent->BindAction("TeamChat", IE_Pressed, this, &APlayerCharacter::OpenTeamChat);
-
-	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon1);
-	InputComponent->BindAction("LeftMouseButton", IE_Released, this, &APlayerCharacter::UseWeapon1Release);
-	InputComponent->BindAction("RightMouseButton", IE_Pressed, this, &APlayerCharacter::UseWeapon2);
-	InputComponent->BindAction("MouseWheelUp", IE_Pressed, this, &APlayerCharacter::SwitchWeaponUp);
-	InputComponent->BindAction("MouseWheelDown", IE_Pressed, this, &APlayerCharacter::SwitchWeaponDown);
-	InputComponent->BindAction("Reload", IE_Pressed, this, &APlayerCharacter::ReloadWeapon);
-
-	InputComponent->BindAction("WeaponSlot1", IE_Pressed, this, &APlayerCharacter::WeaponSlot1);
-	InputComponent->BindAction("WeaponSlot2", IE_Pressed, this, &APlayerCharacter::WeaponSlot2);
-	InputComponent->BindAction("WeaponSlot3", IE_Pressed, this, &APlayerCharacter::WeaponSlot3);
-	InputComponent->BindAction("WeaponSlot4", IE_Pressed, this, &APlayerCharacter::WeaponSlot4);
-}
-
-void APlayerCharacter::ReloadWeapon()
-{
-	ServerReloadWeapon();
-}
-
-bool APlayerCharacter::ServerReloadWeapon_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::ServerReloadWeapon_Implementation()
-{
-	FInventory& inventory = GetInventory();
-	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
-		inventory.GetWeapon(GetCurrentWeapon())->Reload();
-}
-
-void APlayerCharacter::AddWeapon(AWeapon* _weapon)
-{
-	FInventory& inventory = GetInventory();
-	inventory.AddWeaponToInventory(_weapon);
-	//ServerAddWeapon(_weapon);
-}
-
-bool APlayerCharacter::ServerAddWeapon_Validate(AWeapon* _weapon)
-{
-	return true;
-}
-
-void APlayerCharacter::ServerAddWeapon_Implementation(AWeapon* _weapon)
-{
-	FInventory& inventory = GetInventory();
-	inventory.AddWeaponToInventory(_weapon);
-}
-
-void APlayerCharacter::UseWeapon1()
-{
-	ServerUseWeapon1();
-}
-
-bool APlayerCharacter::ServerUseWeapon1_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::ServerUseWeapon1_Implementation()
-{
-	FInventory& inventory = GetInventory();
-
-	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
-		inventory.GetWeapon(GetCurrentWeapon())->PrimaryFunction(this);
-}
-
-void APlayerCharacter::UseWeapon1Release()
-{
-	ServerUseWeapon1Release();
-}
-
-bool APlayerCharacter::ServerUseWeapon1Release_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::ServerUseWeapon1Release_Implementation()
-{
-	FInventory& inventory = GetInventory();
-	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
-		inventory.GetWeapon(GetCurrentWeapon())->PrimaryFunctionReleased(this);
-}
-
-void APlayerCharacter::UseWeapon2()
-{
-	//if (inventory.GetWeapon(currentWeapon) != nullptr)
-	//	inventory.GetWeapon(currentWeapon)->SecondaryFunction(this);
-	//ServerUseWeapon2();
-}
-
-bool APlayerCharacter::ServerUseWeapon2_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::ServerUseWeapon2_Implementation()
-{
-	FInventory& inventory = GetInventory();
-
-	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
-		inventory.GetWeapon(GetCurrentWeapon())->SecondaryFunction(this);
-}
-
-void APlayerCharacter::UseWeapon2Release()
-{
-	ServerUseWeapon1Release();
-}
-
-bool APlayerCharacter::ServerUseWeapon2Release_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::ServerUseWeapon2Release_Implementation()
-{
-	FInventory& inventory = GetInventory();
-	if (inventory.GetWeapon(GetCurrentWeapon()) != nullptr)
-		inventory.GetWeapon(GetCurrentWeapon())->SecondaryFunctionReleased(this);
-}
-
-void APlayerCharacter::SwitchWeaponUp()
-{
-	int tempLastWeapon = GetCurrentWeapon();
-	SetCurrentWeapon(GetCurrentWeapon()+1);
-	if (GetCurrentWeapon() > 3)
-		SetCurrentWeapon(0);
-	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
-}
-
-void APlayerCharacter::SwitchWeaponDown()
-{
-	int tempLastWeapon = GetCurrentWeapon();
-	SetCurrentWeapon(GetCurrentWeapon() -1);
-	if (GetCurrentWeapon() < 0)
-		SetCurrentWeapon(3);
-	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
 }
 
 
-bool APlayerCharacter::ServerSwitchWeapon_Validate(float cw, float pw)
-{
-	return true;
-}
 
-void APlayerCharacter::ServerSwitchWeapon_Implementation(float cw, float pw)
-{
-	SetCurrentWeapon(cw);
 
-	FInventory& inventory = GetInventory();
-
-	if (inventory.GetWeapon(pw) != nullptr)
-		inventory.GetWeapon(pw)->SetActorHiddenInGame(true);
-	if (inventory.GetWeapon(cw) != nullptr)
-		inventory.GetWeapon(cw)->SetActorHiddenInGame(false);
-	if (inventory.GetWeapon(cw) != nullptr)
-		inventory.GetWeapon(cw)->SetActorLocation(Mesh->GetSocketByName("GunSocket")->GetSocketLocation(Mesh));
-}
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -314,8 +158,6 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 	if (!IsAlive() || GetController() == NULL)
 		return;
 
-	health = health - _damage;
-
 	switch (_type)
 	{
 	case DAMAGE_TYPE::NORMAL:
@@ -335,9 +177,7 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 		break;
 	}
 
-	//Temp fix
-	if (!IsAlive())
-		OnDeath(Cast<ACMPlayerController>(damageSource));
+	Super::TakeDamage(_damage, _type, damageSource);
 }
 
 void APlayerCharacter::RestoreActivity()
@@ -361,9 +201,6 @@ bool APlayerCharacter::ServerOnDeath_Validate(ACMPlayerController* killer)
 
 void APlayerCharacter::ServerOnDeath_Implementation(ACMPlayerController* killer)
 {
-	FInventory& inventory = GetInventory();
-	inventory.ClearInventory();
-
 	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	ACMPlayerController* playerController = Cast<ACMPlayerController>(GetController());
 
@@ -584,52 +421,6 @@ void APlayerCharacter::PlaySound_Implementation(USoundCue* _component)
 	audioComp->Play();
 }
 
-void APlayerCharacter::OpenTeamChat()
-{
-	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
-	APlayerHud *playerhud = Cast<APlayerHud>(hud);
-
-
-}
-void APlayerCharacter::OpenAllChat()
-{
-	AHUD *hud = Cast<APlayerController>(Controller)->GetHUD();
-	APlayerHud *playerhud = Cast<APlayerHud>(hud);
-
-}
-void APlayerCharacter::WeaponSlot1()
-{
-	int tempLastWeapon = GetCurrentWeapon();
-	SetCurrentWeapon(0);
-	if (GetCurrentWeapon() == tempLastWeapon)
-		return;
-	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
-	//TODO make these into one function
-}
-void APlayerCharacter::WeaponSlot2()
-{
-	int tempLastWeapon = GetCurrentWeapon();
-	SetCurrentWeapon(1);
-	if (GetCurrentWeapon() == tempLastWeapon)
-		return;
-	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
-}
-void APlayerCharacter::WeaponSlot3()
-{
-	int tempLastWeapon = GetCurrentWeapon();
-	SetCurrentWeapon(2);
-	if (GetCurrentWeapon() == tempLastWeapon)
-		return;
-	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
-}
-void APlayerCharacter::WeaponSlot4()
-{
-	int tempLastWeapon = GetCurrentWeapon();
-	SetCurrentWeapon(3);
-	if (GetCurrentWeapon() == tempLastWeapon)
-		return;
-	ServerSwitchWeapon(GetCurrentWeapon(), tempLastWeapon);
-}
 bool APlayerCharacter::ChangeShirtColor_Validate(FLinearColor color)
 {
 	return true;

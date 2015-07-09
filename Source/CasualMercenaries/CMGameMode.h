@@ -21,8 +21,11 @@ enum class RespawnMode : uint8
 	// Default mode, spawns at random (team) spawn point
 	AtSpawnPoint = 0,
 
-	// Player is spawned at ghost location
+	// Player may spawn at ghost location
 	AtGhost,
+
+	// Player may spawn at ghost location, but is placed to random spawn point after death
+	AtGhostNearSpawn,
 };
 
 UCLASS()
@@ -36,11 +39,13 @@ public:
 	static FString GetInGameStateAsString(InGameState state);
 	InGameState GetInGameState() { return inGameState; };
 
+	virtual void StartNewPlayer(APlayerController* newPlayer) override;
 	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void StartMatch() override;
 
 	virtual bool ShouldSpawnAtStartSpot(AController* player) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* player) override;
+	virtual AActor* GetRandomSpawnPoint(AController* player);
 	virtual void SetPlayerDefaults(APawn* playerPawn) override;
 	virtual void RestartPlayer(AController* controller) override;
 
@@ -70,6 +75,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Match Start"), Category = "Gameplay")
 	void OnMatchStart();
 	virtual void OnMatchStart_Implementation();
+
+	virtual void SetupNewPlayer(APlayerController* newPlayer);
 
 	// Event when map time has reached zero
 	UFUNCTION(BlueprintImplementableEvent, Meta = (DisplayName = "On Map Timeout"), Category = "Gameplay|Level")

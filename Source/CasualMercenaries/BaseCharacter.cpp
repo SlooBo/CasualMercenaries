@@ -113,7 +113,7 @@ void ABaseCharacter::AddHealth(float _health)
 		health = health + _health;
 }
 
-void ABaseCharacter::TakeDamage(float _health, DAMAGE_TYPE _type, APlayerController* _damageSource)
+void ABaseCharacter::TakeDamage(float _health, DAMAGE_TYPE _type, ACMPlayerController* _damageSource)
 {
 	if (!IsAlive() || GetController() == NULL || Role < ROLE_AutonomousProxy) //skip if not owner
 		return;
@@ -136,7 +136,7 @@ void ABaseCharacter::TakeDamage(float _health, DAMAGE_TYPE _type, APlayerControl
 
 	//Temp fix
 	if (!IsAlive())
-		OnDeath(Cast<ACMPlayerController>(_damageSource));
+		OnDeath(_damageSource);
 }
 
 void ABaseCharacter::AddStamina(float _stamina)

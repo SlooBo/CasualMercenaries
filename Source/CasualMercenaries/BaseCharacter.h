@@ -64,7 +64,7 @@ public:
 		void AddHealth(float _health);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, APlayerController* _damageSource = NULL);
+		virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* _damageSource = NULL);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		void AddStamina(float _stamina);
