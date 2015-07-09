@@ -68,7 +68,6 @@ void ARocketLauncher::PrimaryFunction(APlayerCharacter* user)
 	this->SetOwner(user);
 	if (ammo > 0)
 	{
-		
 		audioComp->SetSound(audioList[0]);
 		audioComp->Play();
 		firing = true;
@@ -90,11 +89,6 @@ void ARocketLauncher::Reload()
 
 void ARocketLauncher::Fire()
 {
-	if (ammo < 1)
-	{
-		firing = false;
-		return;
-	}
 	ammo--;
 	
 	FVector userLoc;

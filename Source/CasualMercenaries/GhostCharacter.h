@@ -23,4 +23,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 	virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL);
+
+	virtual void FellOutOfWorld(const class UDamageType& DmgType) override;
 };

@@ -205,6 +205,7 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(ACMPlayerController* player,
 
 	if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
 	{
+		ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 		SetRandomPlayerHuntTarget(player);
 
 		if (killer != NULL)
@@ -219,6 +220,11 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(ACMPlayerController* player,
 			if (killerTarget == player)
 				SetRandomPlayerHuntTarget(killer);
 		}
+
+		// assign new random color for the player
+		FLinearColor randomColor = FLinearColor::MakeRandomColor();
+		if (playerState != NULL)
+			playerState->SetColorId(randomColor);
 	}
 }
 

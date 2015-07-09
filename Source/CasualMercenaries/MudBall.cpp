@@ -68,8 +68,10 @@ void AMudBall::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Norma
 void AMudBall::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if (health <= 0)
-		Explode();
+	if (!HasAuthority())
+		return;
+		if (health <= 0)	
+			Explode();
 
 	if (inflating)
 	{		

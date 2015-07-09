@@ -23,10 +23,10 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 	if (PlayerHud.Object)
 		HUDClass = (UClass*)PlayerHud.Object->GeneratedClass;
 
-	//HUDClass = APlayerHud::StaticClass();
 	PlayerControllerClass = ACMPlayerController::StaticClass();
 	PlayerStateClass = ACMPlayerState::StaticClass();
 	SpectatorClass = ACMSpectator::StaticClass();
+	GhostCharacterClass = AGhostCharacter::StaticClass();
 	//GameStateClass = ACMGameState::StaticClass();
 
 	DefaultPlayerName = FText::FromString("OfficeRat");
@@ -263,6 +263,10 @@ void ACMGameMode::SetupNewPlayer(APlayerController* newPlayer)
 			playerState->SetMoney(playerMaxMoney);
 		else
 			playerState->SetMoney(playerStartMoney);
+
+		// assign random color for the player
+		FLinearColor randomColor = FLinearColor::MakeRandomColor();
+		playerState->SetColorId(randomColor);
 	}
 }
 
@@ -355,6 +359,15 @@ void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 
 void ACMGameMode::SpectatePlayer(ACMPlayerController* player)
 {
+	if (Cast<AGhostCharacter>(player->GetPawn()) != NULL)
+	{
+		// reset ghost location if player fell out of level
+		AActor* spawnActor = GetRandomSpawnPoint(player);
+		if (spawnActor != NULL)
+			Cast<AGhostCharacter>(player->GetPawn())->SetActorLocation(spawnActor->GetActorLocation());
+		return;
+	}
+
 	// disable player pawn instead of destroying it, and let player character destroy itself
 	// this fixes some movement related bugs between server and client right after death occured
 	if (player->GetPawn() != NULL)
@@ -384,14 +397,17 @@ void ACMGameMode::SpectatePlayer(ACMPlayerController* player)
 
 		FVector position = spawnActor->GetActorLocation();
 		FRotator rotation = spawnActor->GetActorRotation();
-		rotation.Roll = 0.0f;
-		player->UnPossess();
+		FRotator newControlRot = rotation;
+		if (Cast<APlayerCharacter>(spawnActor) != NULL)
+			newControlRot.Pitch = Cast<APlayerCharacter>(spawnActor)->GetControlRotation().Pitch;
 
-		AGhostCharacter* pawn = GetWorld()->SpawnActor<AGhostCharacter>(AGhostCharacter::StaticClass(), position, rotation);
+		rotation.Roll = 0.0f;
+		
+		player->UnPossess();
+		APawn* pawn = GetWorld()->SpawnActor<APawn>(GhostCharacterClass, position, rotation);
 		player->Possess(pawn);
 
-		//player->ClientSetRotation(NewPlayer->GetCharacter()->GetActorRotation(), true);
-		//player->SetControlRotation(NewControllerRot);
+		player->SetControlRotation(newControlRot);
 	}
 }
 
@@ -422,14 +438,17 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	if (respawnTimerList.Contains(player))
 		GetWorld()->GetTimerManager().ClearTimer(respawnTimerList[player]);
 
-	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(player->GetPawn());
-	AGhostCharacter* ghostCharacter = Cast<AGhostCharacter>(player->GetPawn());
-	if (playerCharacter != NULL && ghostCharacter == NULL)
-		return;
-
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 	if (playerState != NULL)
 		playerState->SetAlive(true);
+
+	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(player->GetPawn());
+	AGhostCharacter* ghostCharacter = Cast<AGhostCharacter>(player->GetPawn());
+	if (playerCharacter != NULL && ghostCharacter == NULL)
+	{
+		// do nothing if player is already alive
+		return;
+	}
 
 	if (ghostCharacter != NULL)
 	{
@@ -442,17 +461,19 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
 
-	//Super::RestartPlayer(controller);
+	// create and place player pawn
 	AActor* startPos = FindPlayerStart(player);
 	APawn* newPawn = SpawnDefaultPawnFor(player, startPos);
+
+	FRotator NewControllerRot = startPos->GetActorRotation();
+	NewControllerRot.Roll = 0.f;
+	if (ghostCharacter != NULL)
+		NewControllerRot.Pitch = ghostCharacter->GetControlRotation().Pitch;
 
 	player->UnPossess();
 	player->SetPawn(newPawn);
 	player->Possess(newPawn);
-	player->ClientSetRotation(newPawn->GetActorRotation(), true);
 
-	FRotator NewControllerRot = startPos->GetActorRotation();
-	NewControllerRot.Roll = 0.f;
 	player->SetControlRotation(NewControllerRot);
 
 	SetPlayerDefaults(newPawn);
@@ -474,20 +495,12 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 		return;
 	}
 
+	// setup character here
 	ACMPlayerController* player = Cast<ACMPlayerController>(playerCharacter->GetController());
 	if (player != NULL)
 	{
-		//TODO: this should be done when match starts
 		ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 		if (playerState != NULL)
-		{
-			FLinearColor randomColor = FLinearColor::MakeRandomColor();
-			playerState->SetColorId(randomColor);
-		}
-
-		playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
-		//TODO: assign color to character here
+			playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
 	}
-
-	// TODO: setup player character here after respawning (character colors, ...)
 }
