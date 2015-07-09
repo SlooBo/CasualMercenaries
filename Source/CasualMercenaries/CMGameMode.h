@@ -91,6 +91,8 @@ public:
 
 protected:
 
+	TSubclassOf<class AGhostCharacter> GhostCharacterClass;
+
 	TArray<APlayerController*> denyRespawnList;
 	TMap<APlayerController*, FTimerHandle> respawnTimerList;
 

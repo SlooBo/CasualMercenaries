@@ -42,17 +42,19 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	audioComp->AttachParent = GetRootComponent();
 
 	//	CharacterMesh
-	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver6/char2.char2'"));
 	Mesh->SetSkeletalMesh(MeshObj.Object);
 	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MAT_Playercharacter_Inst.MAT_Playercharacter_Inst'"));
 	Mesh->SetMaterial(0, MateriaObj.Object);
-	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/APB_PlayerCharacter.APB_PlayerCharacter'"));
+	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj2(TEXT("Material'/Game/Game/PlayerCharacters/ver6/matmamat.matmamat'"));
+	Mesh->SetMaterial(1, MateriaObj2.Object);
+	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/ver6/APB_PlayerCharacter_ver6.APB_PlayerCharacter_ver6'"));
 	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
 
 	// Values from blueprint
-	CapsuleComponent->SetRelativeScale3D(FVector(1.0f, 1.0f, 1.3f));
+	//CapsuleComponent->SetRelativeScale3D(FVector(1.0f, 1.0f, 1.3f));
 	CapsuleComponent->bVisible = false;
-	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -83.0f));
+	Mesh->SetRelativeLocation(FVector(-9.999983f, -0.000022f, -84.614967f));
 	Mesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	Mesh->SetRelativeScale3D(FVector(0.6f, 0.6f, 0.6f));
 

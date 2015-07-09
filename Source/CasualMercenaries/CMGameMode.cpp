@@ -23,10 +23,10 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 	if (PlayerHud.Object)
 		HUDClass = (UClass*)PlayerHud.Object->GeneratedClass;
 
-	//HUDClass = APlayerHud::StaticClass();
 	PlayerControllerClass = ACMPlayerController::StaticClass();
 	PlayerStateClass = ACMPlayerState::StaticClass();
 	SpectatorClass = ACMSpectator::StaticClass();
+	GhostCharacterClass = AGhostCharacter::StaticClass();
 	//GameStateClass = ACMGameState::StaticClass();
 
 	DefaultPlayerName = FText::FromString("OfficeRat");
@@ -388,14 +388,17 @@ void ACMGameMode::SpectatePlayer(ACMPlayerController* player)
 
 		FVector position = spawnActor->GetActorLocation();
 		FRotator rotation = spawnActor->GetActorRotation();
-		rotation.Roll = 0.0f;
-		player->UnPossess();
+		FRotator newControlRot = rotation;
+		if (Cast<APlayerCharacter>(spawnActor) != NULL)
+			newControlRot.Pitch = Cast<APlayerCharacter>(spawnActor)->GetControlRotation().Pitch;
 
-		AGhostCharacter* pawn = GetWorld()->SpawnActor<AGhostCharacter>(AGhostCharacter::StaticClass(), position, rotation);
+		rotation.Roll = 0.0f;
+		
+		player->UnPossess();
+		APawn* pawn = GetWorld()->SpawnActor<APawn>(GhostCharacterClass, position, rotation);
 		player->Possess(pawn);
 
-		//player->ClientSetRotation(NewPlayer->GetCharacter()->GetActorRotation(), true);
-		//player->SetControlRotation(NewControllerRot);
+		player->SetControlRotation(newControlRot);
 	}
 }
 
@@ -449,17 +452,19 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
 
-	//Super::RestartPlayer(controller);
+	// create and place player pawn
 	AActor* startPos = FindPlayerStart(player);
 	APawn* newPawn = SpawnDefaultPawnFor(player, startPos);
+
+	FRotator NewControllerRot = startPos->GetActorRotation();
+	NewControllerRot.Roll = 0.f;
+	if (ghostCharacter != NULL)
+		NewControllerRot.Pitch = ghostCharacter->GetControlRotation().Pitch;
 
 	player->UnPossess();
 	player->SetPawn(newPawn);
 	player->Possess(newPawn);
-	player->ClientSetRotation(newPawn->GetActorRotation(), true);
 
-	FRotator NewControllerRot = startPos->GetActorRotation();
-	NewControllerRot.Roll = 0.f;
 	player->SetControlRotation(NewControllerRot);
 
 	SetPlayerDefaults(newPawn);
