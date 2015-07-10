@@ -19,13 +19,15 @@ ADestructibleObject::ADestructibleObject(const FObjectInitializer& FOI) : AActor
 	{
 		meshComponent->SetStaticMesh(MeshObj.Object);
 	}
+
+	timerActive = false;
 }
 
 // Called when the game starts or when spawned
 void ADestructibleObject::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	health = 0;
 
 }
 
@@ -44,7 +46,7 @@ void ADestructibleObject::EndPlay(const EEndPlayReason::Type _endPlayReason)
 
 void ADestructibleObject::TakeDamage(float _damage)
 {
-	if (!GetWorld()->GetTimerManager().IsTimerActive(respawnTimerHandle))
+	if (!timerActive)
 	{
 		health = health - _damage;
 	}
@@ -64,11 +66,12 @@ void ADestructibleObject::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 void ADestructibleObject::CheckStatus()
 {
-	if (health >= 0)
+	if (health <= 0)
 	{
 		GoInvisible();
 		health = healthMax;
-		GetWorld()->GetTimerManager().SetTimer(respawnTimerHandle, this, &ADestructibleObject::Respawn, 30.0f, false);
+		GetWorld()->GetTimerManager().SetTimer(respawnTimerHandle, this, &ADestructibleObject::Respawn, 10.0f, false);
+		timerActive = true;
 	}
 }
 
@@ -76,9 +79,12 @@ void ADestructibleObject::Respawn()
 {
 	meshComponent->SetMaterial(0, normalMaterial);
 	GetWorld()->GetTimerManager().ClearTimer(respawnTimerHandle);
+	timerActive = false;
+	SetActorEnableCollision(true);
 }
 
 void ADestructibleObject::GoInvisible()
 {
 	meshComponent->SetMaterial(0, invisibleMaterial);
+	SetActorEnableCollision(false);
 }
