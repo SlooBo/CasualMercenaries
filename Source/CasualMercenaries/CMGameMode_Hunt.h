@@ -26,7 +26,10 @@ class CASUALMERCENARIES_API ACMGameMode_Hunt : public ACMGameMode
 
 public:
 	ACMGameMode_Hunt(const class FObjectInitializer& objectInitializer);
+
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& changedEvent) override;
+#endif
 
 	static FString GetHuntStateAsString(HuntState state);
 

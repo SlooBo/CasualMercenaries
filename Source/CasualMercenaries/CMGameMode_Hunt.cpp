@@ -27,6 +27,7 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	warmupRespawnTimeMinimum = 0;
 }
 
+#if WITH_EDITOR
 void ACMGameMode_Hunt::PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent)
 {
 	if (propertyChangedEvent.Property != NULL)
@@ -43,6 +44,7 @@ void ACMGameMode_Hunt::PostEditChangeProperty(FPropertyChangedEvent& propertyCha
 	
 	Super::PostEditChangeProperty(propertyChangedEvent);
 }
+#endif
 
 FString ACMGameMode_Hunt::GetHuntStateAsString(HuntState state)
 {
