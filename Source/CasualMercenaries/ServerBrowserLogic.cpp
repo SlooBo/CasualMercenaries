@@ -17,53 +17,28 @@ void UServerBrowserLogic::SetUp(UUserWidget *widget,UWorld *world)
 	this->widget = widget;
 	this->world = world;
 
-	UWidgetTree *widgetTree = widget->WidgetTree;
-	TArray<UWidget*> children;
-	widgetTree->GetAllWidgets(children);
+	SetValueFromWidget(&createSessionButton, "CreateSession");
+	createSessionButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::CreateSession);
+
+	SetValueFromWidget(&serverListScrollBox, "ServerListScrollBox");
+
+	SetValueFromWidget(&findSessionsButton, "FindSessionsButton");
+	findSessionsButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::FindSessions);
 
 
-	int childcount = children.Num();
-	for (int i = 0; i < childcount; i++)
-	{
-		UButton *tempCreateSessionButton = Cast<UButton>(children[i]);
-		if (tempCreateSessionButton != nullptr && tempCreateSessionButton->GetName().Equals("CreateSession"))
-		{
-			createSessionButton = tempCreateSessionButton;
-			createSessionButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::CreateSession);
-		}
-		UScrollBox *tempServerListScrollBox = Cast<UScrollBox>(children[i]);
-		if (tempServerListScrollBox != nullptr && tempServerListScrollBox->GetName().Equals("ServerListScrollBox"))
-		{
-			serverListScrollBox = tempServerListScrollBox;
-		}
-		UButton *tempFindSessionsButton = Cast<UButton>(children[i]);
-		if (tempFindSessionsButton != nullptr && tempFindSessionsButton->GetName().Equals("FindSessionsButton"))
-		{
-			findSessionsButton = tempFindSessionsButton;
-			findSessionsButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::FindSessions);
-		}
-		UButton *tempDestroyButton = Cast<UButton>(children[i]);
-		if (tempDestroyButton != nullptr && tempDestroyButton->GetName().Equals("DestroyWorld"))
-		{
-			tempDestroyButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::ForceGarbageCollector);
-		}
-		UButton *tempConnectButton = Cast<UButton>(children[i]);
-		if (tempConnectButton != nullptr && tempConnectButton->GetName().Equals("ConnectButton"))
-		{
-			connectButton = tempConnectButton;
-			connectButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::ConnectSessionWithIP);
-		}
-		UEditableTextBox *tempIPTextBox = Cast<UEditableTextBox>(children[i]);
-		if (tempIPTextBox != nullptr && tempIPTextBox->GetName().Equals("IPTextBox"))
-		{
-			ipTextBox= tempIPTextBox;
-		}
-		UButton *tempHostGameButton = Cast<UButton>(children[i]);
-		if (tempHostGameButton != nullptr && tempHostGameButton->GetName().Equals("HostButton"))
-		{
-			hostGameButton = tempHostGameButton;
-			hostGameButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::HostGame);
-		}
+	UButton *tempDestroyButton = nullptr;
+	SetValueFromWidget(&tempDestroyButton, "DestroyWorld");
+	tempDestroyButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::ForceGarbageCollector);
+
+	SetValueFromWidget(&connectButton, "ConnectButton");
+	connectButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::ConnectSessionWithIP);
+
+	SetValueFromWidget(&ipTextBox, "IPTextBox");
+
+	SetValueFromWidget(&hostGameButton, "HostButton");
+	hostGameButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::HostGame);
+
+
 		/*
 		tempCreateSessionButton = nullptr;
 		tempServerListScrollBox = nullptr;
@@ -78,7 +53,7 @@ void UServerBrowserLogic::SetUp(UUserWidget *widget,UWorld *world)
 			addSessionButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::AddSessionToGUI);
 
 		}*/
-	}
+	
 }
 void UServerBrowserLogic::CreateSession()
 {

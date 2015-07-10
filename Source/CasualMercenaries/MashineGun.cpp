@@ -15,7 +15,7 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05)); 
-
+	weaponMesh->SetRelativeRotation(FRotator(0, 140, 0));
 	//integer values
 	maxAmmo = 120;
 	clips = 999;
@@ -78,11 +78,6 @@ void AMashineGun::Tick(float DeltaTime)
 
 void AMashineGun::Fire()
 {
-	if (ammo < 1)
-	{
-		firing = false;
-		return;
-	}
 	FVector userLoc;
 	FVector userLoc2;
 	FRotator cameraRot;

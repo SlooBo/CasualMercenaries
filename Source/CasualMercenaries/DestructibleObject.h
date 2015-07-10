@@ -23,9 +23,6 @@ public:
 	//Called when game ends
 	virtual void EndPlay(const EEndPlayReason::Type _endPlayReason) override;
 
-	UFUNCTION()
-	void OnMyDestructibleHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
-
 	UFUNCTION(BlueprintCallable, Category = "ObjectCondition")
 		virtual void TakeDamage(float _damage);
 
