@@ -102,7 +102,7 @@ public:
 		return passedTimeFiring == 0;
 	};
 
-
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 protected:
 
@@ -111,7 +111,7 @@ protected:
 	/************************************************************************/
 	
 	int damage;
-	int ammo;
+
 	int clips;
 	int ammoInClip; 
 	int maxAmmo;
@@ -119,6 +119,8 @@ protected:
 
 	DAMAGE_TYPE type;
 	WEAPONID id;
+	UPROPERTY(Replicated)
+	int32 ammo;
 
 	/************************************************************************/
 	/* Timers and triggers                                                  */

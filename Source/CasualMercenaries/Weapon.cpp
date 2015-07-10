@@ -4,7 +4,7 @@
 #include "Weapon.h"
 #include "WeaponData.h"
 #include "PlayerCharacter.h"
-
+#include "UnrealNetwork.h"
 
 // Sets default values
 AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -106,4 +106,9 @@ void AWeapon::IncreaseAmmoAmount(int32 ammo)
 WEAPONID AWeapon::GetIDFromInt(uint8 value)
 {
 	return static_cast<WEAPONID>(value);
+}
+void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AWeapon, ammo);
 }
