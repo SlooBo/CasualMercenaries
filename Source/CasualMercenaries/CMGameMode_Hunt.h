@@ -31,7 +31,9 @@ public:
 	static FString GetHuntStateAsString(HuntState state);
 
 	virtual void HandleMatchIsWaitingToStart() override;
-	virtual void StartMatch() override;
+	virtual void OnMatchStart_Implementation() override;
+
+	virtual void SetupNewPlayer(APlayerController* newPlayer) override;
 
 	// Event when player dies or is killed by other player
 	virtual void OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer = NULL);
