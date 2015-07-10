@@ -16,7 +16,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 
 	//Movement
-	ProjectileMovement->InitialSpeed = 1200.0f;
+	ProjectileMovement->InitialSpeed = 3000.0f;
 	ProjectileMovement->ProjectileGravityScale = 0.0;
 
 

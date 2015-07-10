@@ -356,7 +356,7 @@ void APlayerCharacter::WallJump()
 
 bool APlayerCharacter::WallJumpServer_Validate()
 {
-			return true;
+	return true;
 }
 
 void APlayerCharacter::WallJumpServer_Implementation()

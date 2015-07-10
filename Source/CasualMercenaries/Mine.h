@@ -30,4 +30,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	class UBehaviorTree* MineBehavior;
 
+	void Explode();
+
 };

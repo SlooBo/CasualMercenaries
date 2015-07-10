@@ -3,6 +3,7 @@
 #include "CasualMercenaries.h"
 #include "Mine.h"
 #include "MineAIController.h"
+#include "PlayerCharacter.h"
 
 
 // Sets default values
@@ -11,6 +12,7 @@ AMine::AMine(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitiali
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
+	//Mesh, scale, material and animation in that order
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
 	Mesh->SetSkeletalMesh(MeshObj.Object);
 	Mesh->SetRelativeScale3D(FVector(.2,.2,.2));
@@ -19,17 +21,24 @@ AMine::AMine(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitiali
 	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/APB_PlayerCharacter.APB_PlayerCharacter'"));
 	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
 	
+	//Movement
 	CharacterMovement->NavAgentProps.AgentRadius = 20;
 	CharacterMovement->NavAgentProps.AgentHeight = 20;
 	CharacterMovement->NavAgentProps.AgentStepHeight = 10;
 	CharacterMovement->NavAgentProps.NavWalkingSearchHeightScale = 0.5;
 	CharacterMovement->NavAgentProps.bCanWalk = true;
 	
-	CharacterMovement->MaxWalkSpeed = 400;
+	CharacterMovement->MaxWalkSpeed = 800;
+
+	//CapsuleComponent->
+	//RootComponent->
+	
 
 
+	//MineBehavior = 
+
+	//Controller
 	AIControllerClass = AMineAIController::StaticClass();
-
 }
 
 // Called when the game starts or when spawned
@@ -43,12 +52,43 @@ void AMine::BeginPlay()
 void AMine::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
+	{
+		float distance = GetDistanceTo(*aItr);
 
+		if (distance <= 100)
+		{
+			Explode();
+		}
+	}
 }
 
 // Called to bind functionality to input
 void AMine::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
+}
+
+void AMine::Explode()
+{
+	for (TActorIterator<APlayerCharacter> It(GetWorld()); It; ++It)
+	{
+		float distance = GetDistanceTo(*It);
+
+		if (distance <= 300)
+		{
+			float x = distance / 300;
+			float explosionDamage = 30;
+			explosionDamage*= x;
+
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Splosion");
+			//UGameplayStatics::ApplyDamage(*aItr, explosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
+			//APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
+			//aItr->TakeDamage(explosionDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(tempChar->GetController()));
+		}
+	}
+	//const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+	//UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, ParticleObj2.Object, this->GetActorLocation(), FRotator::ZeroRotator, true);
+	Destroy();
 }
 

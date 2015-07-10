@@ -18,7 +18,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 	//Movement
 	ProjectileMovement->ProjectileGravityScale = 0.1;
-	ProjectileMovement->InitialSpeed = 1600.f;
+	ProjectileMovement->InitialSpeed = 2500.f;
 
 
 	//CollisionComponent
