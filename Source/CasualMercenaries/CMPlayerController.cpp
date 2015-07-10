@@ -399,3 +399,17 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(float newWeapon, flo
 	if (inventory.GetWeapon(newWeapon) != nullptr && character != NULL)
 		inventory.GetWeapon(newWeapon)->SetActorLocation(character->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(character->Mesh));
 }
+void ACMPlayerController::PrintTarget()
+{
+	ACMPlayerState *state = Cast<ACMPlayerState>(this->PlayerState);
+	if (state != nullptr)
+	{
+		APawn *pawn = state->GetHuntTarget();
+		if (pawn != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: " +pawn->GetName());
+		}
+		else
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: null");
+	}
+}

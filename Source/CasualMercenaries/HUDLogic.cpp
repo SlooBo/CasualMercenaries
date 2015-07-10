@@ -34,6 +34,7 @@ void UHUDLogic::SetUp(UUserWidget *widget, UWorld *world)
 	SetValueFromWidget(&cashText, "CashText");
 
 	SetValueFromWidget(&weaponIcon, "WeaponIcon");
+	SetValueFromWidget(&targetSphere, "TargetSphere");
 }
 
 void UHUDLogic::Update()
@@ -74,5 +75,17 @@ void UHUDLogic::Update()
 
 	ACMPlayerState *playerState = Cast<ACMPlayerState>(controller->PlayerState);
 	cashText->SetText(FText::FromString(FString::FromInt(playerState->GetMoney()) + " $"));
+
+	APawn *otherPlayerPawn = playerState->GetHuntTarget();
+	if (otherPlayerPawn != nullptr)
+	{
+			ACMPlayerState *state = Cast<ACMPlayerState>(otherPlayerPawn->PlayerState);
+			if (state != nullptr)
+			{
+				FLinearColor color = state->GetColorId();
+				targetSphere->Brush.TintColor = color;
+			}
+		
+	}
 	//currentAmmo->SetText(cont)
 }

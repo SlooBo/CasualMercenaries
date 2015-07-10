@@ -23,7 +23,6 @@ public:
 private:
 	UUserWidget *thisWidget;
 	UWorld *world;
-	UPROPERTY()
 	UProgressBar *healthProgressBar;
 	UProgressBar *staminaProgressBar;
 	UProgressBar *armorProgressBar;
@@ -35,7 +34,7 @@ private:
 	UTextBlock *clipSizeText;
 	UTextBlock *cashText;
 	UImage *weaponIcon;
-	
+	UImage *targetSphere;
 	template <typename type>
 	bool SetValueFromWidget(type **saveValueHere, FString name)
 	{
