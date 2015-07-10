@@ -52,30 +52,29 @@ FString ACMGameMode_Hunt::GetHuntStateAsString(HuntState state)
 	return enumPtr->GetEnumName((uint8)state);
 }
 
-void ACMGameMode_Hunt::StartMatch()
-{
-	Super::StartMatch();
-
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-	{
-		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
-		if (playerState != NULL)
-			if (inGameState != InGameState::Warmup && Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
-				SetRandomPlayerHuntTarget(Cast<ACMPlayerController>((*iter).Get()));
-	}
-
-	if (inGameState != InGameState::Warmup)
-	{
-		huntElapsed = -1;
-		GetWorld()->GetTimerManager().SetTimer(huntTimerHandle, this, &ACMGameMode_Hunt::HuntTickSecond, 1.0f, true, 0.0f);
-
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("GameMode: Hunt"));
-	}
-}
-
 void ACMGameMode_Hunt::HandleMatchIsWaitingToStart()
 {
 	Super::HandleMatchIsWaitingToStart();
+}
+
+void ACMGameMode_Hunt::OnMatchStart_Implementation()
+{
+	Super::OnMatchStart_Implementation();
+
+	huntElapsed = -1;
+	GetWorld()->GetTimerManager().SetTimer(huntTimerHandle, this, &ACMGameMode_Hunt::HuntTickSecond, 1.0f, true, 0.0f);
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("GameMode: Hunt"));
+}
+
+void ACMGameMode_Hunt::SetupNewPlayer(APlayerController* newPlayer)
+{
+	Super::SetupNewPlayer(newPlayer);
+
+	if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart && inGameState != InGameState::Warmup)
+		SetRandomPlayerHuntTarget(Cast<ACMPlayerController>(newPlayer));
+	else
+		SetPlayerHuntTarget(Cast<ACMPlayerController>(newPlayer), NULL);
 }
 
 void ACMGameMode_Hunt::HuntTickSecond()
