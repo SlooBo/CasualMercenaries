@@ -42,12 +42,11 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	audioComp->AttachParent = GetRootComponent();
 
 	//	CharacterMesh
-	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver6/char2.char2'"));
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver6/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
 	Mesh->SetSkeletalMesh(MeshObj.Object);
-	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MAT_Playercharacter_Inst.MAT_Playercharacter_Inst'"));
+	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/ver6/MATinst_PlayerCharacter.MATinst_PlayerCharacter'"));
 	Mesh->SetMaterial(0, MateriaObj.Object);
-	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj2(TEXT("Material'/Game/Game/PlayerCharacters/ver6/matmamat.matmamat'"));
-	Mesh->SetMaterial(1, MateriaObj2.Object);
+	Mesh->SetMaterial(1, MateriaObj.Object);
 	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/ver6/APB_PlayerCharacter_ver6.APB_PlayerCharacter_ver6'"));
 	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
 
