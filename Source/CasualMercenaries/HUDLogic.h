@@ -47,7 +47,13 @@ private:
 		{
 			type *tempValue = Cast<type>(children[i]);
 			UWidget *userWidget = Cast<UWidget>(children[i]);
-			if (tempValue != nullptr && userWidget != nullptr && userWidget->GetName().Equals(name))
+
+			FString name2 = name.Left(1);
+			name2 = name2.ToLower();
+			name2 += name.RightChop(1);
+
+			if (tempValue != nullptr && userWidget != nullptr &&
+				(userWidget->GetName().Equals(name) || userWidget->GetName().Equals(name2)))
 			{
 				*saveValueHere = Cast<type>(children[i]);
 				return true;
