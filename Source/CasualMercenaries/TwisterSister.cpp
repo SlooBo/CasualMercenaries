@@ -8,11 +8,11 @@
 ATwisterSister::ATwisterSister(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
 	//SkeletalMesh
-	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/RocketLauncher/RocketLauncher.RocketLauncher'"));
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/Weapons/RocketLauncher/RocketLauncher.RocketLauncher'"));
 	weaponMesh->SetSkeletalMesh(MeshObj.Object);
 
 	//Material
-	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
+	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/ToasterGun/MAT_toaster.MAT_toaster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 	//Scale
 	//weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));

@@ -2,10 +2,22 @@
 
 #include "CasualMercenaries.h"
 #include "LiquidProjectile.h"
+#include "PlayerCharacter.h"
 
 
 ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	projectileMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/RocketLauncher/Rocket.Rocket'"));
+	projectileMesh->SetStaticMesh(MeshObj.Object);
+	//Material
+	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/ToasterGun/MAT_toaster.MAT_toaster'"));
+	projectileMesh->SetMaterial(0, MateriaObj.Object);
+	//Scale
+	projectileMesh->SetRelativeScale3D(FVector(.1, 1, 1));
+	projectileMesh->SetSimulatePhysics(false);
+	projectileMesh->SetVisibility(false);
+
 	//Movement
 	ProjectileMovement->ProjectileGravityScale = 0.3;
 	ProjectileMovement->InitialSpeed = 1600.f;
@@ -20,14 +32,22 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 
 
 	//ParticleSystem
-	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
+	
 	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_WaterGun_Hit.P_WaterGun_Hit'"));
+	
 	flavorParticleEffect = ParticleObj.Object;
-
-
+	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_WaterGun_Shoot_Water.P_WaterGun_Shoot_Water'"));
+	particleSystem->Template = ParticleObj2.Object;
+	particleSystem->SetRelativeScale3D(FVector(2,2,2));
+	particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
+	particleSystem->Activate();
 	//replication
 	bReplicates = true;
 	bReplicateMovement = true;
+
+	//particleSystem->BeginPlay();
+	//particleSystem->trail
 }
 
 ALiquidProjectile::~ALiquidProjectile()
@@ -37,7 +57,9 @@ ALiquidProjectile::~ALiquidProjectile()
 
 void ALiquidProjectile::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Splash();
+	if (!Cast<ALiquidProjectile>(OtherActor))
+		if (!Cast<APlayerCharacter>(OtherActor))
+			Splash();
 }
 
 void ALiquidProjectile::Tick(float DeltaSeconds)
@@ -58,6 +80,5 @@ void ALiquidProjectile::Splash_Implementation()
 {	
 	//Splashing
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
-	
 	Destroy();
 }

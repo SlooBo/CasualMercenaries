@@ -8,11 +8,11 @@
 AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
 	//skeletalMesh
-	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/ToasterGun/MESH_Toaster_gun.MESH_Toaster_gun'"));
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/Weapons/ToasterGun/MESH_Toaster.MESH_Toaster'"));
 	weaponMesh->SetSkeletalMesh(MeshObj.Object);
 
 	//material
-	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/ToasterGun/MAT_toaster.MAT_toaster'"));
+	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/ToasterGun/MAT_toaster.MAT_toaster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05)); 
 	weaponMesh->SetRelativeRotation(FRotator(0, 140, 0));
@@ -64,6 +64,7 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	id = WEAPONID::MASHINE_GUN;
 	SuperFunctioAlaMiika();
 	bReplicates = true;
+
 }
 
 void AMashineGun::BeginPlay()
