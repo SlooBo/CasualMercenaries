@@ -30,7 +30,6 @@ void UHUDLogic::SetUp(UUserWidget *widget, UWorld *world)
 	SetValueFromWidget(&armorText, "ArmorText");
 
 	SetValueFromWidget(&currentAmmoText, "CurrentAmmo");
-	SetValueFromWidget(&clipSizeText, "ClipSize");
 	SetValueFromWidget(&cashText, "CashText");
 
 	SetValueFromWidget(&weaponIcon, "WeaponIcon");
@@ -57,16 +56,14 @@ void UHUDLogic::Update()
 	if (currentWeapon != nullptr)
 	{
 		FWeaponStruct *weaponStruct = WeaponData::Get()->GetWeaponData(currentWeapon->GetID());
-		currentAmmoText->SetText(FText::FromString(FString::FromInt(currentWeapon->GetAmmo())));
-		clipSizeText->SetText(FText::FromString(FString::FromInt(weaponStruct->clipSize)));
+		currentAmmoText->SetText(FText::FromString(FString::FromInt(currentWeapon->GetAmmo()) + FString(" / ") + FString::FromInt(weaponStruct->clipSize)));
 
 		UTexture2D *icon = Util::LoadObjFromPath<UTexture2D>(FName(*weaponStruct->iconPath));
 		weaponIcon->Brush.SetResourceObject(icon);
 	}
 	else
 	{
-		currentAmmoText->SetText(FText::FromString(FString::FromInt(0)));
-		clipSizeText->SetText(FText::FromString(FString::FromInt(0)));
+		currentAmmoText->SetText(FText::FromString(FString::FromInt(0) + FString(" / ") + FString::FromInt(0)));
 
 		FWeaponStruct *weaponStruct = WeaponData::Get()->GetWeaponData(WEAPONID::NO_WEAPON);
 		UTexture2D *icon = Util::LoadObjFromPath<UTexture2D>(FName(*weaponStruct->iconPath));

@@ -30,6 +30,7 @@ public:
 	APlayerHud(const FObjectInitializer& PCIP);
 	// Called when the game starts or when spawned
 	//had to be changed so blueprint can run
+
 	UFUNCTION(BlueprintCallable, Category = "UI")
 		void BeginPlayCplusplus();
 	//virtual void BeginPlay() override;

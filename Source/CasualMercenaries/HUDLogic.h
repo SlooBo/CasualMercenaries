@@ -31,7 +31,6 @@ private:
 	UTextBlock *armorText;
 
 	UTextBlock *currentAmmoText;
-	UTextBlock *clipSizeText;
 	UTextBlock *cashText;
 	UImage *weaponIcon;
 	UImage *targetSphere;
