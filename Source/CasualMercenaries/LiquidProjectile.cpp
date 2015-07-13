@@ -21,7 +21,7 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 
 	//ParticleSystem
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MudSplash.P_MudSplash'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_WaterGun_Hit.P_WaterGun_Hit'"));
 	flavorParticleEffect = ParticleObj.Object;
 
 

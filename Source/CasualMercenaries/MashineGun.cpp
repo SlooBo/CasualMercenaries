@@ -57,7 +57,7 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	//particleSystem->Template = ParticleObj.Object;
 	//particleSystem->AttachTo(weaponMesh, "exhaustSocket");
 
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj3(TEXT("ParticleSystem'/Game/Game/Particles/P_BulletTrail.P_BulletTrail'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj3(TEXT("ParticleSystem'/Game/Game/Particles/P_Bullet_Trail.P_Bullet_Trail'"));
 	bulletTrail = ParticleObj3.Object;
 
 	//ID
@@ -158,6 +158,7 @@ bool AMashineGun::ServerDrawLine_Validate(FVector begin, FVector end)
 
 void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
+	int i =+ 2;
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
 	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
@@ -177,6 +178,7 @@ void AMashineGun::Reload()
 	{
 		reloading = true;
 		audioComp->SetSound(audioList[1]);
+		audioComp->SetVolumeMultiplier(2);
 		audioComp->Play();
 	}
 }

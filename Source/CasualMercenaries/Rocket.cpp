@@ -42,14 +42,14 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 	//ParticleSystem
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_SmokeTrail.P_SmokeTrail'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Rocket_SmokeTrail.P_Rocket_SmokeTrail'"));
 	particleSystem->Template = ParticleObj.Object;
 	particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
 	particleSystem->Activate();
 
 
 	//ParticleSystem2
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion.P_Explosion'"));
 	flavorParticleEffect = ParticleObj2.Object;
 
 
@@ -90,7 +90,9 @@ void ARocket::Explode()
 	audioComp->SetSound(audioList[1]);
 
 
-	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, 0, 0);
+	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, -0.50f, 0);
+
+
 	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;
 	//UGameplayStatics::ApplyRadialDamage(GetWorld(), 25, this->GetActorLocation(), 200, UDamageType::DamageFalloff(), this->GetOwner(), this->GetOwner(), );
@@ -100,7 +102,12 @@ void ARocket::Explode()
 
 		if (distance <= ExplosionRadius)
 		{
-			float x = distance / ExplosionRadius;
+			float x = 1;
+			if (distance <= (ExplosionRadius / 2))
+				;
+			else
+				x = 1 - (0.8 * (distance / ExplosionRadius));
+
 			ExplosionDamage *= x;
 			UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());

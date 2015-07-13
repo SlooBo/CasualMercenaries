@@ -26,6 +26,10 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	ProjectileMovement->InitialSpeed = 2000.f;
 
 
+	//Delegate
+	OnActorHit.AddDynamic(this, &AGranade::OnMyActorHit);
+
+
 	//Integers
 	lifeTime = 3;
 
@@ -44,7 +48,7 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 
 	//Particles
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion.P_Explosion'"));
 	flavorParticleEffect = ParticleObj.Object;
 
 
@@ -120,6 +124,13 @@ void AGranade::Explode_Implementation()
 void AGranade::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AGranade::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
+{
+	APlayerCharacter* temp = Cast<APlayerCharacter>(OtherActor);
+	if (temp)
+		Explode();
 }
 
 //float AGranade::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)

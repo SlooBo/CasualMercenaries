@@ -18,7 +18,9 @@ public:
 	void Initialize(); 
 	FWeaponStruct *GetWeaponData(WEAPONID weaponId);
 	FString GetRangeEnumString(ERANGE_TYPE value);
+
 private:
+
 	static WeaponData *instance;
 	WeaponData();
 	~WeaponData();

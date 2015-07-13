@@ -37,7 +37,7 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 
 	//ParticleSystem
 	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("Wasps"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_PaskMyrsky.P_PaskMyrsky'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Beehive.P_Beehive'"));
 	particleSystem->Template = ParticleObj.Object;
 	particleSystem->AttachTo(weaponMesh, "WaspSocket");
 	particleSystem->SetRelativeScale3D(FVector(10, 10, 10));
@@ -67,8 +67,6 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 void AWaspNestCudgel::PrimaryFunction(APlayerCharacter* user)
 {
 	firing = true;
-	particleSystem->Activate();
-
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
 }
@@ -76,7 +74,9 @@ void AWaspNestCudgel::PrimaryFunction(APlayerCharacter* user)
 void AWaspNestCudgel::PrimaryFunctionReleased(APlayerCharacter* user)
 {
 	firing = false;
+
 	particleSystem->Deactivate();
+	audioComp->Stop();
 }
 
 void AWaspNestCudgel::SecondaryFunction(APlayerCharacter* user)
@@ -97,6 +97,10 @@ void AWaspNestCudgel::Reload()
 
 void AWaspNestCudgel::Tick(float DeltaSeconds)
 {
+	if (firing)
+	{
+		particleSystem->SetWorldLocation(GetOwner()->GetActorLocation(), false, nullptr);
+	}
 	Super::Tick(DeltaSeconds);
 }
 
@@ -105,19 +109,24 @@ void AWaspNestCudgel::Fire()
 	float damageRadius = 500.0f;
 	float damage = 5.0f;
 
+	particleSystem->Activate();
+
 
 	//UGameplayStatics::ApplyRadialDamage(GetWorld(), 25, this->GetActorLocation(), 200, UDamageType::DamageFalloff,
 	//									this->GetOwner(), this->GetOwner(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), );
 
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 	{
-		float distance = GetDistanceTo(*aItr);
-
-		if (distance <= damageRadius)
+		if (*aItr != Cast<APlayerCharacter>(this->GetOwner()))
 		{
-			UGameplayStatics::ApplyDamage(*aItr, damage, GetInstigatorController(), this, UDamageType::StaticClass());
-			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			aItr->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(tempChar->GetController()));
+			float distance = GetDistanceTo(*aItr);
+
+			if (distance <= damageRadius)
+			{
+				UGameplayStatics::ApplyDamage(*aItr, damage, GetInstigatorController(), this, UDamageType::StaticClass());
+				APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
+				aItr->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(tempChar->GetController()));
+			}
 		}
 	}
 }

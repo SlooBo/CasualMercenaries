@@ -34,6 +34,10 @@ public:
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 		void Explode();
 
+	UFUNCTION()
+		void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+
+
 	//float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 

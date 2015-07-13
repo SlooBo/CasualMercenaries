@@ -73,7 +73,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::TWISTER_GUN, twisterGun);
 
 	FWeaponStruct shotGun = FWeaponStruct(
-		5, 10, 15, 20,
+		6, 1, 15, 0.5,
 		ERANGE_TYPE::CLOSE_RANGE,
 		300, 2300, 300,
 		"Shot Gun  'Hyper Shotgun'",

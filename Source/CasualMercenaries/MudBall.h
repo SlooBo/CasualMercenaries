@@ -43,8 +43,10 @@ private:
 	/************************************************************************/
 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
-	void Explode();
+		void Explode();
 
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+		void Expand();
 
 	/************************************************************************/
 	/* Values                                                               */

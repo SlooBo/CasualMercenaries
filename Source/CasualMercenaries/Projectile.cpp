@@ -27,6 +27,8 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	ProjectileMovement->ProjectileGravityScale = 0.1;
 
 
+	lifeTime = 0;
+	deathTime = 300;
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -41,6 +43,9 @@ void AProjectile::BeginPlay()
 void AProjectile::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+	lifeTime += DeltaTime;
+	if (lifeTime >= deathTime)
+		Destroy();
 }
 
 void AProjectile::InitVelocity(const FVector& ShootDirection)

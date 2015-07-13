@@ -40,8 +40,8 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	if (audio2.Object)
 		audioList.Add(audio2.Object);
 
-
-
+	//lifeTime
+	deathTime = 20;
 
 	//ParticleSystem
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
@@ -53,7 +53,7 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	particleSystem->SetRelativeLocation(FVector(0.0f, 0.0f, -100.0f));
 
 	//ParticleSystem2
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion1.P_Explosion1'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion.P_Explosion'"));
 	flavorParticleEffect = ParticleObj2.Object;
 
 
@@ -92,7 +92,6 @@ void ATwister::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponen
 		velocity.Z *= random3;
 		projectile->InitVelocity(FVector(random1 ,random2, random3) * 1000);
 	}
-
 }
 void ATwister::FlipShitUp()
 {

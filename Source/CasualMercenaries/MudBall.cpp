@@ -42,7 +42,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 	//ParticleSystem
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
-	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MudSplash.P_MudSplash'"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Mud_Destroy.P_Mud_Destroy'"));
 	flavorParticleEffect = ParticleObj.Object;
 
 
@@ -50,8 +50,6 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	bReplicates = true;
 	bReplicateMovement = true;
 }
-
-
 
 AMudBall::~AMudBall()
 {
@@ -63,7 +61,6 @@ void AMudBall::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Norma
 	ProjectileMovement->SetActive(false, false);
 	inflating = true;
 }
-
 
 void AMudBall::Tick(float DeltaSeconds)
 {
@@ -80,10 +77,10 @@ void AMudBall::Tick(float DeltaSeconds)
 			inflating = false;
 			return;
 		}
-		size += 0.1;
-		projectileMesh->SetRelativeScale3D(FVector(size, size, size));
+		Expand();
 	}
 }
+
 void AMudBall::BeginPlay()
 {
 	Super::BeginPlay();
@@ -99,4 +96,15 @@ void AMudBall::Explode_Implementation()
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
 	particle->SetRelativeScale3D(FVector(2, 2, 2));
 	Destroy();
+}
+
+bool AMudBall::Expand_Validate()
+{
+	return true;
+}
+
+void AMudBall::Expand_Implementation()
+{
+	size += 0.1;
+	projectileMesh->SetRelativeScale3D(FVector(size, size, size));
 }
