@@ -109,14 +109,33 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 
 
 	OnClickedWeaponSlot(0);
+	SetInputMode_UIOnly();
 }
 void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 {
+	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
+	if (controller == nullptr)
+		return;
+	switch (slotIndex)
+	{
+	case 0:
+		controller->WeaponSlot1();
+		break;
+	case 1:
+		controller->WeaponSlot2();
+		break;
+	case 2:
+		controller->WeaponSlot3();
+		break;
+	case 3:
+		controller->WeaponSlot4();
+		break;
+	}
 	ChangeWeaponSlotColor(slotIndex, FLinearColor::Yellow);
 	if (slotIndex != currentWeaponIndex)
 		ChangeWeaponSlotColor(currentWeaponIndex, FLinearColor::White);
 	currentWeaponIndex = slotIndex;
-	AWeapon *weapon = Cast<ACMPlayerController>(world->GetFirstPlayerController())->GetInventory().GetWeapon(slotIndex);
+	AWeapon *weapon = controller->GetInventory().GetWeapon(slotIndex);
 	if (weapon != nullptr)
 	{
 		ChangeCurrentShopSlot((uint32)weapon->GetID());
@@ -206,7 +225,14 @@ void UShopLogic::ChangeCurrentShopSlot(uint32 slotIndex)
 }
 void UShopLogic::OnClickedQuit()
 {
-	Cast<APlayerHud>(world->GetFirstPlayerController()->GetHUD())->changeUIElement(MenuType::GAME_UI);
+	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
+	if (controller != nullptr)
+	{
+		Cast<APlayerHud>(controller->GetHUD())->changeUIElement(MenuType::GAME_UI);
+		//Cast<controller->GetPawn()
+		SetInputMode_GameOnly();
+	}
+
 }
 void UShopLogic::OnClickedBuyButton()
 {
@@ -297,7 +323,7 @@ void UShopLogic::UpdateInfoBox()
 {
 	WEAPONID weaponid = AWeapon::GetIDFromInt((int8)currentShopIndex);
 	FWeaponStruct *currentWeaponData = WeaponData::Get()->GetWeaponData(weaponid);
-	if (currentWeaponData != nullptr)
+	if (currentWeaponData != nullptr && weaponid != WEAPONID::NO_WEAPON)
 	{
 		UTexture2D *test = Util::LoadObjFromPath<UTexture2D>(FName(*currentWeaponData->iconPath));
 		ChangeWeaponIconImage(test);
@@ -313,6 +339,14 @@ void UShopLogic::UpdateInfoBox()
 			"\nRange: " + WeaponData::Get()->GetRangeEnumString(currentWeaponData->range);
 		statTextBox->SetText(FText::FromString(statText));
 	}
+	else
+	{
+		FWeaponStruct *emptyWeaponData = WeaponData::Get()->GetWeaponData(WEAPONID::NO_WEAPON);
+		UTexture2D *emptyIcon = Util::LoadObjFromPath<UTexture2D>(FName(*emptyWeaponData->iconPath));
+		ChangeWeaponIconImage(emptyIcon);
+		descriptionTextBox->SetText(FText::FromString(""));
+		statTextBox->SetText(FText::FromString(""));
+	}
 }
 
 void UShopLogic::Update()
@@ -325,4 +359,29 @@ void UShopLogic::Update()
 	if (controller->GetInventory().currentWeapon != currentWeaponIndex)
 		OnClickedWeaponSlot(controller->GetInventory().currentWeapon);
 	
+}
+
+void UShopLogic::SetInputMode_UIOnly()
+{
+	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
+	if (controller != nullptr)
+	{
+		FInputModeUIOnly InputMode;
+		//InputMode.SetLockMouseToViewport(bLockMouseToViewport);
+
+		if (shopMenu != nullptr)
+		{
+			InputMode.SetWidgetToFocus(shopMenu->TakeWidget());
+		}
+		controller->SetInputMode(InputMode);
+	}
+}
+void UShopLogic::SetInputMode_GameOnly()
+{
+	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
+	if (controller != nullptr)
+	{
+		FInputModeGameOnly InputMode;
+		controller->SetInputMode(InputMode);
+	}
 }

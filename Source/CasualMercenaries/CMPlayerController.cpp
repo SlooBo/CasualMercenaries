@@ -340,11 +340,15 @@ void ACMPlayerController::ServerUseWeapon2Release_Implementation()
 
 void ACMPlayerController::SwitchWeaponUp()
 {
+	if(Cast<APlayerHud>(GetHUD())->GetCurrentUI() != MenuType::SHOP)
 	SwitchWeapon(inventory.currentWeapon + 1);
+	//TODO change shop weapons at shoplogic
 }
 void ACMPlayerController::SwitchWeaponDown()
 {
+	if (Cast<APlayerHud>(GetHUD())->GetCurrentUI() != MenuType::SHOP)
 	SwitchWeapon(inventory.currentWeapon - 1);
+	//TODO change shop weapons at shoplogic
 }
 
 void ACMPlayerController::WeaponSlot1()

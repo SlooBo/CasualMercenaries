@@ -32,23 +32,14 @@ private:
 	UPROPERTY()
 	TArray<UButton*> shopSlotButtons;
 
-	UPROPERTY()
 	UButton* buyButton;
-	UPROPERTY()
 	UButton* upgradeButton1;
-	UPROPERTY()
 	UButton* upgradeButton2;
-	UPROPERTY()
 	UTextBlock *buyButtonText;
-	UPROPERTY()
 	UTextBlock *cashText;
-	UPROPERTY()
 	UImage* weaponImage;
-	UPROPERTY()
 	UTextBlock* tooltipText;
-	UPROPERTY()
 	UMultiLineEditableTextBox* descriptionTextBox;
-	UPROPERTY()
 	UMultiLineEditableTextBox* statTextBox;
 	UPROPERTY()
 	uint32 currentShopIndex;
@@ -80,6 +71,8 @@ private:
 	void OnClickedUpgradeButton2();
 	void ChangeWeaponIconImage(UTexture2D *newImage);
 	void UpdateInfoBox();
+	void SetInputMode_UIOnly();
+	void SetInputMode_GameOnly();
 	template <typename type>
 	bool SetValueFromWidget(type **saveValueHere, FString name)
 	{
