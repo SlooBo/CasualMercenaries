@@ -34,6 +34,9 @@ void UHUDLogic::SetUp(UUserWidget *widget, UWorld *world)
 
 	SetValueFromWidget(&weaponIcon, "WeaponIcon");
 	SetValueFromWidget(&targetSphere, "TargetSphere");
+
+	SetValueFromWidget(&cashProgressBar, "CashProgressBar");
+	SetValueFromWidget(&ammoProgressBar, "AmmoProgressBar");
 }
 
 void UHUDLogic::Update()
@@ -60,6 +63,9 @@ void UHUDLogic::Update()
 
 		UTexture2D *icon = Util::LoadObjFromPath<UTexture2D>(FName(*weaponStruct->iconPath));
 		weaponIcon->Brush.SetResourceObject(icon);
+
+		float ammoPercent = (float)currentWeapon->GetAmmo() / (float)weaponStruct->clipSize;
+		ammoProgressBar->SetPercent(ammoPercent);
 	}
 	else
 	{
@@ -68,6 +74,8 @@ void UHUDLogic::Update()
 		FWeaponStruct *weaponStruct = WeaponData::Get()->GetWeaponData(WEAPONID::NO_WEAPON);
 		UTexture2D *icon = Util::LoadObjFromPath<UTexture2D>(FName(*weaponStruct->iconPath));
 		weaponIcon->Brush.SetResourceObject(icon);
+		float ammoPercent = 1.0f;
+		ammoProgressBar->SetPercent(ammoPercent);
 	}
 
 	ACMPlayerState *playerState = Cast<ACMPlayerState>(controller->PlayerState);
@@ -84,5 +92,10 @@ void UHUDLogic::Update()
 			}
 		
 	}
+	float moneyPercent = playerState->GetMoney() / 5000.0f;
+	cashProgressBar->SetPercent(moneyPercent);
+
+	
+
 	//currentAmmo->SetText(cont)
 }

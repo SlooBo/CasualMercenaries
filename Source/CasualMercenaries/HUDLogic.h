@@ -26,6 +26,8 @@ private:
 	UProgressBar *healthProgressBar;
 	UProgressBar *staminaProgressBar;
 	UProgressBar *armorProgressBar;
+	UProgressBar *cashProgressBar;
+	UProgressBar *ammoProgressBar;
 	UTextBlock *healthText;
 	UTextBlock *staminaText;
 	UTextBlock *armorText;
