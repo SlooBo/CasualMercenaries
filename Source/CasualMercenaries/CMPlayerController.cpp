@@ -112,7 +112,9 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 
 void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
 {
-	GetInventory().GetCurrentWeapon()->weaponMesh->SetVisibility(false);
+	if (inventory.GetCurrentWeapon() != NULL)
+		inventory.GetCurrentWeapon()->weaponMesh->SetVisibility(false);
+
 	if (killed == this)
 	{
 		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(GetPawn());
@@ -388,7 +390,8 @@ void ACMPlayerController::SwitchWeapon(int newWeapon)
 	{
 		ServerSwitchWeapon(newWeapon, inventory.currentWeapon);
 		inventory.currentWeapon = newWeapon;
-		GetInventory().GetCurrentWeapon()->weaponMesh->SetVisibility(true);// If everything comes crashing down this is at fault
+		if (inventory.GetCurrentWeapon() != NULL)
+			inventory.GetCurrentWeapon()->weaponMesh->SetVisibility(true);
 	}
 }
 
