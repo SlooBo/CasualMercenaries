@@ -121,6 +121,11 @@ private:
 	void RestoreActivity();
 
 
+	UPROPERTY(VisibleAnywhere, Category = "Player actions")
+	bool dashing;
+
+	FVector dashEndLocation;
+
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")
 	bool wallTouch;
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")

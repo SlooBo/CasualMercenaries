@@ -72,6 +72,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	wallTouch = false;
 	dash_Multiplier = 0;
 
+	dashing = false;
+
 	//SetCurrentWeapon(0);
 
 	state = CHARACTER_STATE::ALIVE;
@@ -432,7 +434,7 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	FVector tempForwardResult = tempForward * _inputForward;
 	FVector tempRightResult = tempRight * _inputRight;
 	FVector tempResult = tempForwardResult + tempRightResult;
-	tempResult.Normalize();
+	//tempResult.Normalize();
 	tempResult = tempResult * dash_Multiplier;
 	LaunchCharacter(tempResult, false, false);
 	LoseStamina(20.0f);
@@ -440,6 +442,38 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	if (dashSound)
 	{
 		PlaySound(dashSound);
+	}
+
+	FVector tempActorLocation = this->GetActorLocation();
+
+	const FName traceTag("MyTraceTag");
+
+	GetWorld()->DebugDrawTraceTag = traceTag;
+
+	//https://goo.gl/pN6vYF
+	FCollisionQueryParams  TraceParams = FCollisionQueryParams(FName(TEXT("RV_TRACE")), false, this);
+	TraceParams.bTraceComplex = false;
+	TraceParams.bTraceAsyncScene = false;
+	TraceParams.bReturnPhysicalMaterial = false;
+	TraceParams.TraceTag = traceTag;
+
+	FHitResult RV_Hit(ForceInit);
+	//Forward check
+	GetWorld()->LineTraceSingle(
+		RV_Hit,//result
+		tempActorLocation,//start of line trace
+		tempActorLocation + tempResult,//end of line trace
+		ECC_Visibility,//collision channel, maybe wrong
+		TraceParams);
+	if (RV_Hit.bBlockingHit)
+	{
+		dashing = true;
+		dashEndLocation = RV_Hit.Location;
+		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
+		return;
+	}
+	else
+	{
 	}
 }
 
