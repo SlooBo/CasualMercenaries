@@ -17,6 +17,15 @@ AGhostCharacter::AGhostCharacter(const FObjectInitializer& ObjectInitializer)
 	characterMovement->MaxWalkSpeed *= 2;
 
 	CapsuleComponent->SetCollisionProfileName(TEXT("Spectator"));
+
+	// ghost post-processing effects
+	UCameraComponent* camera = GetCamera();
+	camera->PostProcessSettings.bOverride_ColorSaturation = true;
+	camera->PostProcessSettings.bOverride_ColorContrast = true;
+	camera->PostProcessSettings.bOverride_VignetteIntensity = true;
+	camera->PostProcessSettings.ColorSaturation.Set(0.0f, 0.0f, 0.0f);
+	camera->PostProcessSettings.ColorContrast.Set(1.5f, 1.5f, 1.5f);
+	camera->PostProcessSettings.VignetteIntensity = 0.76f;
 }
 
 void AGhostCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
