@@ -36,6 +36,9 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	UFUNCTION(Reliable, NetMulticast, BlueprintCallable, Category = "PlayerCondition")
+	virtual void SetState(CHARACTER_STATE _state) override;
+
 	/************************************************************************/
 	/* Movement                                                             */
 	/************************************************************************/

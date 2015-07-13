@@ -164,14 +164,9 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 	case DAMAGE_TYPE::NORMAL:
 		break;
 	case DAMAGE_TYPE::STUN:
-		canLook = false;
-		springArmComp->bUsePawnControlRotation = false;
-		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
 		SetState(CHARACTER_STATE::STUNNED);
 		break;
 	case DAMAGE_TYPE::ROOT:
-		canWalk = false;
-		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
 		SetState(CHARACTER_STATE::ROOTED);
 		break;
 	default:
@@ -181,11 +176,43 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 	Super::TakeDamage(_damage, _type, damageSource);
 }
 
+void APlayerCharacter::SetState_Implementation(CHARACTER_STATE _state)
+{
+	state = _state;
+
+	ACMPlayerController* pc = Cast<ACMPlayerController>(Controller);
+
+	switch (state)
+	{
+	case CHARACTER_STATE::STUNNED:
+		canLook = false;
+		springArmComp->bUsePawnControlRotation = false;
+		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
+		break;
+	case CHARACTER_STATE::ROOTED:
+		canWalk = false;
+		if (pc != NULL)
+			pc->SetIgnoreMoveInput(true);
+		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
+		break;
+	case CHARACTER_STATE::FROZEN:
+		if (pc != NULL)
+			pc->SetIgnoreMoveInput(true);
+		canWalk = false;
+		canLook = false;
+		break;
+	default:
+		if (pc != NULL)
+			pc->SetIgnoreMoveInput(false);
+		canLook = true;
+		canWalk = true;
+		break;
+	}
+}
+
 void APlayerCharacter::RestoreActivity()
 {
 	SetState(CHARACTER_STATE::ALIVE);
-	canWalk = true;
-	canLook = true;
 	springArmComp->bUsePawnControlRotation = true;
 }
 
