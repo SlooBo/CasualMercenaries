@@ -2,6 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "CMGameMode.h"
+#include "CMGameState.h"
 #include "CMPlayerState.h"
 #include "PlayerCharacter.h"
 #include "Util.h"
@@ -27,7 +28,7 @@ ACMGameMode::ACMGameMode(const FObjectInitializer& objectInitializer)
 	PlayerStateClass = ACMPlayerState::StaticClass();
 	SpectatorClass = ACMSpectator::StaticClass();
 	GhostCharacterClass = AGhostCharacter::StaticClass();
-	//GameStateClass = ACMGameState::StaticClass();
+	GameStateClass = ACMGameState::StaticClass();
 
 	DefaultPlayerName = FText::FromString("OfficeRat");
 
@@ -204,6 +205,35 @@ void ACMGameMode::WaitTickSecond()
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Warmup, Game starting in... ") + FString::FromInt(warmupTime - waitElapsed));
 		else if (inGameState == InGameState::Starting)
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Game starting in... ") + FString::FromInt(startTime - waitElapsed));
+	}
+
+
+}
+
+void ACMGameMode::UpdateGameState()
+{
+	ACMGameState* gameState = Cast<ACMGameState>(GameState);
+	if (gameState != NULL)
+	{
+		gameState->inGameState = inGameState;
+		if (inGameState == InGameState::Warmup || inGameState == InGameState::WarmupStarting)
+		{
+			gameState->stateTimeElapsed = waitElapsed;
+			gameState->stateTimeLength = warmupTime;
+		}
+		else if (inGameState == InGameState::Starting)
+		{
+			gameState->stateTimeElapsed = waitElapsed;
+			gameState->stateTimeLength = startTime;
+		}
+		else
+		{
+			gameState->stateTimeElapsed = mapTimeElapsed;
+			gameState->stateTimeLength = mapTimelimit;
+		}
+		
+		gameState->gameTimeElapsed = mapTimeElapsed;
+		gameState->gameTimeLength = mapTimelimit;
 	}
 }
 

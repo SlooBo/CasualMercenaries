@@ -49,6 +49,8 @@ public:
 	virtual void SetPlayerDefaults(APawn* playerPawn) override;
 	virtual void RestartPlayer(AController* controller) override;
 
+	virtual void UpdateGameState();
+
 	void WaitTickSecond();
 	void MapTickSecond();
 
@@ -106,7 +108,7 @@ protected:
 	FTimerHandle mapTimerHandle;	// Ticks once every second when the main game mode is running
 	FTimerHandle waitTimer;			// Wait for players timer before game starts
 
-	// Internal game state of the game mode
+	// Current state of the game mode
 	UPROPERTY(BlueprintReadOnly, Category = Enum)
 	InGameState inGameState;
 

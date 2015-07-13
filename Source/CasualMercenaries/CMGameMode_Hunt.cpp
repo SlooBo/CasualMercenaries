@@ -2,6 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "CMGameMode_Hunt.h"
+#include "CMGameState.h"
 #include "CMPlayerState.h"
 #include "CMPlayerController.h"
 #include "Util.h"
@@ -146,6 +147,35 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		huntCurrentRound++;
 
 		OnIntermissionStart();
+	}
+}
+
+void ACMGameMode_Hunt::UpdateGameState()
+{
+	Super::UpdateGameState();
+
+	ACMGameState* gameState = Cast<ACMGameState>(GameState);
+	if (gameState != NULL)
+	{
+		gameState->huntGameState = huntState;
+		if (huntState == HuntState::Freeze)
+		{
+			gameState->stateTimeElapsed = huntFreezeTimeElapsed;
+			gameState->stateTimeLength = huntRoundFreezeLength;
+		}
+		else if (huntState == HuntState::Intermission)
+		{
+			gameState->stateTimeElapsed = huntIntermissionElapsed;
+			gameState->stateTimeLength = huntIntermissionLength;
+		}
+		else
+		{
+			gameState->stateTimeElapsed = huntRoundElapsed;
+			gameState->stateTimeLength = huntRoundLength;
+		}
+
+		gameState->gameTimeElapsed = huntElapsed;
+		gameState->gameTimeLength = huntTotalLength;
 	}
 }
 

@@ -43,6 +43,8 @@ public:
 
 	void HuntTickSecond();
 
+	virtual void UpdateGameState() override;
+
 	void SetRandomPlayerHuntTarget(ACMPlayerController* player);
 	void SetPlayerHuntTarget(ACMPlayerController* player, ACMPlayerController* target);
 
@@ -93,7 +95,7 @@ protected:
 	int32 huntFreezeTimeElapsed;
 	int32 huntRoundElapsed;
 
-	// Internal game state of hunt mode
+	// Current state of hunt mode
 	UPROPERTY(BlueprintReadOnly, Category=Enum)
 	HuntState huntState;
 
