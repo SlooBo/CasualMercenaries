@@ -78,6 +78,13 @@ void ACMGameMode_Hunt::SetupNewPlayer(APlayerController* newPlayer)
 {
 	Super::SetupNewPlayer(newPlayer);
 
+	ACMPlayerController* pc = Cast<ACMPlayerController>(newPlayer);
+	if (pc == NULL)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Error: PlayerController is not CMPlayerController"));
+		return;
+	}
+
 	if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart && inGameState != InGameState::Warmup)
 		SetRandomPlayerHuntTarget(Cast<ACMPlayerController>(newPlayer));
 	else
@@ -288,8 +295,9 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(ACMPlayerController* player, ACMPlaye
 
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 
-	playerState->SetHuntTarget(killer->GetPawn());
-	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killer->GetName());
+	playerState->SetHuntTarget((killer != NULL) ? killer->GetPawn() : NULL);
+	FString killerName = (killer != NULL) ? killer->GetName() : TEXT("NULL");
+	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killerName);
 }
 
 void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(ACMPlayerController* player)
