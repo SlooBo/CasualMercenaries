@@ -16,6 +16,7 @@ class CASUALMERCENARIES_API ACMPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
+
 	ACMPlayerController(const class FObjectInitializer& objectInitializer);
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -95,6 +96,7 @@ public:
 	void ServerReloadWeapon();
 	UFUNCTION(Exec)
 	void PrintTarget();
+
 protected:
 
 	UPROPERTY(Replicated)

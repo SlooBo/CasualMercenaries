@@ -37,6 +37,7 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	audioComp->SetVolumeMultiplier(0.525f);
 	audioComp->bAutoActivate = false;
+	audioComp->AttachParent = GetRootComponent();
 
 	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/AC_Hum_1.AC_Hum_1'"));
 	if (audio1.Object)

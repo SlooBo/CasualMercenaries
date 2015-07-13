@@ -33,6 +33,7 @@ ATwisterSister::ATwisterSister(const FObjectInitializer& FOI) : AWeapon(FOI)
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	audioComp->SetVolumeMultiplier(0.125f);
 	audioComp->bAutoActivate = false;
+	audioComp->AttachParent = GetRootComponent();
 
 	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
 	if (audio1.Object)

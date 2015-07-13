@@ -112,6 +112,7 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 
 void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
 {
+	GetInventory().GetCurrentWeapon()->weaponMesh->SetVisibility(false);
 	if (killed == this)
 	{
 		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(GetPawn());
@@ -141,6 +142,11 @@ bool ACMPlayerController::RequestRespawn_Validate()
 
 void ACMPlayerController::RequestRespawn_Implementation()
 {
+	//GetInventory().GetCurrentWeapon()->
+	for (int i = 0; i < 4; i++)
+	{
+		GetInventory().GetWeapon(i)->SetRoot(Cast<APlayerCharacter>(this->GetPawn()));
+	}
 	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != NULL)
 	{
@@ -382,6 +388,7 @@ void ACMPlayerController::SwitchWeapon(int newWeapon)
 	{
 		ServerSwitchWeapon(newWeapon, inventory.currentWeapon);
 		inventory.currentWeapon = newWeapon;
+		GetInventory().GetCurrentWeapon()->weaponMesh->SetVisibility(true);// If everything comes crashing down this is at fault
 	}
 }
 
