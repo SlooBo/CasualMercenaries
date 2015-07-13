@@ -23,6 +23,7 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	playerMaxMoney = 20000;
 	playerKillRewardTarget = 2000;
 	playerKillRewardWrong = -1000;
+	huntRoundReward = 5000;
 
 	playerRespawnTimeMinimum = 0;
 	warmupRespawnTimeMinimum = 0;
@@ -120,22 +121,23 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		huntRoundElapsed++;
 	}
 
-	
-
+	HuntState lastState = huntState;
 	if (huntIntermissionElapsed > huntIntermissionLength)
 	{
 		huntIntermissionElapsed = 0;
-		huntState = HuntState::Freeze;
-
+		
 		if (huntRoundFreezeLength > 0)
+		{
+			huntState = HuntState::Freeze;
 			OnRoundFreezeStart();
+		}
 	}
 	if (huntFreezeTimeElapsed > huntRoundFreezeLength)
 	{
 		huntFreezeTimeElapsed = 0;
 		huntState = HuntState::Round;
 
-		if (huntRoundFreezeLength > 0)
+		if (lastState == HuntState::Freeze)
 			OnRoundFreezeEnd();
 
 		OnRoundStart();
@@ -143,8 +145,12 @@ void ACMGameMode_Hunt::HuntTickSecond()
 	if (huntRoundElapsed > huntRoundLength)
 	{
 		huntRoundElapsed = 0;
+		
 		huntState = HuntState::Intermission;
 		huntCurrentRound++;
+
+		if (lastState == HuntState::Round)
+			OnRoundEnd();
 
 		OnIntermissionStart();
 	}
@@ -181,6 +187,7 @@ void ACMGameMode_Hunt::UpdateGameState()
 
 void ACMGameMode_Hunt::OnRoundFreezeStart_Implementation()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("FREEZE: "));
 	// freeze players during freeze time
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 		(*iter)->SetIgnoreMoveInput(true);
@@ -188,6 +195,7 @@ void ACMGameMode_Hunt::OnRoundFreezeStart_Implementation()
 
 void ACMGameMode_Hunt::OnRoundFreezeEnd_Implementation()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("unFREEZE: "));
 	// unfreeze frozen players from frozen state back to unfrozen state
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 		(*iter)->SetIgnoreMoveInput(false);
@@ -205,7 +213,7 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 	}
 }
 
-void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
+void ACMGameMode_Hunt::OnRoundEnd_Implementation()
 {
 	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
 	{
@@ -217,6 +225,10 @@ void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 		// allow shop access
 		player->OnShopAccessChanged(true);
 	}
+}
+
+void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
+{
 }
 
 void ACMGameMode_Hunt::OnWarmupStart_Implementation()

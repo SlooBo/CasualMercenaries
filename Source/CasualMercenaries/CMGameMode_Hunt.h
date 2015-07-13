@@ -81,6 +81,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Round Start"), Category = "Gameplay")
 	void OnRoundStart();
 
+	// Event when round starts
+	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Round End"), Category = "Gameplay")
+	void OnRoundEnd();
+
 	// Event after round ends
 	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Intermission Start"), Category = "Gameplay")
 	void OnIntermissionStart();
