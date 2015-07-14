@@ -18,7 +18,7 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 
 	//Scaling
-	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
+	//weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
 
 	//integers
 	maxAmmo = 6;

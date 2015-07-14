@@ -16,7 +16,7 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Weapon/MAT_Mudbuster.MAT_Mudbuster'")); // Material missing!!!!!
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 	//Scaling
-	weaponMesh->SetRelativeScale3D(FVector(0.5, 0.5, 0.25));
+	//weaponMesh->SetRelativeScale3D(FVector(0.5, 0.5, 0.25));
 
 	//Audio
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
