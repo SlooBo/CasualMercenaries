@@ -142,6 +142,7 @@ private:
 
 	void WallCheck();
 	void InputDash();
+	void UpdateDash();
 
 	float staminaIncrease;
 

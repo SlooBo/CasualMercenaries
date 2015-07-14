@@ -460,7 +460,11 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(float newWeapon, flo
 	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
 
 	if (inventory.GetWeapon(previousWeapon) != nullptr)
+	{ 
 		inventory.GetWeapon(previousWeapon)->SetActorHiddenInGame(true);
+		inventory.GetWeapon(previousWeapon)->PrimaryFunctionReleased(Cast<APlayerCharacter>(GetPawn()));
+	}
+
 	if (inventory.GetWeapon(newWeapon) != nullptr)
 		inventory.GetWeapon(newWeapon)->SetActorHiddenInGame(false);
 	if (inventory.GetWeapon(newWeapon) != nullptr && character != NULL)

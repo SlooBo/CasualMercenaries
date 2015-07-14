@@ -16,7 +16,7 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	//skeletalMesh
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Weapon/MAT_Mudbuster.MAT_Mudbuster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
-	weaponMesh->SetRelativeScale3D(FVector(0.5, 0.5, 0.25));
+	//weaponMesh->SetRelativeScale3D(FVector(0.5, 0.5, 0.25));
 
 	// integers
 	maxAmmo = 120;

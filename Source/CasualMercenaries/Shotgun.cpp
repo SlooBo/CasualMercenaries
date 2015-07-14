@@ -14,7 +14,7 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	//Material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/Shotgun/MAT_Shotgun.MAT_Shotgun'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
-	weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
+	//weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
 
 	//Integer values
 	maxAmmo = 120;
