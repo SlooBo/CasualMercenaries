@@ -45,6 +45,12 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Hunt State"), Category = "Gameplay")
 	HuntState GetHuntState() { return huntGameState; }
 
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Current Hunt Round"), Category = "Gameplay")
+	int32 GetHuntCurrentRound() { return huntCurrentRound; }
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Hunt Rounds Total"), Category = "Gameplay")
+	int32 GetHuntTotalRounds() { return huntTotalRounds; }
+
 	// Current state of the base game mode
 	UPROPERTY(Replicated)
 	InGameState inGameState;
@@ -52,6 +58,14 @@ public:
 	// Current state of hunt mode
 	UPROPERTY(Replicated)
 	HuntState huntGameState;
+
+	// Current hunt round number
+	UPROPERTY(Replicated)
+	int32 huntCurrentRound;
+
+	// Total of hunt rounds in game
+	UPROPERTY(Replicated)
+	int32 huntTotalRounds;
 
 	// Elapsed time of current game state
 	UPROPERTY(Replicated)

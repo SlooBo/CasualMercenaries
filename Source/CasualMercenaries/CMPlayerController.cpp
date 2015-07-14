@@ -78,7 +78,7 @@ void ACMPlayerController::SetupInputComponent()
 	InputComponent->BindAction("WeaponSlot3", IE_Pressed, this, &ACMPlayerController::WeaponSlot3);
 	InputComponent->BindAction("WeaponSlot4", IE_Pressed, this, &ACMPlayerController::WeaponSlot4);
 
-	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &ACMPlayerController::TryRespawn);
+	InputComponent->BindAction("Reload", IE_Pressed, this, &ACMPlayerController::TryRespawn);
 }
 
 void ACMPlayerController::MusicPlay()

@@ -194,6 +194,8 @@ void ACMGameMode_Hunt::UpdateGameState()
 
 		gameState->gameTimeElapsed = huntElapsed;
 		gameState->gameTimeLength = huntTotalLength;
+		gameState->huntTotalRounds = huntRounds;
+		gameState->huntCurrentRound = huntCurrentRound;
 	}
 }
 

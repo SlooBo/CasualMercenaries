@@ -14,7 +14,6 @@ void ACMSpectator::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
 
-	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &ACMSpectator::TryRespawn);
 	InputComponent->BindAction("Reload", IE_Pressed, this, &ACMSpectator::TryRespawn);
 }
 
