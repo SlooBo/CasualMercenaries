@@ -81,6 +81,8 @@ public:
 	UFUNCTION(Exec)
 	void SetStaminaRate(float rate);
 
+	virtual void FellOutOfWorld(const class UDamageType& DmgType) override;
+
 	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, Server, WithValidation)

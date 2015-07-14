@@ -237,6 +237,11 @@ void APlayerCharacter::RestoreActivity()
 	springArmComp->bUsePawnControlRotation = true;
 }
 
+void APlayerCharacter::FellOutOfWorld(const class UDamageType& DmgType)
+{
+	OnDeath(NULL);
+}
+
 void APlayerCharacter::OnDeath_Implementation(ACMPlayerController* killer)
 {
 	if (Role >= ROLE_AutonomousProxy)
