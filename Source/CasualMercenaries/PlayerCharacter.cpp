@@ -69,7 +69,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	armor_Max = 100.0f;
 	armor = armor_Max;
 
-	staminaIntervall = 0.2;
+	staminaIncrease = 10.0f;
 
 	wallTouch = false;
 	dash_Multiplier = 0;
@@ -93,15 +93,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (staminaIntervall < staminaTimer)
-	{
-		StaminaRegenServer(); 
-		staminaTimer = 0; 
-	}
-	else
-		staminaTimer += DeltaTime;
-
+	if (!HasAuthority())
+		return;
+	StaminaRegenServer(DeltaTime); 
 	WallCheck();
 }
 
@@ -131,17 +125,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* InputComponent
 	InputComponent->BindAction("SwitchShoulder", IE_Pressed, this, &APlayerCharacter::SwitchShoulder);
 }
 
-void APlayerCharacter::StaminaRegenServer_Implementation()
+void APlayerCharacter::StaminaRegenServer(float DeltaTime)
 {
-	stamina++;
+	stamina+=DeltaTime * staminaIncrease ;
 	if (stamina > 100)
-		stamina = 100;
+		stamina = 100.0f;
 }
 
-bool APlayerCharacter::StaminaRegenServer_Validate()
-{
-	return true;
-}
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -520,4 +510,8 @@ bool APlayerCharacter::IsNetRelevantFor(const AActor* realViewer, const AActor* 
 		relevant = false;
 
 	return relevant;
+}
+void APlayerCharacter::SetStaminaRate(float rate)
+{
+	staminaIncrease = rate;
 }

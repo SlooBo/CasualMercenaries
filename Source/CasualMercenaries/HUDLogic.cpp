@@ -8,6 +8,7 @@
 #include "WeaponData.h"
 #include "CMPlayerState.h"
 #include "Util.h"
+#include "CMGameState.h"
 UHUDLogic::UHUDLogic()
 {
 
@@ -23,11 +24,9 @@ void UHUDLogic::SetUp(UUserWidget *widget, UWorld *world)
 	this->world = world;
 	SetValueFromWidget(&healthProgressBar, "HealthProgressBar");
 	SetValueFromWidget(&staminaProgressBar, "StaminaProgressBar");
-	SetValueFromWidget(&armorProgressBar, "ArmorProgressBar");
 
 	SetValueFromWidget(&healthText, "HealthText");
 	SetValueFromWidget(&staminaText, "StaminaText");
-	SetValueFromWidget(&armorText, "ArmorText");
 
 	SetValueFromWidget(&currentAmmoText, "CurrentAmmo");
 	SetValueFromWidget(&cashText, "CashText");
@@ -37,6 +36,8 @@ void UHUDLogic::SetUp(UUserWidget *widget, UWorld *world)
 
 	SetValueFromWidget(&cashProgressBar, "CashProgressBar");
 	SetValueFromWidget(&ammoProgressBar, "AmmoProgressBar");
+
+	SetValueFromWidget(&roundTimeLeft, "RoundTimer");
 }
 
 void UHUDLogic::Update()
@@ -46,12 +47,9 @@ void UHUDLogic::Update()
 		return;
 	healthProgressBar->SetPercent(player->GetHealth() / player->GetHealthMax());
 	staminaProgressBar->SetPercent(player->GetStamina() / player->GetStaminaMax());
-	armorProgressBar->SetPercent(player->GetArmor() / player->GetArmorMax());
 
 	healthText->SetText(FText::FromString(FString::FromInt((int32)player->GetHealth())));
 	staminaText->SetText(FText::FromString(FString::FromInt((int32)player->GetStamina())));
-	armorText->SetText(FText::FromString(FString::FromInt((int32)player->GetArmor())));
-
 	
 
 	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
@@ -95,7 +93,10 @@ void UHUDLogic::Update()
 	float moneyPercent = playerState->GetMoney() / 5000.0f;
 	cashProgressBar->SetPercent(moneyPercent);
 
+	ACMGameState *gameState = Cast<ACMGameState>(world->GameState);
+	FText text = FText::FromString(FString::FromInt(gameState->GetStateTimeleft()));
 	
+	roundTimeLeft->SetText(text);
 
 	//currentAmmo->SetText(cont)
 }

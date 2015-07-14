@@ -75,8 +75,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 	virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL) override;
 
-	UFUNCTION(Reliable, Server, WithValidation)
-		void StaminaRegenServer();
+	UFUNCTION()
+	void StaminaRegenServer(float DeltaTime);
+
+	UFUNCTION(Exec)
+	void SetStaminaRate(float rate);
 
 	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 
@@ -139,8 +142,7 @@ private:
 	void WallCheck();
 	void InputDash();
 
-	float staminaIntervall;
-	float staminaTimer;
+	float staminaIncrease;
 
 	int rounds;
 };

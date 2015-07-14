@@ -17,6 +17,7 @@ enum class MenuType : uint8
 	GAME_UI 		UMETA(DisplayName = "GAME_UI"),
 	SERVER_BROWSER 	UMETA(DisplayName = "SERVER_BROWSER"),
 	SHOP			UMETA(DisplayName = "SHOP"),
+	PAUSE_MENU		UMETA(DisplayName = "PAUSE_MENU"),
 	NO_UI			UMETA(DisplayName = "NO_UI")
 };
 
@@ -42,7 +43,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void changeUIElement(MenuType menu);
 	MenuType GetCurrentUI();
-
+	UFUNCTION(Exec)
+	void ChangeUI(int32 interfaceID);
 private:
 	UPROPERTY()
 	MenuType currentMenu;
@@ -60,6 +62,8 @@ private:
 	UClass *serverBrowserClass;
 	UPROPERTY()
 	UClass *shopClass;
+	UPROPERTY()
+	UClass *pauseClass;
 	UPROPERTY()
 	TArray<UUILogicBase*> logicClasses;
 	void ClearAllWidgets();
