@@ -147,12 +147,6 @@ bool ACMPlayerController::RequestRespawn_Validate()
 
 void ACMPlayerController::RequestRespawn_Implementation()
 {
-	for (int i = 0; i < 4; i++)
-	{
-		inventory.GetWeapon(i)->SetRoot(Cast<APlayerCharacter>(this->GetPawn()));
-		inventory.GetWeapon(i)->SetOwner(Cast<APlayerCharacter>(this->GetPawn()));
-		inventory.GetWeapon(i)->SetActorLocation(Cast<APlayerCharacter>(this->GetPawn())->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(Cast<APlayerCharacter>(this->GetPawn())->Mesh));
-	}
 	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != NULL)
 	{
@@ -165,11 +159,32 @@ void ACMPlayerController::Possess(APawn* inPawn)
 {
 	Super::Possess(inPawn);
 
+	if (!HasAuthority())
+		return;
+
 	APlayerCharacter* pc = Cast<APlayerCharacter>(inPawn);
 	APlayerCharacter* ghost = Cast<AGhostCharacter>(inPawn);
 	if (pc != NULL && ghost == NULL)
 	{
 		// handle player character possession here
+		for (int i = 0; i < 4; i++)
+		{
+			if (this->GetInventory().GetWeapon(i) != NULL)
+			{
+				this->GetInventory().GetWeapon(i)->SetRoot(Cast<APlayerCharacter>(pc));
+				this->GetInventory().GetWeapon(i)->SetOwner(pc);
+
+				this->GetInventory().GetWeapon(i)->SetActorLocation(
+					Cast<APlayerCharacter>(pc)->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(
+					Cast<APlayerCharacter>(pc)->Mesh
+					)
+					);
+				this->GetInventory().GetWeapon(i)->SetActorRotation(
+					Cast<APlayerCharacter>(pc)->Mesh->GetSocketByName("GunSocket")->RelativeRotation
+					);
+			}
+		}
+		
 	}
 	else if (ghost != NULL)
 	{

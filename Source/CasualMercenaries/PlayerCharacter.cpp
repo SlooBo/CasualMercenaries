@@ -504,6 +504,7 @@ bool APlayerCharacter::ChangeShirtColor_Validate(FLinearColor color)
 {
 	return true;
 }
+
 void APlayerCharacter::ChangeShirtColor_Implementation(FLinearColor color)
 {
 	UMaterialInstanceDynamic *dynamicMesh = Mesh->CreateDynamicMaterialInstance(0, Mesh->GetMaterial(0));
