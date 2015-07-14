@@ -33,6 +33,9 @@ public:
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void RequestRespawn();
+
+	virtual void Possess(APawn* inPawn) override;
+	virtual void UnPossess() override;
 	
 	void OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/);
 	void OnAnnouncement(FString announceText/*, USoundCue* announceSoundCue*/);

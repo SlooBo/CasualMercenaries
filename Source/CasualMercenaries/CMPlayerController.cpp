@@ -160,6 +160,38 @@ void ACMPlayerController::RequestRespawn_Implementation()
 			gameMode->RespawnPlayer(this);
 	}
 }
+
+void ACMPlayerController::Possess(APawn* inPawn)
+{
+	Super::Possess(inPawn);
+
+	APlayerCharacter* pc = Cast<APlayerCharacter>(inPawn);
+	APlayerCharacter* ghost = Cast<AGhostCharacter>(inPawn);
+	if (pc != NULL && ghost == NULL)
+	{
+		// handle player character possession here
+	}
+	else if (ghost != NULL)
+	{
+		// handle ghost character possession here
+	}
+}
+void ACMPlayerController::UnPossess()
+{
+	APlayerCharacter* pc = Cast<APlayerCharacter>(GetPawn());
+	APlayerCharacter* ghost = Cast<AGhostCharacter>(GetPawn());
+	if (pc != NULL && ghost == NULL)
+	{
+		// handle player character unpossession here
+	}
+	else if (ghost != NULL)
+	{
+		// handle ghost character unpossession here
+	}
+
+	Super::UnPossess();
+}
+
 bool ACMPlayerController::BuyWeapon_Validate(uint8 weaponIndex,WEAPONID weaponid)
 {
 	return true;
