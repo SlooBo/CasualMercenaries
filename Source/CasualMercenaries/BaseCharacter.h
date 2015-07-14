@@ -15,7 +15,8 @@ enum class CHARACTER_STATE : uint8
 	DEAD UMETA(DisplayName = "Dead"),
 	STUNNED UMETA(DisplayName = "Stunned"),
 	ROOTED UMETA(DisplayName = "Rooted"),
-	POISONED UMETA(DisplayName = "Poisoned")
+	POISONED UMETA(DisplayName = "Poisoned"),
+	FROZEN UMETA(DisplayName = "Frozen")
 };
 
 UCLASS()
@@ -79,7 +80,7 @@ public:
 		void LoseArmor(float _damage);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		void SetState(CHARACTER_STATE _state);
+		virtual void SetState(CHARACTER_STATE _state);
 
 protected:
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")

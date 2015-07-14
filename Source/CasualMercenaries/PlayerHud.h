@@ -17,6 +17,7 @@ enum class MenuType : uint8
 	GAME_UI 		UMETA(DisplayName = "GAME_UI"),
 	SERVER_BROWSER 	UMETA(DisplayName = "SERVER_BROWSER"),
 	SHOP			UMETA(DisplayName = "SHOP"),
+	PAUSE_MENU		UMETA(DisplayName = "PAUSE_MENU"),
 	NO_UI			UMETA(DisplayName = "NO_UI")
 };
 
@@ -30,6 +31,7 @@ public:
 	APlayerHud(const FObjectInitializer& PCIP);
 	// Called when the game starts or when spawned
 	//had to be changed so blueprint can run
+
 	UFUNCTION(BlueprintCallable, Category = "UI")
 		void BeginPlayCplusplus();
 	//virtual void BeginPlay() override;
@@ -41,7 +43,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void changeUIElement(MenuType menu);
 	MenuType GetCurrentUI();
-
+	UFUNCTION(Exec)
+	void ChangeUI(int32 interfaceID);
 private:
 	UPROPERTY()
 	MenuType currentMenu;
@@ -59,6 +62,8 @@ private:
 	UClass *serverBrowserClass;
 	UPROPERTY()
 	UClass *shopClass;
+	UPROPERTY()
+	UClass *pauseClass;
 	UPROPERTY()
 	TArray<UUILogicBase*> logicClasses;
 	void ClearAllWidgets();

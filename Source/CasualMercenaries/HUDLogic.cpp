@@ -8,6 +8,7 @@
 #include "WeaponData.h"
 #include "CMPlayerState.h"
 #include "Util.h"
+#include "CMGameState.h"
 UHUDLogic::UHUDLogic()
 {
 
@@ -23,18 +24,20 @@ void UHUDLogic::SetUp(UUserWidget *widget, UWorld *world)
 	this->world = world;
 	SetValueFromWidget(&healthProgressBar, "HealthProgressBar");
 	SetValueFromWidget(&staminaProgressBar, "StaminaProgressBar");
-	SetValueFromWidget(&armorProgressBar, "ArmorProgressBar");
 
 	SetValueFromWidget(&healthText, "HealthText");
 	SetValueFromWidget(&staminaText, "StaminaText");
-	SetValueFromWidget(&armorText, "ArmorText");
 
 	SetValueFromWidget(&currentAmmoText, "CurrentAmmo");
-	SetValueFromWidget(&clipSizeText, "ClipSize");
 	SetValueFromWidget(&cashText, "CashText");
 
 	SetValueFromWidget(&weaponIcon, "WeaponIcon");
 	SetValueFromWidget(&targetSphere, "TargetSphere");
+
+	SetValueFromWidget(&cashProgressBar, "CashProgressBar");
+	SetValueFromWidget(&ammoProgressBar, "AmmoProgressBar");
+
+	SetValueFromWidget(&roundTimeLeft, "RoundTimer");
 }
 
 void UHUDLogic::Update()
@@ -44,12 +47,9 @@ void UHUDLogic::Update()
 		return;
 	healthProgressBar->SetPercent(player->GetHealth() / player->GetHealthMax());
 	staminaProgressBar->SetPercent(player->GetStamina() / player->GetStaminaMax());
-	armorProgressBar->SetPercent(player->GetArmor() / player->GetArmorMax());
 
 	healthText->SetText(FText::FromString(FString::FromInt((int32)player->GetHealth())));
 	staminaText->SetText(FText::FromString(FString::FromInt((int32)player->GetStamina())));
-	armorText->SetText(FText::FromString(FString::FromInt((int32)player->GetArmor())));
-
 	
 
 	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
@@ -57,20 +57,23 @@ void UHUDLogic::Update()
 	if (currentWeapon != nullptr)
 	{
 		FWeaponStruct *weaponStruct = WeaponData::Get()->GetWeaponData(currentWeapon->GetID());
-		currentAmmoText->SetText(FText::FromString(FString::FromInt(currentWeapon->GetAmmo())));
-		clipSizeText->SetText(FText::FromString(FString::FromInt(weaponStruct->clipSize)));
+		currentAmmoText->SetText(FText::FromString(FString::FromInt(currentWeapon->GetAmmo()) + FString(" / ") + FString::FromInt(weaponStruct->clipSize)));
 
 		UTexture2D *icon = Util::LoadObjFromPath<UTexture2D>(FName(*weaponStruct->iconPath));
 		weaponIcon->Brush.SetResourceObject(icon);
+
+		float ammoPercent = (float)currentWeapon->GetAmmo() / (float)weaponStruct->clipSize;
+		ammoProgressBar->SetPercent(ammoPercent);
 	}
 	else
 	{
-		currentAmmoText->SetText(FText::FromString(FString::FromInt(0)));
-		clipSizeText->SetText(FText::FromString(FString::FromInt(0)));
+		currentAmmoText->SetText(FText::FromString(FString::FromInt(0) + FString(" / ") + FString::FromInt(0)));
 
 		FWeaponStruct *weaponStruct = WeaponData::Get()->GetWeaponData(WEAPONID::NO_WEAPON);
 		UTexture2D *icon = Util::LoadObjFromPath<UTexture2D>(FName(*weaponStruct->iconPath));
 		weaponIcon->Brush.SetResourceObject(icon);
+		float ammoPercent = 1.0f;
+		ammoProgressBar->SetPercent(ammoPercent);
 	}
 
 	ACMPlayerState *playerState = Cast<ACMPlayerState>(controller->PlayerState);
@@ -87,5 +90,13 @@ void UHUDLogic::Update()
 			}
 		
 	}
+	float moneyPercent = playerState->GetMoney() / 5000.0f;
+	cashProgressBar->SetPercent(moneyPercent);
+
+	ACMGameState *gameState = Cast<ACMGameState>(world->GameState);
+	FText text = FText::FromString(FString::FromInt(gameState->GetStateTimeleft()));
+	
+	roundTimeLeft->SetText(text);
+
 	//currentAmmo->SetText(cont)
 }

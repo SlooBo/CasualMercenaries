@@ -29,7 +29,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	springArmComp->SocketOffset = FVector(0, -100, 20);
 	springArmComp->TargetOffset = FVector(0, 0, 55);
 	springArmComp->bUsePawnControlRotation = true;
-	springArmComp->TargetArmLength = 800;
+	springArmComp->TargetArmLength = 400;
 	springArmComp->AttachParent = GetRootComponent();
 
 	cameraComp = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
@@ -69,8 +69,12 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	armor_Max = 100.0f;
 	armor = armor_Max;
 
+	staminaIncrease = 10.0f;
+
 	wallTouch = false;
 	dash_Multiplier = 0;
+
+	dashing = false;
 
 	//SetCurrentWeapon(0);
 
@@ -89,7 +93,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (!HasAuthority())
+		return;
+	StaminaRegenServer(DeltaTime); 
 	WallCheck();
 }
 
@@ -119,8 +125,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* InputComponent
 	InputComponent->BindAction("SwitchShoulder", IE_Pressed, this, &APlayerCharacter::SwitchShoulder);
 }
 
-
-
+void APlayerCharacter::StaminaRegenServer(float DeltaTime)
+{
+	stamina+=DeltaTime * staminaIncrease ;
+	if (stamina > 100)
+		stamina = 100.0f;
+}
 
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -164,14 +174,9 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 	case DAMAGE_TYPE::NORMAL:
 		break;
 	case DAMAGE_TYPE::STUN:
-		canLook = false;
-		springArmComp->bUsePawnControlRotation = false;
-		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
 		SetState(CHARACTER_STATE::STUNNED);
 		break;
 	case DAMAGE_TYPE::ROOT:
-		canWalk = false;
-		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
 		SetState(CHARACTER_STATE::ROOTED);
 		break;
 	default:
@@ -181,11 +186,43 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 	Super::TakeDamage(_damage, _type, damageSource);
 }
 
+void APlayerCharacter::SetState_Implementation(CHARACTER_STATE _state)
+{
+	state = _state;
+
+	ACMPlayerController* pc = Cast<ACMPlayerController>(Controller);
+
+	switch (state)
+	{
+	case CHARACTER_STATE::STUNNED:
+		canLook = false;
+		springArmComp->bUsePawnControlRotation = false;
+		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
+		break;
+	case CHARACTER_STATE::ROOTED:
+		canWalk = false;
+		if (pc != NULL)
+			pc->SetIgnoreMoveInput(true);
+		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
+		break;
+	case CHARACTER_STATE::FROZEN:
+		if (pc != NULL)
+			pc->SetIgnoreMoveInput(true);
+		canWalk = false;
+		canLook = false;
+		break;
+	default:
+		if (pc != NULL)
+			pc->SetIgnoreMoveInput(false);
+		canLook = true;
+		canWalk = true;
+		break;
+	}
+}
+
 void APlayerCharacter::RestoreActivity()
 {
 	SetState(CHARACTER_STATE::ALIVE);
-	canWalk = true;
-	canLook = true;
 	springArmComp->bUsePawnControlRotation = true;
 }
 
@@ -204,7 +241,6 @@ void APlayerCharacter::ServerOnDeath_Implementation(ACMPlayerController* killer)
 {
 	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	ACMPlayerController* playerController = Cast<ACMPlayerController>(GetController());
-
 	if (gameMode != NULL && playerController != NULL)
 		gameMode->OnPlayerDeath(playerController, killer);
 
@@ -405,7 +441,7 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	FVector tempForwardResult = tempForward * _inputForward;
 	FVector tempRightResult = tempRight * _inputRight;
 	FVector tempResult = tempForwardResult + tempRightResult;
-	tempResult.Normalize();
+	//tempResult.Normalize();
 	tempResult = tempResult * dash_Multiplier;
 	LaunchCharacter(tempResult, false, false);
 	LoseStamina(20.0f);
@@ -413,6 +449,38 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	if (dashSound)
 	{
 		PlaySound(dashSound);
+	}
+
+	FVector tempActorLocation = this->GetActorLocation();
+
+	const FName traceTag("MyTraceTag");
+
+	GetWorld()->DebugDrawTraceTag = traceTag;
+
+	//https://goo.gl/pN6vYF
+	FCollisionQueryParams  TraceParams = FCollisionQueryParams(FName(TEXT("RV_TRACE")), false, this);
+	TraceParams.bTraceComplex = false;
+	TraceParams.bTraceAsyncScene = false;
+	TraceParams.bReturnPhysicalMaterial = false;
+	TraceParams.TraceTag = traceTag;
+
+	FHitResult RV_Hit(ForceInit);
+	//Forward check
+	GetWorld()->LineTraceSingle(
+		RV_Hit,//result
+		tempActorLocation,//start of line trace
+		tempActorLocation + tempResult,//end of line trace
+		ECC_Visibility,//collision channel, maybe wrong
+		TraceParams);
+	if (RV_Hit.bBlockingHit)
+	{
+		dashing = true;
+		dashEndLocation = RV_Hit.Location;
+		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
+		return;
+	}
+	else
+	{
 	}
 }
 
@@ -442,4 +510,8 @@ bool APlayerCharacter::IsNetRelevantFor(const AActor* realViewer, const AActor* 
 		relevant = false;
 
 	return relevant;
+}
+void APlayerCharacter::SetStaminaRate(float rate)
+{
+	staminaIncrease = rate;
 }

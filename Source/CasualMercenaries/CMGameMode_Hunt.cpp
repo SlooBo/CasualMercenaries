@@ -13,9 +13,9 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	minPlayersToStart = 1;
 
 	huntRounds = 3;
-	huntIntermissionLength = 4;
-	huntRoundFreezeLength = 1;
-	huntRoundLength = 10;
+	huntIntermissionLength = 10;
+	huntRoundFreezeLength = 3;
+	huntRoundLength = 2*60;
 	
 	huntTotalLength = huntTotalLength = ((huntRoundLength + huntRoundFreezeLength) * huntRounds) + (huntIntermissionLength * (huntRounds - 1));
 
@@ -25,7 +25,10 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	playerKillRewardWrong = -1000;
 	huntRoundReward = 5000;
 
-	playerRespawnTimeMinimum = 0;
+	respawnMode = RespawnMode::AtGhost;
+	playerRespawnTime = 20;
+	warmupRespawnTime = 1;
+	playerRespawnTimeMinimum = 1;
 	warmupRespawnTimeMinimum = 0;
 }
 
@@ -74,6 +77,13 @@ void ACMGameMode_Hunt::OnMatchStart_Implementation()
 void ACMGameMode_Hunt::SetupNewPlayer(APlayerController* newPlayer)
 {
 	Super::SetupNewPlayer(newPlayer);
+
+	ACMPlayerController* pc = Cast<ACMPlayerController>(newPlayer);
+	if (pc == NULL)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Error: PlayerController is not CMPlayerController"));
+		return;
+	}
 
 	if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart && inGameState != InGameState::Warmup)
 		SetRandomPlayerHuntTarget(Cast<ACMPlayerController>(newPlayer));
@@ -154,6 +164,8 @@ void ACMGameMode_Hunt::HuntTickSecond()
 
 		OnIntermissionStart();
 	}
+
+	UpdateGameState();
 }
 
 void ACMGameMode_Hunt::UpdateGameState()
@@ -182,6 +194,8 @@ void ACMGameMode_Hunt::UpdateGameState()
 
 		gameState->gameTimeElapsed = huntElapsed;
 		gameState->gameTimeLength = huntTotalLength;
+		gameState->huntTotalRounds = huntRounds;
+		gameState->huntCurrentRound = huntCurrentRound;
 	}
 }
 
@@ -189,16 +203,24 @@ void ACMGameMode_Hunt::OnRoundFreezeStart_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("FREEZE: "));
 	// freeze players during freeze time
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-		(*iter)->SetIgnoreMoveInput(true);
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+	{
+		APlayerCharacter* pc = Cast<APlayerCharacter>((*iter)->GetCharacter());
+		if (pc != NULL && Cast<AGhostCharacter>(pc) == NULL)
+			pc->SetState(CHARACTER_STATE::FROZEN);
+	}
 }
 
 void ACMGameMode_Hunt::OnRoundFreezeEnd_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("unFREEZE: "));
 	// unfreeze frozen players from frozen state back to unfrozen state
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-		(*iter)->SetIgnoreMoveInput(false);
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+	{
+		APlayerCharacter* pc = Cast<APlayerCharacter>((*iter)->GetCharacter());
+		if (pc != NULL && Cast<AGhostCharacter>(pc) == NULL)
+			pc->SetState(CHARACTER_STATE::ALIVE);
+	}
 }
 
 void ACMGameMode_Hunt::OnRoundStart_Implementation()
@@ -277,8 +299,9 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(ACMPlayerController* player, ACMPlaye
 
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 
-	playerState->SetHuntTarget(killer->GetPawn());
-	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killer->GetName());
+	playerState->SetHuntTarget((killer != NULL) ? killer->GetPawn() : NULL);
+	FString killerName = (killer != NULL) ? killer->GetName() : TEXT("NULL");
+	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killerName);
 }
 
 void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(ACMPlayerController* player)

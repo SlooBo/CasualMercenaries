@@ -78,7 +78,7 @@ void ACMPlayerController::SetupInputComponent()
 	InputComponent->BindAction("WeaponSlot3", IE_Pressed, this, &ACMPlayerController::WeaponSlot3);
 	InputComponent->BindAction("WeaponSlot4", IE_Pressed, this, &ACMPlayerController::WeaponSlot4);
 
-	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &ACMPlayerController::TryRespawn);
+	InputComponent->BindAction("Reload", IE_Pressed, this, &ACMPlayerController::TryRespawn);
 }
 
 void ACMPlayerController::MusicPlay()
@@ -112,6 +112,12 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 
 void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
 {
+	if (inventory.GetCurrentWeapon() != NULL)
+	{
+		inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
+	}
+
 	if (killed == this)
 	{
 		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(GetPawn());
@@ -141,6 +147,12 @@ bool ACMPlayerController::RequestRespawn_Validate()
 
 void ACMPlayerController::RequestRespawn_Implementation()
 {
+	for (int i = 0; i < 4; i++)
+	{
+		inventory.GetWeapon(i)->SetRoot(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetWeapon(i)->SetOwner(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetWeapon(i)->SetActorLocation(Cast<APlayerCharacter>(this->GetPawn())->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(Cast<APlayerCharacter>(this->GetPawn())->Mesh));
+	}
 	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != NULL)
 	{
@@ -148,6 +160,38 @@ void ACMPlayerController::RequestRespawn_Implementation()
 			gameMode->RespawnPlayer(this);
 	}
 }
+
+void ACMPlayerController::Possess(APawn* inPawn)
+{
+	Super::Possess(inPawn);
+
+	APlayerCharacter* pc = Cast<APlayerCharacter>(inPawn);
+	APlayerCharacter* ghost = Cast<AGhostCharacter>(inPawn);
+	if (pc != NULL && ghost == NULL)
+	{
+		// handle player character possession here
+	}
+	else if (ghost != NULL)
+	{
+		// handle ghost character possession here
+	}
+}
+void ACMPlayerController::UnPossess()
+{
+	APlayerCharacter* pc = Cast<APlayerCharacter>(GetPawn());
+	APlayerCharacter* ghost = Cast<AGhostCharacter>(GetPawn());
+	if (pc != NULL && ghost == NULL)
+	{
+		// handle player character unpossession here
+	}
+	else if (ghost != NULL)
+	{
+		// handle ghost character unpossession here
+	}
+
+	Super::UnPossess();
+}
+
 bool ACMPlayerController::BuyWeapon_Validate(uint8 weaponIndex,WEAPONID weaponid)
 {
 	return true;
@@ -207,6 +251,7 @@ void ACMPlayerController::OpenTeamChat()
 {
 	APlayerHud *playerhud = Cast<APlayerHud>(GetHUD());
 }
+
 void ACMPlayerController::OpenShop()
 {
 	APlayerHud *playerHud = Cast<APlayerHud>(GetHUD());
@@ -216,14 +261,11 @@ void ACMPlayerController::OpenShop()
 	else
 		playerHud->changeUIElement(MenuType::SHOP);
 }
+
 void ACMPlayerController::OpenAllChat()
 {
 	APlayerHud *playerHud = Cast<APlayerHud>(GetHUD());
 }
-
-/*
-	Inventory
-*/
 
 void ACMPlayerController::ReloadWeapon()
 {
@@ -402,6 +444,13 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(float newWeapon, flo
 		inventory.GetWeapon(newWeapon)->SetActorHiddenInGame(false);
 	if (inventory.GetWeapon(newWeapon) != nullptr && character != NULL)
 		inventory.GetWeapon(newWeapon)->SetActorLocation(character->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(character->Mesh));
+	if (inventory.GetCurrentWeapon() != NULL)
+	{
+		inventory.GetCurrentWeapon()->SetRoot(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetCurrentWeapon()->SetOwner(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetCurrentWeapon()->SetActorHiddenInGame(false);// ->weaponMesh->SetVisibility(true);
+	}
+
 }
 void ACMPlayerController::PrintTarget()
 {

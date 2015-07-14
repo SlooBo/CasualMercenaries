@@ -16,6 +16,7 @@ class CASUALMERCENARIES_API ACMPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
+
 	ACMPlayerController(const class FObjectInitializer& objectInitializer);
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -32,6 +33,9 @@ public:
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void RequestRespawn();
+
+	virtual void Possess(APawn* inPawn) override;
+	virtual void UnPossess() override;
 	
 	void OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/);
 	void OnAnnouncement(FString announceText/*, USoundCue* announceSoundCue*/);
@@ -95,6 +99,7 @@ public:
 	void ServerReloadWeapon();
 	UFUNCTION(Exec)
 	void PrintTarget();
+
 protected:
 
 	UPROPERTY(Replicated)

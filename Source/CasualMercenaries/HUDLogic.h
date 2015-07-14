@@ -25,14 +25,14 @@ private:
 	UWorld *world;
 	UProgressBar *healthProgressBar;
 	UProgressBar *staminaProgressBar;
-	UProgressBar *armorProgressBar;
+	UProgressBar *cashProgressBar;
+	UProgressBar *ammoProgressBar;
 	UTextBlock *healthText;
 	UTextBlock *staminaText;
-	UTextBlock *armorText;
 
 	UTextBlock *currentAmmoText;
-	UTextBlock *clipSizeText;
 	UTextBlock *cashText;
+	UTextBlock *roundTimeLeft;
 	UImage *weaponIcon;
 	UImage *targetSphere;
 	template <typename type>

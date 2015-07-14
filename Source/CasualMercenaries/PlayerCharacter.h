@@ -36,6 +36,9 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	UFUNCTION(Reliable, NetMulticast, BlueprintCallable, Category = "PlayerCondition")
+	virtual void SetState(CHARACTER_STATE _state) override;
+
 	/************************************************************************/
 	/* Movement                                                             */
 	/************************************************************************/
@@ -71,6 +74,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 	virtual void TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer = NULL) override;
+
+	UFUNCTION()
+	void StaminaRegenServer(float DeltaTime);
+
+	UFUNCTION(Exec)
+	void SetStaminaRate(float rate);
 
 	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 
@@ -118,6 +127,11 @@ private:
 	void RestoreActivity();
 
 
+	UPROPERTY(VisibleAnywhere, Category = "Player actions")
+	bool dashing;
+
+	FVector dashEndLocation;
+
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")
 	bool wallTouch;
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")
@@ -127,6 +141,8 @@ private:
 
 	void WallCheck();
 	void InputDash();
+
+	float staminaIncrease;
 
 	int rounds;
 };
