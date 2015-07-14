@@ -207,7 +207,7 @@ void ACMGameMode::WaitTickSecond()
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Game starting in... ") + FString::FromInt(startTime - waitElapsed));
 	}
 
-
+	UpdateGameState();
 }
 
 void ACMGameMode::UpdateGameState()
@@ -256,6 +256,8 @@ void ACMGameMode::MapTickSecond()
 			// TODO: notify players to display timeleft messages?
 		}
 	}
+
+	UpdateGameState();
 }
 
 int32 ACMGameMode::MapTimeleft()

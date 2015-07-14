@@ -23,9 +23,13 @@ APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 		serverBrowserClass = (UClass*)ServerBrowserBP.Object;
 	}
 	
-		static ConstructorHelpers::FObjectFinder<UClass> ShopBP(TEXT("'/Game/Game/UI/ShopGUI.ShopGUI_C'"));
-		if (ShopBP.Object){
-			shopClass = (UClass*)ShopBP.Object;
+	static ConstructorHelpers::FObjectFinder<UClass> ShopBP(TEXT("'/Game/Game/UI/ShopGUI.ShopGUI_C'"));
+	if (ShopBP.Object){
+		shopClass = (UClass*)ShopBP.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<UClass> PauseBP(TEXT("'/Game/Game/UI/PauseMenu.PauseMenu_C'"));
+	if (PauseBP.Object){
+		pauseClass = (UClass*)PauseBP.Object;
 	}
 }
 void APlayerHud::DrawHUD()
@@ -98,6 +102,11 @@ void APlayerHud::changeUIElement(MenuType menu)
 		logicClasses.Add(shopLogic);
 		break;
 	}
+	case MenuType::PAUSE_MENU:
+	{
+		changeUIElement(pauseClass);
+		break;
+	}
 	case MenuType::NO_UI:
 	default:
 		break;
@@ -124,4 +133,8 @@ void APlayerHud::ClearAllWidgets()
 MenuType APlayerHud::GetCurrentUI()
 {
 	return currentMenu;
+}
+void APlayerHud::ChangeUI(int32 interfaceID)
+{
+	changeUIElement(static_cast<MenuType>(interfaceID));
 }
