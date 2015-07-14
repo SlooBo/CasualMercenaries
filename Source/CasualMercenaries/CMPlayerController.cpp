@@ -113,7 +113,10 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
 {
 	if (inventory.GetCurrentWeapon() != NULL)
-		inventory.GetCurrentWeapon()->weaponMesh->SetVisibility(false);
+	{
+		inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
+	}
 
 	if (killed == this)
 	{
@@ -144,10 +147,11 @@ bool ACMPlayerController::RequestRespawn_Validate()
 
 void ACMPlayerController::RequestRespawn_Implementation()
 {
-	//GetInventory().GetCurrentWeapon()->
 	for (int i = 0; i < 4; i++)
 	{
-		GetInventory().GetWeapon(i)->SetRoot(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetWeapon(i)->SetRoot(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetWeapon(i)->SetOwner(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetWeapon(i)->SetActorLocation(Cast<APlayerCharacter>(this->GetPawn())->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(Cast<APlayerCharacter>(this->GetPawn())->Mesh));
 	}
 	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != NULL)
@@ -215,6 +219,7 @@ void ACMPlayerController::OpenTeamChat()
 {
 	APlayerHud *playerhud = Cast<APlayerHud>(GetHUD());
 }
+
 void ACMPlayerController::OpenShop()
 {
 	APlayerHud *playerHud = Cast<APlayerHud>(GetHUD());
@@ -224,14 +229,11 @@ void ACMPlayerController::OpenShop()
 	else
 		playerHud->changeUIElement(MenuType::SHOP);
 }
+
 void ACMPlayerController::OpenAllChat()
 {
 	APlayerHud *playerHud = Cast<APlayerHud>(GetHUD());
 }
-
-/*
-	Inventory
-*/
 
 void ACMPlayerController::ReloadWeapon()
 {
@@ -390,8 +392,6 @@ void ACMPlayerController::SwitchWeapon(int newWeapon)
 	{
 		ServerSwitchWeapon(newWeapon, inventory.currentWeapon);
 		inventory.currentWeapon = newWeapon;
-		if (inventory.GetCurrentWeapon() != NULL)
-			inventory.GetCurrentWeapon()->weaponMesh->SetVisibility(true);
 	}
 }
 
@@ -412,6 +412,13 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(float newWeapon, flo
 		inventory.GetWeapon(newWeapon)->SetActorHiddenInGame(false);
 	if (inventory.GetWeapon(newWeapon) != nullptr && character != NULL)
 		inventory.GetWeapon(newWeapon)->SetActorLocation(character->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(character->Mesh));
+	if (inventory.GetCurrentWeapon() != NULL)
+	{
+		inventory.GetCurrentWeapon()->SetRoot(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetCurrentWeapon()->SetOwner(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetCurrentWeapon()->SetActorHiddenInGame(false);// ->weaponMesh->SetVisibility(true);
+	}
+
 }
 void ACMPlayerController::PrintTarget()
 {

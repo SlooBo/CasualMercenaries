@@ -42,11 +42,14 @@ public:
 	TArray<AWeapon*> weapons;
 
 	void ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon);
+
 	UPROPERTY()
 	class APlayerCharacter *owningPlayer;
+
 	UPROPERTY()
 	uint16 maxInventorySize;
 	int32 currentWeapon;
+
 private:
 
 	

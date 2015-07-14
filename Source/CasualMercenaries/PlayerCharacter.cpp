@@ -29,7 +29,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	springArmComp->SocketOffset = FVector(0, -100, 20);
 	springArmComp->TargetOffset = FVector(0, 0, 55);
 	springArmComp->bUsePawnControlRotation = true;
-	springArmComp->TargetArmLength = 800;
+	springArmComp->TargetArmLength = 400;
 	springArmComp->AttachParent = GetRootComponent();
 
 	cameraComp = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
@@ -251,7 +251,6 @@ void APlayerCharacter::ServerOnDeath_Implementation(ACMPlayerController* killer)
 {
 	ACMGameMode* gameMode = Cast<ACMGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	ACMPlayerController* playerController = Cast<ACMPlayerController>(GetController());
-
 	if (gameMode != NULL && playerController != NULL)
 		gameMode->OnPlayerDeath(playerController, killer);
 
