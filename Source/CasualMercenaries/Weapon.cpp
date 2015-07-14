@@ -36,6 +36,7 @@ void AWeapon::SuperFunctioAlaMiika()
 	damage = data->damage;
 	firingInterval = data->fireRate;
 	reloadTime = data->reloadTime;
+	//muzzleOffset = FVector( 0, 0, 0);
 }
 
 // Called when the game starts or when spawned
