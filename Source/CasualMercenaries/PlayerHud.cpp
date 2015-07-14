@@ -138,3 +138,11 @@ void APlayerHud::ChangeUI(int32 interfaceID)
 {
 	changeUIElement(static_cast<MenuType>(interfaceID));
 }
+UUILogicBase *APlayerHud::GetCurrentUILogic()
+{
+	if (logicClasses.IsValidIndex(0))
+	{
+		return logicClasses[0];
+	}
+	return nullptr;
+}

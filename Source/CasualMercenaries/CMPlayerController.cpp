@@ -8,7 +8,7 @@
 #include "CMPlayerState.h"
 #include "WeaponData.h"
 #include "PlayerHud.h"
-
+#include "ShopLogic.h"
 
 ACMPlayerController::ACMPlayerController(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
@@ -272,7 +272,13 @@ void ACMPlayerController::OpenShop()
 	APlayerHud *playerHud = Cast<APlayerHud>(GetHUD());
 
 	if (playerHud->GetCurrentUI() == MenuType::SHOP)
+	{
+		APlayerCharacter *player = Cast<APlayerCharacter>(GetPawn());
+		if (player != nullptr)
+		player->RestoreActivity();
 		playerHud->changeUIElement(MenuType::GAME_UI);
+	
+	}
 	else
 		playerHud->changeUIElement(MenuType::SHOP);
 }

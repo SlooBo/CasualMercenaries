@@ -211,6 +211,15 @@ void APlayerCharacter::SetState_Implementation(CHARACTER_STATE _state)
 		canWalk = false;
 		canLook = false;
 		break;
+	case CHARACTER_STATE::SHOPPING:
+	{
+		if (pc != NULL)
+		{
+			pc->SetIgnoreMoveInput(true);
+			canLook = false;
+			canWalk = false;
+		}
+	}
 	default:
 		if (pc != NULL)
 			pc->SetIgnoreMoveInput(false);
