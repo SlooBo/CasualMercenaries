@@ -94,9 +94,12 @@ void UHUDLogic::Update()
 	cashProgressBar->SetPercent(moneyPercent);
 
 	ACMGameState *gameState = Cast<ACMGameState>(world->GameState);
-	FText text = FText::FromString(FString::FromInt(gameState->GetStateTimeleft()));
-	
-	roundTimeLeft->SetText(text);
+	if (gameState != nullptr)
+	{
+		FText text = FText::FromString(FString::FromInt(gameState->GetStateTimeleft()));
+
+		roundTimeLeft->SetText(text);
+	}
 
 	//currentAmmo->SetText(cont)
 }
