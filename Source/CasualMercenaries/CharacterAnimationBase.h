@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Animation/AnimInstance.h"
+//#include "Weap"
 #include "CharacterAnimationBase.generated.h"
 
 /**
@@ -19,13 +20,15 @@ public:
 	UCharacterAnimationBase(const FObjectInitializer& ObjectInitializer);
 	~UCharacterAnimationBase();
 	/** Left Foot Rotation, Set in Character.cpp Tick */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FootPlacement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Doge")
 		float cameraRot;
 
 	/** Left Upper Leg Offset, Set in Character.cpp Tick */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FootPlacement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Doge")
 		bool wasJustShooting;
-	UFUNCTION(BLueprintCallable, Category = FootPlacement)
+	UFUNCTION(BLueprintCallable, Category = "Doge")
 	void UpdateWasJustShooting();
-	
+
+	UFUNCTION(BlueprintCallable, Category = "Doge")
+	WEAPONID GetCurrentWeapon();
 };

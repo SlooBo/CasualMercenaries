@@ -46,3 +46,16 @@ void UCharacterAnimationBase::UpdateWasJustShooting()
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "WasJustSHooting = true");
 
 }
+WEAPONID UCharacterAnimationBase::GetCurrentWeapon()
+{
+	if (GetWorld() == nullptr)
+		return WEAPONID::NO_WEAPON;
+	ACMPlayerController *controller = Cast<ACMPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (controller == nullptr)
+		return WEAPONID::NO_WEAPON;
+	AWeapon *currentWeapon = controller->GetInventory().GetWeapon(controller->GetInventory().currentWeapon);
+	if (currentWeapon == nullptr)
+		return WEAPONID::NO_WEAPON;
+	else
+		return currentWeapon->GetID();
+}
