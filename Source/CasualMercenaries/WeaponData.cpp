@@ -51,7 +51,7 @@ void WeaponData::Initialize()
 		100, 200, 300,
 		"Mudbuster Gun 'Liero's dröm'",
 		"Insta mud instantly just point and shoot! Where ever you need, what ever you want! Aproved by Miika the Great",
-		"Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
+		"Texture2D'/Game/Game/UI/Textures/MudbusterPic.MudbusterPic'");
 	weaponData.Add(WEAPONID::MUDBUSTER_GUN, mudbusterGun);
 
 	FWeaponStruct waspGun = FWeaponStruct(
@@ -60,7 +60,7 @@ void WeaponData::Initialize()
 		200, 1000, 600,
 		"Wasp Stick 'WaspNestCudgel'",
 		"Makes you the Queen/King bee, sent forth thine minions!",
-		"Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
+		"Texture2D'/Game/Game/UI/Textures/BeeHivePic.BeeHivePic'");
 	weaponData.Add(WEAPONID::WASP_GUN, waspGun);
 
 	FWeaponStruct twisterGun = FWeaponStruct(
