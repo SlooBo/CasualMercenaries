@@ -19,7 +19,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	//NavMeshIntegration
 	projectileMesh->SetCanEverAffectNavigation(true);
 
-
+	
 	//Movement
 	ProjectileMovement->ProjectileGravityScale = 0.1;
 	ProjectileMovement->InitialSpeed = 2500.f;

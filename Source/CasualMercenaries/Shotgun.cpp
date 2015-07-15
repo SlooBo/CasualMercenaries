@@ -76,18 +76,23 @@ void AShotgun::Fire()
 	FVector userLoc2;
 	FRotator cameraRot;
 
+
+
 	this->GetOwner()->GetActorEyesViewPoint(userLoc2, cameraRot);
+
+	FVector cameraLoc = Cast<APlayerCharacter>(GetOwner())->GetCamera()->GetComponentLocation();
+
 	userLoc = this->GetOwner()->GetActorLocation();
 
 	FVector shootDir = cameraRot.Vector();
 	for (int i = 0; i < 10; i++)
 	{
 		//Bullet spread
-		float random1 = (2 * FMath::FRand() - 1) * 0.05;
-		float random2 = (2 * FMath::FRand() - 1) * 0.05;
-		float random3 = (2 * FMath::FRand() - 1) * 0.05;
+		float random1 = (2 * FMath::FRand() - 1) * 0.025;
+		float random2 = (2 * FMath::FRand() - 1) * 0.025;
+		float random3 = (2 * FMath::FRand() - 1) * 0.025;
 		FVector random(random1, random2, random3);
-		//shootDir.Set(shootDir.X + random1, shootDir.Y + random2, shootDir.Z + random3);
+
 		shootDir += random;
 
 		//LineTrace
@@ -101,7 +106,10 @@ void AShotgun::Fire()
 
 		FHitResult hit(ForceInit);
 
-		GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
+
+		GetWorld()->LineTraceSingle(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
+
+		GetWorld()->LineTraceSingle(hit, startTrace, hit.ImpactPoint, ECollisionChannel::ECC_Destructible, traceParams);
 
 
 		//Play effect 
@@ -121,7 +129,7 @@ void AShotgun::Fire()
 
 
 		//Another effect
-		DrawLine(startTrace, endTrace);
+		DrawLine(startTrace, hit.ImpactPoint);
 	
 	}
 	 ammo--;
@@ -156,10 +164,9 @@ void AShotgun::ServerDrawLine_Implementation(FVector begin, FVector end)
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
 
-	DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
-	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
-	//UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
-	//particlen->SetVectorParameter("BulletTrailEnd", end);
+	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
+	particlen->SetVectorParameter("BulletTrailEnd", end);
 }
 
 void AShotgun::SecondaryFunction(APlayerCharacter* user)

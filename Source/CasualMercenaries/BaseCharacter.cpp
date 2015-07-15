@@ -19,7 +19,7 @@ ABaseCharacter::ABaseCharacter()
 	armor_Max = 100;
 	armor = 100;
 
-	state = CHARACTER_STATE:: ALIVE;
+	state = CHARACTER_STATE::ALIVE;
 
 	/* Don't collide with camera checks to keep 3rd person camera at position when other players are standing behind player */
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);

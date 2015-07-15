@@ -12,11 +12,12 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	CollisionComp->InitSphereRadius(15.0f);
 	CollisionComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	CollisionComp->SetNotifyRigidBodyCollision(true);
-
+	CollisionComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	//Set Root component
 	RootComponent = CollisionComp;
+	
 
-	//MovementComponent
+	//MovementComponent  
 	ProjectileMovement = ObjectInitializer.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
 	ProjectileMovement->InitialSpeed = 600.f;

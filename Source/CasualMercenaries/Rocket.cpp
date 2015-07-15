@@ -14,7 +14,6 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	projectileMesh->SetStaticMesh(MeshObj.Object);
 	//Material MISSING!
 
-
 	//Movement
 	ProjectileMovement->InitialSpeed = 3000.0f;
 	ProjectileMovement->ProjectileGravityScale = 0.0;
@@ -55,7 +54,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 	//radial force
 	radialForceComponent = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
-	radialForceComponent->ForceStrength = 5000000;
+	radialForceComponent->ForceStrength = 50000;
 	radialForceComponent->AttachTo(projectileMesh, "ExhaustSocket");
 
 	//Replication
@@ -101,7 +100,7 @@ void ARocket::Explode()
 
 	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;
-	//UGameplayStatics::ApplyRadialDamage(GetWorld(), 25, this->GetActorLocation(), 200, UDamageType::DamageFalloff(), this->GetOwner(), this->GetOwner(), );
+
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 	{
 		float distance = GetDistanceTo(*aItr);
@@ -126,7 +125,6 @@ void ARocket::Explode()
 
 		if (distance <= ExplosionRadius)
 		{
-			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			AProjectile* tempChar = Cast<AProjectile>(this->GetOwner());
 			aItr->TakeDamage(ExplosionDamage * 2);
 		}
