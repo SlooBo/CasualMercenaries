@@ -26,15 +26,15 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	tempMoveComp->MaxWalkSpeed = 1500;
 	springArmComp = ObjectInitializer.CreateDefaultSubobject<USpringArmComponent>(this, TEXT("CameraSpring"));
 	//these 2 need finetuning
-	springArmComp->SocketOffset = FVector(0, -100, 20);
-	springArmComp->TargetOffset = FVector(0, 0, 55);
+	springArmComp->SocketOffset = FVector(0, 100, 20);
+	springArmComp->TargetOffset = FVector(0, 0, 100);
 	springArmComp->bUsePawnControlRotation = true;
 	springArmComp->TargetArmLength = 400;
 	springArmComp->AttachParent = GetRootComponent();
 
 	cameraComp = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("Camera"));
 	cameraComp->AttachParent = springArmComp;
-
+	cameraComp->SetRelativeLocation(FVector(130, 0, 0));
 	//Audio component initialization
 	audioComp = ObjectInitializer.CreateDefaultSubobject<UAudioComponent>(this, TEXT("AudioComp"));
 	audioComp->bAutoActivate = false;
@@ -288,13 +288,13 @@ void APlayerCharacter::SwitchShoulder()
 	if (rightShoulder)
 	{
 		springArmComp->SocketOffset = FVector(0, 100, 20);
-		springArmComp->TargetOffset = FVector(0, 0, 55);
+		springArmComp->TargetOffset = FVector(0, 0, 100);
 		rightShoulder = false;
 	}
 	else
 	{
 		springArmComp->SocketOffset = FVector(0, -100, 20);
-		springArmComp->TargetOffset = FVector(0, 0, 55);
+		springArmComp->TargetOffset = FVector(0, 0, 100);
 		rightShoulder = true;
 	}
 }
