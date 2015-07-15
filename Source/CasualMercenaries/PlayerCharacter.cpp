@@ -405,7 +405,7 @@ void APlayerCharacter::WallJumpServer_Implementation()
 
 void APlayerCharacter::InputDash()
 {
-	if (state == CHARACTER_STATE::ALIVE)
+	
 	ServerDash(GetInputAxisValue("MoveForward") , GetInputAxisValue("MoveRight"));
 }
 
@@ -418,7 +418,8 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 {
 	if (IsMoveInputIgnored())
 		return;
-
+	if (state != CHARACTER_STATE::ALIVE)
+		return;
 	//if (this->CharacterMovement->IsFalling())
 	//{
 	//	dash_Multiplier = 1000;

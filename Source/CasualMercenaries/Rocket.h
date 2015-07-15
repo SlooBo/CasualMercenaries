@@ -45,6 +45,6 @@ private:
 	/************************************************************************/
 
 	void Explode();
-
+	URadialForceComponent *radialForceComponent;
 
 };
