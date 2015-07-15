@@ -11,9 +11,13 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 	projectileMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/MudBuster/Projectile/MESH_Budbuster_projectile.MESH_Budbuster_projectile'"));
 	projectileMesh->SetStaticMesh(MeshObj.Object);
+
 	//Material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Projectile/MAT_Mudbuster_projectile.MAT_Mudbuster_projectile'")); // Material missing!!!!!
 	projectileMesh->SetMaterial(0, MateriaObj.Object);
+
+	//NavMeshIntegration
+	projectileMesh->SetCanEverAffectNavigation(true);
 
 
 	//Movement
@@ -38,6 +42,21 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 	//Triggers
 	inflating = false;
+
+
+	//Audio
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.525f);
+	audioComp->bAutoActivate = false;
+	audioComp->AttachParent = GetRootComponent();
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/AC_Hum_1.AC_Hum_1'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Explosion_4.Explosion_4'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
 
 
 	//ParticleSystem

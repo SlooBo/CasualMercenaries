@@ -45,6 +45,8 @@ public:
 	MenuType GetCurrentUI();
 	UFUNCTION(Exec)
 	void ChangeUI(int32 interfaceID);
+	UFUNCTION()
+	UUILogicBase *GetCurrentUILogic();
 private:
 	UPROPERTY()
 	MenuType currentMenu;

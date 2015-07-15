@@ -32,6 +32,7 @@ private:
 	UPROPERTY()
 	TArray<UButton*> shopSlotButtons;
 
+	TArray<UImage*> weaponSlotIcons;
 	UButton* buyButton;
 	UButton* upgradeButton1;
 	UButton* upgradeButton2;

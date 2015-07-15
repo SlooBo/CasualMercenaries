@@ -9,6 +9,7 @@
 #include "WeaponData.h"
 #include "CMPlayerState.h"
 #include "CMPlayerController.h"
+#include "PlayerCharacter.h"
 UShopLogic::UShopLogic(const FObjectInitializer& PCIP)
 {
 
@@ -77,6 +78,15 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 		shopSlotButtons.Add(tempShopButton);
 		shopSlots.Add(shopSlot);
 	}
+
+	
+
+	for (int i = 0; i < 4; i++)
+	{
+		UImage *tempImage = nullptr;
+		SetValueFromWidget(&tempImage, "WeaponImage" + FString::FromInt(i));
+		weaponSlotIcons.Add(tempImage);
+	}
 	/*
 	Setting buyButton's Tooltip widget
 	*/
@@ -107,9 +117,14 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 
 
 
-
-	OnClickedWeaponSlot(0);
-	SetInputMode_UIOnly();
+	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
+	if (controller == nullptr)
+		return;
+	APlayerCharacter *player = Cast<APlayerCharacter>(controller->GetPawn());
+	if (player == nullptr)
+		return;
+	player->SetState(CHARACTER_STATE::SHOPPING);
+	
 }
 void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 {
@@ -230,7 +245,10 @@ void UShopLogic::OnClickedQuit()
 	{
 		Cast<APlayerHud>(controller->GetHUD())->changeUIElement(MenuType::GAME_UI);
 		//Cast<controller->GetPawn()
-		SetInputMode_GameOnly();
+		//SetInputMode_GameOnly();
+		APlayerCharacter *player= Cast<APlayerCharacter>(controller->GetPawn());
+		if (player != nullptr)
+		player->RestoreActivity();
 	}
 
 }
@@ -359,6 +377,25 @@ void UShopLogic::Update()
 	if (controller->GetInventory().currentWeapon != currentWeaponIndex)
 		OnClickedWeaponSlot(controller->GetInventory().currentWeapon);
 	
+	
+	for (int i = 0; i < 4; i++)
+	{
+		AWeapon *weapon = Cast<ACMPlayerController>(world->GetFirstPlayerController())->GetInventory().GetWeapon(i);
+		
+
+		if (weapon != nullptr)
+		{
+			FName iconPath = *WeaponData::Get()->GetWeaponData(weapon->GetID())->iconPath;
+			UTexture2D *texture = Util::LoadObjFromPath<UTexture2D>(iconPath);
+			weaponSlotIcons[i]->Brush.SetResourceObject(texture);
+		}
+		else
+		{
+			FName iconPath = *WeaponData::Get()->GetWeaponData(WEAPONID::NO_WEAPON)->iconPath;
+			UTexture2D *texture = Util::LoadObjFromPath<UTexture2D>(iconPath);
+			weaponSlotIcons[i]->Brush.SetResourceObject(texture);
+		}
+	}
 }
 
 void UShopLogic::SetInputMode_UIOnly()

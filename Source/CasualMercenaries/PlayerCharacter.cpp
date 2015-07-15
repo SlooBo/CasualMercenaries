@@ -97,6 +97,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		return;
 	StaminaRegenServer(DeltaTime); 
 	WallCheck();
+	UpdateDash();
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type _endPlayReason)
@@ -211,6 +212,15 @@ void APlayerCharacter::SetState_Implementation(CHARACTER_STATE _state)
 		canWalk = false;
 		canLook = false;
 		break;
+	case CHARACTER_STATE::SHOPPING:
+	{
+		if (pc != NULL)
+		{
+			pc->SetIgnoreMoveInput(true);
+			canLook = false;
+			canWalk = false;
+		}
+	}
 	default:
 		if (pc != NULL)
 			pc->SetIgnoreMoveInput(false);
@@ -367,26 +377,6 @@ void APlayerCharacter::WallCheck()
 void APlayerCharacter::WallJump()
 {
 	WallJumpServer();
-	//if (wallTouch == true)
-	//{
-	//	if (this->CharacterMovement->IsFalling())
-	//	{
-	//		//To disable ever increasing falling speed
-	//		this->CharacterMovement->Velocity = FVector(0, 0, 0);
-
-	//		FRotator temp = GetActorRotation();
-	//		FRotator tempControllerRotation = GetActorRotation();
-	//		FRotator tempControllerYaw(0, tempControllerRotation.Yaw, 0);
-	//		//Wall jump is adjusted using these 3
-	//		FVector tempForwardVector = tempControllerYaw.Vector() * 500.0f;
-	//		FVector tempResult = tempForwardVector.MirrorByVector(wallJumpNormal) * 2.5f;
-	//		tempResult = tempResult + FVector(0.0f, 0.0f, 800.0f);
-
-	//		LaunchCharacter(tempResult, false, false);
-	//		//Hox!
-	//		LoseStamina(25.0f);
-	//	}
-	//}
 }
 
 bool APlayerCharacter::WallJumpServer_Validate()
@@ -415,7 +405,7 @@ void APlayerCharacter::WallJumpServer_Implementation()
 
 void APlayerCharacter::InputDash()
 {
-	if (state == CHARACTER_STATE::ALIVE)
+	
 	ServerDash(GetInputAxisValue("MoveForward") , GetInputAxisValue("MoveRight"));
 }
 
@@ -428,23 +418,24 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 {
 	if (IsMoveInputIgnored())
 		return;
-
-	if (this->CharacterMovement->IsFalling())
-	{
-		dash_Multiplier = 1000;
-	}
-	else
-		dash_Multiplier = 5000;
+	if (state != CHARACTER_STATE::ALIVE)
+		return;
+	//if (this->CharacterMovement->IsFalling())
+	//{
+	//	dash_Multiplier = 1000;
+	//}
+	//else
+	//	dash_Multiplier = 5000;
 
 	FVector tempForward = this->GetActorForwardVector();
 	FVector tempRight = this->GetActorRightVector();
 	FVector tempForwardResult = tempForward * _inputForward;
 	FVector tempRightResult = tempRight * _inputRight;
 	FVector tempResult = tempForwardResult + tempRightResult;
-	//tempResult.Normalize();
-	tempResult = tempResult * dash_Multiplier;
-	LaunchCharacter(tempResult, false, false);
-	LoseStamina(20.0f);
+	tempResult.Normalize();
+	tempResult = tempResult * 400;
+	//LaunchCharacter(tempResult, false, false);
+	//LoseStamina(20.0f);
 
 	if (dashSound)
 	{
@@ -476,11 +467,39 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	{
 		dashing = true;
 		dashEndLocation = RV_Hit.Location;
-		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
+		canWalk = false;
+		UE_LOG(LogTemp, Warning, TEXT("Hit wall"));
 		return;
 	}
 	else
 	{
+		dashing = true;
+		dashEndLocation = tempActorLocation + tempResult;
+		canWalk = false;
+	}
+}
+
+void APlayerCharacter::UpdateDash()
+{
+	if (dashing)
+	{
+		FVector tempActorLocation = this->GetActorLocation();
+		FVector tempDirection = FVector();
+
+		//tempCalc.Dist(tempActorLocation, dashEndLocation);
+		if (FVector::Dist(tempActorLocation, dashEndLocation) < 1)
+		{ 
+			dashing = false;
+		}
+		else
+		{
+
+			CharacterMovement->Velocity = -(tempActorLocation - dashEndLocation);
+		}
+	}
+	else
+	{
+		canWalk = true;
 	}
 }
 

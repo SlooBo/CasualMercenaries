@@ -53,6 +53,10 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion.P_Explosion'"));
 	flavorParticleEffect = ParticleObj2.Object;
 
+	//radial force
+	radialForceComponent = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
+	radialForceComponent->ForceStrength = 5000000;
+	radialForceComponent->AttachTo(projectileMesh, "ExhaustSocket");
 
 	//Replication
 	bReplicates = true;
@@ -93,7 +97,7 @@ void ARocket::Explode()
 
 
 	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, -0.50f, 0);
-
+	radialForceComponent->FireImpulse();
 
 	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;

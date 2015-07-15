@@ -8,7 +8,7 @@
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
 	currentMenu = MenuType::NO_UI;
-	static ConstructorHelpers::FObjectFinder<UClass> MainMenuBP(TEXT("'/Game/Game/UI/PhoneUITest.PhoneUITest_C'"));
+	static ConstructorHelpers::FObjectFinder<UClass> MainMenuBP(TEXT("'/Game/Game/UI/MainMenu.MainMenu_C'"));
 	if (MainMenuBP.Object){
 		mainMenuClass = (UClass*)MainMenuBP.Object;
 	}
@@ -137,4 +137,12 @@ MenuType APlayerHud::GetCurrentUI()
 void APlayerHud::ChangeUI(int32 interfaceID)
 {
 	changeUIElement(static_cast<MenuType>(interfaceID));
+}
+UUILogicBase *APlayerHud::GetCurrentUILogic()
+{
+	if (logicClasses.IsValidIndex(0))
+	{
+		return logicClasses[0];
+	}
+	return nullptr;
 }

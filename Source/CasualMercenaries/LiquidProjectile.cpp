@@ -14,7 +14,7 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/ToasterGun/MAT_toaster.MAT_toaster'"));
 	projectileMesh->SetMaterial(0, MateriaObj.Object);
 	//Scale
-	projectileMesh->SetRelativeScale3D(FVector(.1, 1, 1));
+	projectileMesh->SetRelativeScale3D(FVector(1, 1, 1));
 	projectileMesh->SetSimulatePhysics(false);
 	projectileMesh->SetVisibility(false);
 
@@ -32,7 +32,6 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 
 
 	//ParticleSystem
-	
 	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_WaterGun_Hit.P_WaterGun_Hit'"));
 	
 	flavorParticleEffect = ParticleObj.Object;
@@ -42,6 +41,21 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 	particleSystem->SetRelativeScale3D(FVector(2,2,2));
 	particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
 	particleSystem->Activate();
+
+	//Audio
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetVolumeMultiplier(0.525f);
+	audioComp->bAutoActivate = false;
+	audioComp->AttachParent = GetRootComponent();
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/AC_Hum_1.AC_Hum_1'"));
+	if (audio1.Object)
+		audioList.Add(audio1.Object);
+
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio2(TEXT("SoundWave'/Game/Game/Audio/Explosion_4.Explosion_4'"));
+	if (audio2.Object)
+		audioList.Add(audio2.Object);
+
 	//replication
 	bReplicates = true;
 	bReplicateMovement = true;
