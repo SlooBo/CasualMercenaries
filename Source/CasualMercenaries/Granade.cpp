@@ -57,8 +57,8 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	bReplicates = true;
 	bReplicateMovement = true;
 
-	audioComp->SetSound(audioList[0]);
-	audioComp->Play();
+	//audioComp->SetSound(audioList[0]);
+	//audioComp->Play();
 }
 
 AGranade::~AGranade()
@@ -116,8 +116,8 @@ void AGranade::Explode_Implementation()
 		}
 	}
 
-	audioComp->SetSound(audioList[1]);
-	audioComp->Play();
+	//audioComp->SetSound(audioList[1]);
+	//audioComp->Play();
 
 	Destroy();
 }

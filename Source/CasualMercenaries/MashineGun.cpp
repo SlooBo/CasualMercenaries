@@ -91,9 +91,9 @@ void AMashineGun::Fire()
 	FVector shootDir = cameraRot.Vector();
 
 	//Bullet spread
-	float random1 = FMath::FRand() * 0.05;
-	float random2 = FMath::FRand() * 0.05;
-	float random3 = FMath::FRand() * 0.05;
+	float random1 = (2 * FMath::FRand() - 1) * 0.05;
+	float random2 = (2 * FMath::FRand() - 1) * 0.05;
+	float random3 = (2 * FMath::FRand() - 1) * 0.05;
 	shootDir.Set(shootDir.X + random1, shootDir.Y + random2, shootDir.Z + random3);
 
 	//LineTrace
@@ -118,12 +118,12 @@ void AMashineGun::Fire()
 	//Hit resolve
 	ABaseCharacter* player = Cast<ABaseCharacter>(hit.GetActor());
 	if (player != nullptr)
-		player->TakeDamage(10, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
+		player->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
 	else
 	{ 
 		AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
 		if (projectile != nullptr)
-			projectile->TakeDamage(20);// , FDamageEvent::FDamageEvent(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), this);
+			projectile->TakeDamage(damage);// , FDamageEvent::FDamageEvent(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), this);
 	}
 
 	muzzleOffset.X = 100;
