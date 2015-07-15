@@ -48,4 +48,6 @@ private:
 	/************************************************************************/
 
 	float lifeTime, livedTime;
+
+	URadialForceComponent *radialForceComponent;
 };

@@ -18,6 +18,7 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	projectileMesh->SetRelativeScale3D(FVector(1, 1, 1));
 	projectileMesh->SetSimulatePhysics(true);
 
+
 	this->RootComponent = projectileMesh;
 
 
@@ -57,6 +58,12 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	bReplicates = true;
 	bReplicateMovement = true;
 
+	//radial force
+	radialForceComponent = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
+	radialForceComponent->ForceStrength = 50000;
+	radialForceComponent->AttachTo(projectileMesh, "ExhaustSocket");
+
+
 	//audioComp->SetSound(audioList[0]);
 	//audioComp->Play();
 }
@@ -92,6 +99,7 @@ void AGranade::Explode_Implementation()
 
 	audioComp->SetSound(audioList[1]);
 	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, 0, 0);
+	radialForceComponent->FireImpulse();
 
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 	{
@@ -99,7 +107,6 @@ void AGranade::Explode_Implementation()
 		
 		if (distance <= ExplosionRadius)
 		{
-			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
 			aItr->TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(tempChar->GetController()));
 		}
@@ -110,7 +117,6 @@ void AGranade::Explode_Implementation()
 
 		if (distance <= ExplosionRadius)
 		{
-			//UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 			AProjectile* tempChar = Cast<AProjectile>(this->GetOwner());
 			aItr->TakeDamage(ExplosionDamage*2);
 		}

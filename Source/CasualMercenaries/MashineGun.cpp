@@ -4,6 +4,7 @@
 #include "MashineGun.h"
 #include "PlayerCharacter.h"//this should not be working...
 #include "Projectile.h"
+#include "CMPlayerController.h"
 
 AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
@@ -14,8 +15,6 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	//material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/ToasterGun/MAT_toaster.MAT_toaster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
-	//weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05)); 
-	//weaponMesh->SetRelativeRotation(FRotator(0, 140, 0));
 
 	//integer values
 	maxAmmo = 120;
@@ -85,16 +84,24 @@ void AMashineGun::Fire()
 	FVector userLoc2;
 	FRotator cameraRot;
 
+
 	this->GetOwner()->GetActorEyesViewPoint(userLoc2, cameraRot);
+
+	FVector cameraLoc = Cast<APlayerCharacter>(GetOwner())->GetCamera()->GetComponentLocation();
+
 	userLoc = this->GetOwner()->GetActorLocation();
 
+
 	FVector shootDir = cameraRot.Vector();
+
 
 	//Bullet spread
 	float random1 = (2 * FMath::FRand() - 1) * 0.05;
 	float random2 = (2 * FMath::FRand() - 1) * 0.05;
 	float random3 = (2 * FMath::FRand() - 1) * 0.05;
 	shootDir.Set(shootDir.X + random1, shootDir.Y + random2, shootDir.Z + random3);
+
+
 
 	//LineTrace
 	const FVector startTrace = userLoc;
@@ -107,8 +114,10 @@ void AMashineGun::Fire()
 
 	FHitResult hit(ForceInit);
 
-	GetWorld()->LineTraceSingle(hit, startTrace, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
+	GetWorld()->LineTraceSingle(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
+
+	GetWorld()->LineTraceSingle(hit, startTrace, hit.ImpactPoint, ECollisionChannel::ECC_Destructible, traceParams);
 
 
 	//Play effect 
@@ -120,7 +129,7 @@ void AMashineGun::Fire()
 	if (player != nullptr)
 		player->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
 	else
-	{ 
+	{
 		AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
 		if (projectile != nullptr)
 			projectile->TakeDamage(damage);// , FDamageEvent::FDamageEvent(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), this);
@@ -130,7 +139,7 @@ void AMashineGun::Fire()
 	FVector const muzzleLocation = userLoc + FTransform(cameraRot).TransformVector(muzzleOffset);
 
 	//Another effect
-	DrawLine(muzzleLocation, endTrace);
+	DrawLine(startTrace, hit.ImpactPoint);
 	ammo--;
 }
 
