@@ -97,6 +97,7 @@ public:
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerReloadWeapon();
+
 	UFUNCTION(Exec)
 	void PrintTarget();
 

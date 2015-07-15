@@ -484,17 +484,18 @@ void APlayerCharacter::UpdateDash()
 	if (dashing)
 	{
 		FVector tempActorLocation = this->GetActorLocation();
-		FVector tempDirection = FVector();
-
+		FVector tempDistance = tempActorLocation - dashEndLocation;
+		
 		//tempCalc.Dist(tempActorLocation, dashEndLocation);
-		if (FVector::Dist(tempActorLocation, dashEndLocation) < 1)
+		if (tempDistance.Size() < 50)
 		{ 
 			dashing = false;
+			CharacterMovement->Velocity.Normalize();
+			CharacterMovement->Velocity = CharacterMovement->Velocity * CharacterMovement->MaxWalkSpeed;
 		}
 		else
 		{
-
-			CharacterMovement->Velocity = -(tempActorLocation - dashEndLocation);
+			CharacterMovement->Velocity = -(tempActorLocation - dashEndLocation)*30;
 		}
 	}
 	else
