@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Animation/AnimInstance.h"
-//#include "Weap"
+#include "Weapon.h"
 #include "CharacterAnimationBase.generated.h"
 
 /**

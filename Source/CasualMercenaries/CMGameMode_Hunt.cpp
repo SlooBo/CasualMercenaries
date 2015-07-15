@@ -5,6 +5,7 @@
 #include "CMGameState.h"
 #include "CMPlayerState.h"
 #include "CMPlayerController.h"
+#include "PlayerCharacter.h"
 #include "Util.h"
 
 ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)

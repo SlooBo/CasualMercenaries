@@ -163,7 +163,7 @@ void ACMPlayerController::Possess(APawn* inPawn)
 		return;
 
 	APlayerCharacter* pc = Cast<APlayerCharacter>(inPawn);
-	APlayerCharacter* ghost = Cast<AGhostCharacter>(inPawn);
+	AGhostCharacter* ghost = Cast<AGhostCharacter>(inPawn);
 	if (pc != NULL && ghost == NULL)
 	{
 		// handle player character possession here
@@ -194,7 +194,7 @@ void ACMPlayerController::Possess(APawn* inPawn)
 void ACMPlayerController::UnPossess()
 {
 	APlayerCharacter* pc = Cast<APlayerCharacter>(GetPawn());
-	APlayerCharacter* ghost = Cast<AGhostCharacter>(GetPawn());
+	AGhostCharacter* ghost = Cast<AGhostCharacter>(GetPawn());
 	if (pc != NULL && ghost == NULL)
 	{
 		// handle player character unpossession here

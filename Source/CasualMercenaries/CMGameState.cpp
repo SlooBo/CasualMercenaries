@@ -2,6 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "CMGameState.h"
+#include "UnrealNetwork.h"
 
 ACMGameState::ACMGameState(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)

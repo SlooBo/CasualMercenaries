@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/GameMode.h"
+#include "GhostCharacter.h"
 #include "CMGameMode.generated.h"
 
 UENUM(BlueprintType)
