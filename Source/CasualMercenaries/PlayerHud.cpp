@@ -65,6 +65,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 	}
 	logicClasses.Empty();
 	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+	ClearAllWidgets();
 	switch (menu)
 	{
 	case MenuType::MAIN_MENU:
@@ -95,10 +96,19 @@ void APlayerHud::changeUIElement(MenuType menu)
 	}
 	case MenuType::SHOP:
 	{
+
+
+		//also show hud
+		UUserWidget* widget;
+		widget = changeUIElement(gameUIClass);
+		UHUDLogic* hudLogic = NewObject<UHUDLogic>();
+		hudLogic->SetUp(widget, GetWorld());
+		logicClasses.Add(hudLogic);
+
 		UUserWidget* tempWidget = changeUIElement(shopClass);
 		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		UShopLogic* shopLogic = NewObject<UShopLogic>();
-		shopLogic->SetUp(tempWidget,GetWorld());
+		shopLogic->SetUp(tempWidget, GetWorld());
 		logicClasses.Add(shopLogic);
 		break;
 	}
@@ -114,7 +124,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 }
 UUserWidget* APlayerHud::changeUIElement(UClass *uitype)
 {
-	ClearAllWidgets();
+
 
 	widgetInstance = CreateWidget<UUserWidget>(GetWorld(), uitype);
 	widgetInstance->AddToViewport();
