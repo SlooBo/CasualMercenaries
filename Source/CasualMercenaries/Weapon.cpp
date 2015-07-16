@@ -10,7 +10,7 @@
 AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	weaponMesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh"));
-
+	//weaponMesh->SetWorldScale3D(FVector(.6,.6,.6));
 	PrimaryActorTick.bCanEverTick = true;
 
 	this->SetActorHiddenInGame(true);
@@ -23,9 +23,6 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	bReplicates = true;
 
 	passedTimeFiring = 1;
-	
-	
-
 }
 
 void AWeapon::SuperFunctioAlaMiika()
@@ -104,10 +101,12 @@ void AWeapon::IncreaseAmmoAmount(int32 ammo)
 {
 	clips += ammo;
 }
+
 WEAPONID AWeapon::GetIDFromInt(uint8 value)
 {
 	return static_cast<WEAPONID>(value);
 }
+
 void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

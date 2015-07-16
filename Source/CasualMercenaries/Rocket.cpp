@@ -3,6 +3,7 @@
 #include "CasualMercenaries.h"
 #include "Rocket.h"
 #include "PlayerCharacter.h"
+#include "Twister.h"
 
 
 
@@ -65,7 +66,8 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
 	if (OtherActor != this->GetOwner())
-		Explode();
+		if (!Cast<ATwister>(OtherActor))
+			Explode();
 }
 
 void ARocket::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -101,7 +101,11 @@ public:
 	UFUNCTION(Exec)
 	void PrintTarget();
 
+	void UpdateWeapons();
+
 protected:
+
+	const USkeletalMeshSocket* gunSocket;
 
 	bool rightShoulder;
 

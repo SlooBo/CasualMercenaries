@@ -12,6 +12,7 @@
 #include "PomegranadeLauncher.h"
 #include "MUDbuster.h"
 #include "WaspNestCudgel.h"
+#include "CMPlayerController.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
@@ -98,6 +99,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 	StaminaRegenServer(DeltaTime); 
 	WallCheck();
 	UpdateDash();
+
+	Cast<ACMPlayerController>(GetController())->UpdateWeapons();
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type _endPlayReason)
