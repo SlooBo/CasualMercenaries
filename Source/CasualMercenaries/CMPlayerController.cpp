@@ -169,10 +169,11 @@ void ACMPlayerController::Possess(APawn* inPawn)
 		// handle player character possession here
 		for (int i = 0; i < 4; i++)
 		{
-			if (this->GetInventory().GetWeapon(i) != NULL)
+			AWeapon* weapon = GetInventory().GetWeapon(i);
+			if (weapon != NULL)
 			{
-				this->GetInventory().GetWeapon(i)->SetRoot(Cast<APlayerCharacter>(pc));
-				this->GetInventory().GetWeapon(i)->SetOwner(pc);
+				weapon->SetRoot(pc);
+				weapon->SetOwner(pc);
 
 				//this->GetInventory().GetWeapon(i)->SetActorLocation(
 				//	Cast<APlayerCharacter>(pc)->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(
@@ -431,7 +432,7 @@ void ACMPlayerController::WeaponSlot4()
 	SwitchWeapon(3);
 }
 
-void ACMPlayerController::SwitchWeapon(int newWeapon)
+void ACMPlayerController::SwitchWeapon(int32 newWeapon)
 {
 	if (!IsAlive())
 		return;
@@ -448,32 +449,41 @@ void ACMPlayerController::SwitchWeapon(int newWeapon)
 	}
 }
 
-bool ACMPlayerController::ServerSwitchWeapon_Validate(float cw, float pw)
+bool ACMPlayerController::ServerSwitchWeapon_Validate(int32 cw, int32 pw)
 {
 	return true;
 }
 
-void ACMPlayerController::ServerSwitchWeapon_Implementation(float newWeapon, float previousWeapon)
+void ACMPlayerController::ServerSwitchWeapon_Implementation(int32 cw, int32 pw)
 {
-	inventory.currentWeapon = newWeapon;
+	inventory.currentWeapon = cw;
 
 	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
 
-	if (inventory.GetWeapon(previousWeapon) != nullptr)
+	if (character == nullptr)
+		return;
+
+	AWeapon* previousWeapon = inventory.GetWeapon(pw);
+	AWeapon* newWeapon = inventory.GetWeapon(cw);
+
+	if (previousWeapon != nullptr)
 	{ 
-		inventory.GetWeapon(previousWeapon)->SetActorHiddenInGame(true);
-		inventory.GetWeapon(previousWeapon)->PrimaryFunctionReleased(Cast<APlayerCharacter>(GetPawn()));
+		previousWeapon->SetActorHiddenInGame(true);
+		previousWeapon->PrimaryFunctionReleased(character);
 	}
 
-	if (inventory.GetWeapon(newWeapon) != nullptr)
-		inventory.GetWeapon(newWeapon)->SetActorHiddenInGame(false);
-	if (inventory.GetWeapon(newWeapon) != nullptr && character != NULL)
-		inventory.GetWeapon(newWeapon)->SetActorLocation(character->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(character->Mesh));
-	if (inventory.GetCurrentWeapon() != NULL)
+	if (newWeapon != nullptr)
 	{
-		inventory.GetCurrentWeapon()->SetRoot(Cast<APlayerCharacter>(this->GetPawn()));
-		inventory.GetCurrentWeapon()->SetOwner(Cast<APlayerCharacter>(this->GetPawn()));
-		inventory.GetCurrentWeapon()->SetActorHiddenInGame(false);// ->weaponMesh->SetVisibility(true);
+		const USkeletalMeshSocket* gunSocket = character->GetMesh()->GetSocketByName("GunSocket");
+
+		if (gunSocket != nullptr)
+			newWeapon->SetActorLocation(gunSocket->GetSocketLocation(character->GetMesh()));
+		else
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "GunSocket not found pls fix");
+
+		newWeapon->SetRoot(character);
+		newWeapon->SetOwner(character);
+		newWeapon->SetActorHiddenInGame(false);// ->weaponMesh->SetVisibility(true);
 	}
 
 }

@@ -78,10 +78,10 @@ public:
 	void WeaponSlot3();
 	void WeaponSlot4();
 
-	void SwitchWeapon(int newWeapon);
+	void SwitchWeapon(int32 newWeapon);
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerSwitchWeapon(float cw, float cp);
+	void ServerSwitchWeapon(int32 cw, int32 pw);
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerUseWeapon1();
