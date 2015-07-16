@@ -436,12 +436,6 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 		return;
 	if (state != CHARACTER_STATE::ALIVE)
 		return;
-	//if (this->CharacterMovement->IsFalling())
-	//{
-	//	dash_Multiplier = 1000;
-	//}
-	//else
-	//	dash_Multiplier = 5000;
 
 	FVector tempForward = this->GetActorForwardVector();
 	FVector tempRight = this->GetActorRightVector();
@@ -449,9 +443,7 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	FVector tempRightResult = tempRight * _inputRight;
 	FVector tempResult = tempForwardResult + tempRightResult;
 	tempResult.Normalize();
-	tempResult = tempResult * 400;
-	//LaunchCharacter(tempResult, false, false);
-	//LoseStamina(20.0f);
+	tempResult = tempResult * 600;
 
 	if (dashSound)
 	{
@@ -489,6 +481,29 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	}
 	else
 	{
+		if (tempResult.Size() == 0)
+		{
+			GetWorld()->LineTraceSingleByChannel(
+				RV_Hit,//result
+				tempActorLocation,//start of line trace
+				tempActorLocation - (tempForward * 600),//end of line trace
+				ECC_Visibility,//collision channel, maybe wrong
+				TraceParams);
+			if (RV_Hit.bBlockingHit)
+			{
+				dashing = true;
+				dashEndLocation = RV_Hit.Location;
+				canWalk = false;
+				UE_LOG(LogTemp, Warning, TEXT("Hit wall"));
+				return;
+			}
+
+			dashing = true;
+			dashEndLocation = tempActorLocation - (tempForward * 600 );
+			canWalk = false;
+			return;
+		}
+
 		dashing = true;
 		dashEndLocation = tempActorLocation + tempResult;
 		canWalk = false;
@@ -502,7 +517,6 @@ void APlayerCharacter::UpdateDash()
 		FVector tempActorLocation = this->GetActorLocation();
 		FVector tempDistance = tempActorLocation - dashEndLocation;
 		
-		//tempCalc.Dist(tempActorLocation, dashEndLocation);
 		if (tempDistance.Size() < 50)
 		{ 
 			dashing = false;
