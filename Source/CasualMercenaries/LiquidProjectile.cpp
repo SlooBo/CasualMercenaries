@@ -40,7 +40,7 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_WaterGun_Shoot_Water.P_WaterGun_Shoot_Water'"));
 	particleSystem->Template = ParticleObj2.Object;
-	particleSystem->SetRelativeScale3D(FVector(20,20,20));
+	particleSystem->SetRelativeScale3D(FVector(40,40,40));
 	particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
 	particleSystem->Activate();
 
@@ -96,6 +96,6 @@ void ALiquidProjectile::Splash_Implementation()
 {	
 	//Splashing
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
-	particle->SetRelativeScale3D(FVector(10,10,10));
+	particle->SetRelativeScale3D(FVector(40,40,40));
 	Destroy();
 }

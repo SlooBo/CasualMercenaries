@@ -101,7 +101,6 @@ public:
 	UFUNCTION(Exec)
 	void PrintTarget();
 
-	void UpdateWeapons();
 
 protected:
 

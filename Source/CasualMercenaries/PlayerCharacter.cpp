@@ -99,8 +99,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	StaminaRegenServer(DeltaTime); 
 	WallCheck();
 	UpdateDash();
-
-	Cast<ACMPlayerController>(GetController())->UpdateWeapons();
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type _endPlayReason)
