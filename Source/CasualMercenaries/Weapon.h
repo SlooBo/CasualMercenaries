@@ -34,7 +34,7 @@ public:
 	/* UProperties                                                          */
 	/************************************************************************/
 
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = Mesh)
 	USkeletalMeshComponent* weaponMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
@@ -101,6 +101,9 @@ public:
 	{ 
 		return passedTimeFiring == 0;
 	};
+
+	WEAPONID GetId(){ return id; };
+
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 

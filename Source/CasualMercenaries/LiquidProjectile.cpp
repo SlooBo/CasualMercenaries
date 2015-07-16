@@ -14,7 +14,7 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/ToasterGun/MAT_toaster.MAT_toaster'"));
 	projectileMesh->SetMaterial(0, MateriaObj.Object);
 	//Scale
-	projectileMesh->SetRelativeScale3D(FVector(1, 1, 1));
+	projectileMesh->SetRelativeScale3D(FVector(.1, .1, .1));
 	projectileMesh->SetSimulatePhysics(false);
 	projectileMesh->SetVisibility(false);
 
@@ -24,7 +24,7 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 
 
 	//CollisionComponent
-	CollisionComp->InitSphereRadius(15.0f);
+	CollisionComp->InitSphereRadius(5.0f);
 
 
 	//Delegate
@@ -35,10 +35,12 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_WaterGun_Hit.P_WaterGun_Hit'"));
 	
 	flavorParticleEffect = ParticleObj.Object;
+
+
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 	const ConstructorHelpers::FObjectFinder<UParticleSystem>ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_WaterGun_Shoot_Water.P_WaterGun_Shoot_Water'"));
 	particleSystem->Template = ParticleObj2.Object;
-	particleSystem->SetRelativeScale3D(FVector(2,2,2));
+	particleSystem->SetRelativeScale3D(FVector(20,20,20));
 	particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
 	particleSystem->Activate();
 
@@ -94,5 +96,6 @@ void ALiquidProjectile::Splash_Implementation()
 {	
 	//Splashing
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
+	particle->SetRelativeScale3D(FVector(10,10,10));
 	Destroy();
 }

@@ -113,7 +113,7 @@ void AShotgun::Fire()
 
 
 		//Play effect 
-		ServerEffect(flavorParticleEffect, startTrace);
+		ServerEffect(flavorParticleEffect, this->weaponMesh->GetSocketLocation("ExhaustSocket"));
 
 
 		//Hit resolve
@@ -165,7 +165,7 @@ void AShotgun::ServerDrawLine_Implementation(FVector begin, FVector end)
 	audioComp->Play();
 
 	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
-	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, this->GetActorRotation(), true);
 	particlen->SetVectorParameter("BulletTrailEnd", end);
 }
 

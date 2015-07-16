@@ -19,7 +19,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::ROCKET_LAUNCHER, rocketLauncher);
 
 	FWeaponStruct waterGun = FWeaponStruct(
-		100, .05, 0, .05,
+		100, .05, 0, .1,
 		ERANGE_TYPE::CLOSE_RANGE,
 		500, 300, 1000,
 		"Wasserwerfer 'Vermuser'",

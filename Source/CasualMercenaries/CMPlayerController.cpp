@@ -112,10 +112,10 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 
 void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
 {
-	if (inventory.GetCurrentWeapon() != NULL)
+	if (killed->inventory.GetCurrentWeapon() != NULL)
 	{
-		inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
-		inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
+		killed->inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
+		killed->inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
 	}
 
 	if (killed == this)
@@ -289,7 +289,6 @@ void ACMPlayerController::OpenShop()
 		if (player != nullptr)
 		player->RestoreActivity();
 		playerHud->changeUIElement(MenuType::GAME_UI);
-	
 	}
 	else
 		playerHud->changeUIElement(MenuType::SHOP);
@@ -438,6 +437,7 @@ void ACMPlayerController::WeaponSlot3()
 {
 	SwitchWeapon(2);
 }
+
 void ACMPlayerController::WeaponSlot4()
 {
 	SwitchWeapon(3);
@@ -465,6 +465,53 @@ bool ACMPlayerController::ServerSwitchWeapon_Validate(int32 cw, int32 pw)
 	return true;
 }
 
+void ACMPlayerController::UpdateWeapons()
+{
+	APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+
+
+	//if (inventory.GetWeapon(inventory.currentWeapon) != nullptr)
+	//{
+	//
+	//	switch (inventory.GetWeapon(inventory.currentWeapon)->GetID())
+	//	{
+	//	case WEAPONID::SHOT_GUN:
+	//		gunSocket = character->GetMesh()->GetSocketByName("ShotgunSocket");
+	//		break;
+	//	case WEAPONID::GRENADE_LAUNCHER:
+	//		gunSocket = character->GetMesh()->GetSocketByName("MashineSocket");
+	//		break;
+	//	case WEAPONID::MASHINE_GUN:
+	//		gunSocket = character->GetMesh()->GetSocketByName("MashineSocket");
+	//		break;
+	//	case WEAPONID::MUDBUSTER_GUN:
+	//		gunSocket = character->GetMesh()->GetSocketByName("MBusterSocket");
+	//		break;
+	//	case WEAPONID::TWISTER_GUN:
+	//		gunSocket = character->GetMesh()->GetSocketByName("PocketRocketSocket");
+	//		break;
+	//	case WEAPONID::ROCKET_LAUNCHER:
+	//		gunSocket = character->GetMesh()->GetSocketByName("PocketRocketSocket");
+	//		break;
+	//	case WEAPONID::WASP_GUN:
+	//		gunSocket = character->GetMesh()->GetSocketByName("WaspGunSocket");
+	//		break;
+	//	case WEAPONID::WATER_GUN:
+	//		gunSocket = character->GetMesh()->GetSocketByName("WaterGunSocket");
+	//		break;
+	//	default:
+	//		gunSocket = character->GetMesh()->GetSocketByName("GunSocket_null");
+	//		break;
+	//	}
+	//
+	//	if (gunSocket != nullptr)
+	//	{
+	//		//inventory.GetWeapon(inventory.currentWeapon)->SetActorLocation(gunSocket->GetSocketLocation(character->GetMesh()));
+	//		inventory.GetWeapon(inventory.currentWeapon)->weaponMesh->AttachTo(character->Mesh, FName(*gunSocket->GetName()));
+	//	}
+	//}
+}
+
 void ACMPlayerController::ServerSwitchWeapon_Implementation(int32 cw, int32 pw)
 {
 	inventory.currentWeapon = cw;
@@ -485,10 +532,45 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(int32 cw, int32 pw)
 
 	if (newWeapon != nullptr)
 	{
-		const USkeletalMeshSocket* gunSocket = character->GetMesh()->GetSocketByName("GunSocket");
+		
+		//switch case caseroll for Miika to enjoy
+		switch (newWeapon->GetID())
+		{
+		case WEAPONID::SHOT_GUN:
+			gunSocket = character->GetMesh()->GetSocketByName("ShotgunSocket");
+			break;
+		case WEAPONID::GRENADE_LAUNCHER:
+			gunSocket = character->GetMesh()->GetSocketByName("MashineSocket");
+			break;
+		case WEAPONID::MASHINE_GUN:
+			gunSocket = character->GetMesh()->GetSocketByName("MashineSocket");
+			break;
+		case WEAPONID::MUDBUSTER_GUN:
+			gunSocket = character->GetMesh()->GetSocketByName("MBusterSocket");
+			break;
+		case WEAPONID::TWISTER_GUN:
+			gunSocket = character->GetMesh()->GetSocketByName("PocketRocketSocket");
+			break;
+		case WEAPONID::ROCKET_LAUNCHER:
+			gunSocket = character->GetMesh()->GetSocketByName("PocketRocketSocket");
+			break;
+		case WEAPONID::WASP_GUN:
+			gunSocket = character->GetMesh()->GetSocketByName("WaspGunSocket");
+			break;
+		case WEAPONID::WATER_GUN:
+			gunSocket = character->GetMesh()->GetSocketByName("WaterGunSocket");
+			break;
+		default:
+			gunSocket = character->GetMesh()->GetSocketByName("GunSocket_null");
+			break;
+		}
 
 		if (gunSocket != nullptr)
-			newWeapon->SetActorLocation(gunSocket->GetSocketLocation(character->GetMesh()));
+		{
+			//newWeapon->SetActorLocation(gunSocket->GetSocketLocation(character->GetMesh()));
+			newWeapon->weaponMesh->AttachTo(character->Mesh, "ShotgunSocket");//, EAttachLocation::SnapToTargetIncludingScale);
+			
+		}
 		else
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "GunSocket not found pls fix");
 
