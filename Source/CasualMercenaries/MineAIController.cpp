@@ -8,15 +8,15 @@
 #include "BehaviorTree/BlackboardComponent.h"//
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
-
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "PlayerCharacter.h"
 
 
-AMineAIController::AMineAIController(const class FPostConstructInitializeProperties& PCIP) : Super(PCIP)
+AMineAIController::AMineAIController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	blackboardComponent = PCIP.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackBoardComp"));
+	blackboardComponent = ObjectInitializer.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackBoardComp"));
 
-	behaviorComponent = PCIP.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BehaviorComp"));
+	behaviorComponent = ObjectInitializer.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BehaviorComp"));
 }
 
 void AMineAIController::Possess(class APawn* InPawn)
@@ -74,6 +74,6 @@ void AMineAIController::SearchForEnemy()
 
 void AMineAIController::SetEnemy(class APawn* InPawn)
 {
-	blackboardComponent->SetValueAsObject(enemyKeyID, InPawn);
-	blackboardComponent->SetValueAsVector(enemyLocationID, InPawn->GetActorLocation());
+	blackboardComponent->SetValue<UBlackboardKeyType_Object>(enemyKeyID, InPawn);
+	blackboardComponent->SetValue<UBlackboardKeyType_Vector>(enemyLocationID, InPawn->GetActorLocation());
 }

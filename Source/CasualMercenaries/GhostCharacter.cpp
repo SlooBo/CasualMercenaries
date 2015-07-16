@@ -16,7 +16,7 @@ AGhostCharacter::AGhostCharacter(const FObjectInitializer& ObjectInitializer)
 	characterMovement->JumpZVelocity *= 2;
 	characterMovement->MaxWalkSpeed *= 2;
 
-	CapsuleComponent->SetCollisionProfileName(TEXT("Spectator"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Spectator"));
 
 	// ghost post-processing effects
 	UCameraComponent* camera = GetCamera();

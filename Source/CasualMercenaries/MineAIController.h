@@ -34,9 +34,7 @@ public:
 
 	virtual void Tick(float DeltaTime);
 
-	AMineAIController(const class FPostConstructInitializeProperties& PCIP);
-
-
+	AMineAIController(const FObjectInitializer& ObjectInitializer);
 
 private:
 	

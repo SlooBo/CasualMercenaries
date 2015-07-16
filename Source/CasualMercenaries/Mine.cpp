@@ -14,21 +14,21 @@ AMine::AMine(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitiali
 	
 	//Mesh, scale, material and animation in that order
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
-	Mesh->SetSkeletalMesh(MeshObj.Object);
-	Mesh->SetRelativeScale3D(FVector(.2,.2,.2));
+	GetMesh()->SetSkeletalMesh(MeshObj.Object);
+	GetMesh()->SetRelativeScale3D(FVector(.2,.2,.2));
 	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/MAT_Playercharacter_Inst.MAT_Playercharacter_Inst'"));
-	Mesh->SetMaterial(0, MateriaObj.Object);
+	GetMesh()->SetMaterial(0, MateriaObj.Object);
 	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/PlayerCharacter_Ver2/APB_PlayerCharacter.APB_PlayerCharacter'"));
-	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
+	GetMesh()->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
 	
 	//Movement
-	CharacterMovement->NavAgentProps.AgentRadius = 20;
-	CharacterMovement->NavAgentProps.AgentHeight = 20;
-	CharacterMovement->NavAgentProps.AgentStepHeight = 10;
-	CharacterMovement->NavAgentProps.NavWalkingSearchHeightScale = 0.5;
-	CharacterMovement->NavAgentProps.bCanWalk = true;
+	GetCharacterMovement()->NavAgentProps.AgentRadius = 20;
+	GetCharacterMovement()->NavAgentProps.AgentHeight = 20;
+	GetCharacterMovement()->NavAgentProps.AgentStepHeight = 10;
+	GetCharacterMovement()->NavAgentProps.NavWalkingSearchHeightScale = 0.5;
+	GetCharacterMovement()->NavAgentProps.bCanWalk = true;
 	
-	CharacterMovement->MaxWalkSpeed = 800;
+	GetCharacterMovement()->MaxWalkSpeed = 800;
 
 	//CapsuleComponent->
 	//RootComponent->

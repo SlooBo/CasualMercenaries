@@ -130,9 +130,9 @@ void UServerBrowserLogic::JoinSession(int32 searchIndex)
 void UServerBrowserLogic::AddSessionToGUI(int32 searchIndex)
 {
 	UPROPERTY()
-	UButton *newButton = ConstructObject<UButton>(UButton::StaticClass());
+	UButton *newButton = NewObject<UButton>(UButton::StaticClass());
 	UPROPERTY()
-	UTextBlock *newText = ConstructObject<UTextBlock>(UTextBlock::StaticClass());
+	UTextBlock *newText = NewObject<UTextBlock>(UTextBlock::StaticClass());
 	newText->SetText(FText::FromString("This is server"));
 	newButton->AddChild(newText);
 	serverListScrollBox->AddChild(newButton);

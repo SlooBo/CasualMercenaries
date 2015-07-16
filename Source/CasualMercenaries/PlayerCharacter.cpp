@@ -43,19 +43,19 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	//	CharacterMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver6/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
-	Mesh->SetSkeletalMesh(MeshObj.Object);
+	GetMesh()->SetSkeletalMesh(MeshObj.Object);
 	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/ver6/MATinst_PlayerCharacter.MATinst_PlayerCharacter'"));
-	Mesh->SetMaterial(0, MateriaObj.Object);
-	Mesh->SetMaterial(1, MateriaObj.Object);
+	GetMesh()->SetMaterial(0, MateriaObj.Object);
+	GetMesh()->SetMaterial(1, MateriaObj.Object);
 	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/ver6/APB_PlayerCharacter_ver6.APB_PlayerCharacter_ver6'"));
-	Mesh->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
+	GetMesh()->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
 
 	// Values from blueprint
 	//CapsuleComponent->SetRelativeScale3D(FVector(1.0f, 1.0f, 1.3f));
-	CapsuleComponent->bVisible = false;
-	Mesh->SetRelativeLocation(FVector(-9.999983f, -0.000022f, -84.614967f));
-	Mesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
-	Mesh->SetRelativeScale3D(FVector(0.6f, 0.6f, 0.6f));
+	GetCapsuleComponent()->bVisible = false;
+	GetMesh()->SetRelativeLocation(FVector(-9.999983f, -0.000022f, -84.614967f));
+	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+	GetMesh()->SetRelativeScale3D(FVector(0.6f, 0.6f, 0.6f));
 
 
 	rightShoulder = false;
@@ -318,7 +318,7 @@ void APlayerCharacter::WallCheck()
 
 	FHitResult RV_Hit(ForceInit);
 	//Forward check
-	GetWorld()->LineTraceSingle(
+	GetWorld()->LineTraceSingleByChannel(
 		RV_Hit,//result
 		tempActorLocation,//start of line trace
 		ForwardCheckVector,//end of line trace
@@ -328,7 +328,7 @@ void APlayerCharacter::WallCheck()
 	{
 		wallTouch = true;
 		wallJumpNormal = RV_Hit.ImpactNormal;
-		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Found hit"));
 		return;
 	}
 
@@ -336,7 +336,7 @@ void APlayerCharacter::WallCheck()
 	RightCheckVector = RightCheckVector * 100;
 	RightCheckVector = tempActorLocation + RightCheckVector;
 	//Right check
-	GetWorld()->LineTraceSingle(
+	GetWorld()->LineTraceSingleByChannel(
 		RV_Hit,//result
 		tempActorLocation,//start of line trace
 		RightCheckVector,//end of line trace
@@ -347,7 +347,7 @@ void APlayerCharacter::WallCheck()
 	{
 		wallTouch = true;
 		wallJumpNormal = RV_Hit.ImpactNormal;
-		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Found hit"));
 		return;
 	}
 
@@ -355,7 +355,7 @@ void APlayerCharacter::WallCheck()
 	LeftCheckVector = LeftCheckVector * 100;
 	LeftCheckVector = tempActorLocation + LeftCheckVector;
 	//Left check
-	GetWorld()->LineTraceSingle(
+	GetWorld()->LineTraceSingleByChannel(
 		RV_Hit,//result
 		tempActorLocation,//start of line trace
 		LeftCheckVector,//end of line trace
@@ -366,12 +366,12 @@ void APlayerCharacter::WallCheck()
 	{
 		wallTouch = true;
 		wallJumpNormal = RV_Hit.ImpactNormal;
-		UE_LOG(LogTemp, Warning, TEXT("Found hit"));
+		//UE_LOG(LogTemp, Warning, TEXT("Found hit"));
 		return;
 	}
 	else
 		wallTouch = false;
-	UE_LOG(LogTemp, Warning, TEXT("Did not find hit"));
+	//UE_LOG(LogTemp, Warning, TEXT("Did not find hit"));
 }
 
 void APlayerCharacter::WallJump()
@@ -388,11 +388,11 @@ void APlayerCharacter::WallJumpServer_Implementation()
 {
 	if (wallTouch)
 	{
-		if (this->CharacterMovement->IsFalling())
+		if (this->GetCharacterMovement()->IsFalling())
 		{
 			//To disable ever increasing falling speed
-			FVector tempVel = CharacterMovement->Velocity;
-			CharacterMovement->Velocity = FVector(tempVel.X, tempVel.Y, 0);
+			FVector tempVel = GetCharacterMovement()->Velocity;
+			GetCharacterMovement()->Velocity = FVector(tempVel.X, tempVel.Y, 0);
 
 			FVector tempResult = wallJumpNormal * 700.0f + FVector(0.0f,0.0f,600.0f);
 
@@ -457,7 +457,7 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 
 	FHitResult RV_Hit(ForceInit);
 	//Forward check
-	GetWorld()->LineTraceSingle(
+	GetWorld()->LineTraceSingleByChannel(
 		RV_Hit,//result
 		tempActorLocation,//start of line trace
 		tempActorLocation + tempResult,//end of line trace
@@ -490,12 +490,12 @@ void APlayerCharacter::UpdateDash()
 		if (tempDistance.Size() < 50)
 		{ 
 			dashing = false;
-			CharacterMovement->Velocity.Normalize();
-			CharacterMovement->Velocity = CharacterMovement->Velocity * CharacterMovement->MaxWalkSpeed;
+			GetCharacterMovement()->Velocity.Normalize();
+			GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity * GetCharacterMovement()->MaxWalkSpeed;
 		}
 		else
 		{
-			CharacterMovement->Velocity = -(tempActorLocation - dashEndLocation)*30;
+			GetCharacterMovement()->Velocity = -(tempActorLocation - dashEndLocation)*30;
 		}
 	}
 	else
@@ -517,9 +517,9 @@ bool APlayerCharacter::ChangeShirtColor_Validate(FLinearColor color)
 
 void APlayerCharacter::ChangeShirtColor_Implementation(FLinearColor color)
 {
-	UMaterialInstanceDynamic *dynamicMesh = Mesh->CreateDynamicMaterialInstance(0, Mesh->GetMaterial(0));
+	UMaterialInstanceDynamic *dynamicMesh = GetMesh()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
 	dynamicMesh->SetVectorParameterValue("ShirtColour", color);
-	Mesh->SetMaterial(0, dynamicMesh);
+	GetMesh()->SetMaterial(0, dynamicMesh);
 }
 
 bool APlayerCharacter::IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const

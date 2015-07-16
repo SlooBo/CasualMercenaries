@@ -115,9 +115,9 @@ void AMashineGun::Fire()
 	FHitResult hit(ForceInit);
 
 
-	GetWorld()->LineTraceSingle(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
+	GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	GetWorld()->LineTraceSingle(hit, startTrace, hit.ImpactPoint, ECollisionChannel::ECC_Destructible, traceParams);
+	GetWorld()->LineTraceSingleByChannel(hit, startTrace, hit.ImpactPoint, ECollisionChannel::ECC_Destructible, traceParams);
 
 
 	//Play effect 

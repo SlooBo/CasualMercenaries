@@ -6,6 +6,9 @@
 #include "DamageTypes.h"
 #include "Projectile.generated.h"
 
+#pragma warning(disable : 4263) // C4263: member function does not override any base class virtual member function
+#pragma warning(disable : 4264) // C4264: no override available for virtual member function from base 'class'; function is hidden
+
 UCLASS()
 class CASUALMERCENARIES_API AProjectile : public AActor
 {
