@@ -191,6 +191,12 @@ void ACMPlayerController::Possess(APawn* inPawn)
 	{
 		// handle ghost character possession here
 	}
+	if (pc != NULL)
+	{
+		// handle both player and ghost character possession here
+		if (rightShoulder)
+			pc->SwitchShoulder();
+	}
 }
 void ACMPlayerController::UnPossess()
 {
@@ -203,6 +209,11 @@ void ACMPlayerController::UnPossess()
 	else if (ghost != NULL)
 	{
 		// handle ghost character unpossession here
+	}
+	if (pc != NULL)
+	{
+		// handle both player and ghost character unpossession here
+		rightShoulder = pc->IsRightShoulder();
 	}
 
 	Super::UnPossess();

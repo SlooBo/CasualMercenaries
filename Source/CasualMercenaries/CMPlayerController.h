@@ -103,6 +103,8 @@ public:
 
 protected:
 
+	bool rightShoulder;
+
 	UPROPERTY(Replicated)
 	bool canShop;
 

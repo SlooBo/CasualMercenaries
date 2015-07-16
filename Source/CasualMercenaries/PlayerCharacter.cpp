@@ -283,19 +283,34 @@ void APlayerCharacter::MoveRight(float _val)
 	}
 }
 
-void APlayerCharacter::SwitchShoulder()
+void APlayerCharacter::SwitchShoulder_Implementation()
+{
+	SwitchShoulderServer();
+	UpdateShoulder();
+	rightShoulder = !rightShoulder;
+}
+
+bool APlayerCharacter::SwitchShoulderServer_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::SwitchShoulderServer_Implementation()
+{
+	rightShoulder = !rightShoulder;
+}
+
+void APlayerCharacter::UpdateShoulder()
 {
 	if (rightShoulder)
 	{
 		springArmComp->SocketOffset = FVector(0, 100, 20);
 		springArmComp->TargetOffset = FVector(0, 0, 100);
-		rightShoulder = false;
 	}
 	else
 	{
 		springArmComp->SocketOffset = FVector(0, -100, 20);
 		springArmComp->TargetOffset = FVector(0, 0, 100);
-		rightShoulder = true;
 	}
 }
 

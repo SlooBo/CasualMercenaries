@@ -92,6 +92,14 @@ public:
 
 	UCameraComponent* GetCamera(){ return cameraComp; };
 
+	UFUNCTION(Reliable, Client)
+	void SwitchShoulder();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void SwitchShoulderServer();
+
+	bool IsRightShoulder() { return rightShoulder; };
+
 	/************************************************************************/
 	/* Utility                                                              */
 	/************************************************************************/
@@ -110,9 +118,10 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* cameraComp;
 
-	UPROPERTY(VisibleDefaultsOnly,Category = "Camera")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Camera")
 	bool rightShoulder;
-	void SwitchShoulder();
+
+	void UpdateShoulder();
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UAudioComponent* audioComp;
