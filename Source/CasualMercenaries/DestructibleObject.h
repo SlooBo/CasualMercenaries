@@ -45,10 +45,11 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ObjectCondition")
 	UMaterialInterface* invisibleMaterial;
+
+	void Respawn();
 private:
 
 	void CheckStatus();
-	void Respawn();
 	void GoInvisible();
 
 	FTimerHandle respawnTimerHandle;

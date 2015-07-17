@@ -27,7 +27,7 @@ ADestructibleObject::ADestructibleObject(const FObjectInitializer& FOI) : AActor
 void ADestructibleObject::BeginPlay()
 {
 	Super::BeginPlay();
-	health = 0;
+	//health = 0;
 
 }
 
