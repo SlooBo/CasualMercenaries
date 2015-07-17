@@ -38,6 +38,7 @@ void UHUDLogic::SetUp(UUserWidget *widget, UWorld *world)
 	SetValueFromWidget(&ammoProgressBar, "AmmoProgressBar");
 
 	SetValueFromWidget(&roundTimeLeft, "RoundTimer");
+	SetValueFromWidget(&currentRoundText, "RoundText");
 }
 
 void UHUDLogic::Update()
@@ -100,6 +101,6 @@ void UHUDLogic::Update()
 
 		roundTimeLeft->SetText(text);
 	}
-
+	currentRoundText->SetText(FText::FromString(FString::FromInt(gameState->GetHuntCurrentRound()+1)));
 	//currentAmmo->SetText(cont)
 }

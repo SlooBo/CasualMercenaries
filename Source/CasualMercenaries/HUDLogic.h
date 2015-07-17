@@ -33,6 +33,7 @@ private:
 	UTextBlock *currentAmmoText;
 	UTextBlock *cashText;
 	UTextBlock *roundTimeLeft;
+	UTextBlock *currentRoundText;
 	UImage *weaponIcon;
 	UImage *targetSphere;
 	template <typename type>
