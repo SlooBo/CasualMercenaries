@@ -79,6 +79,7 @@ void ACMPlayerController::SetupInputComponent()
 	InputComponent->BindAction("WeaponSlot4", IE_Pressed, this, &ACMPlayerController::WeaponSlot4);
 
 	InputComponent->BindAction("Reload", IE_Pressed, this, &ACMPlayerController::TryRespawn);
+	InputComponent->BindAction("Escape_Back", IE_Pressed, this, &ACMPlayerController::OnPressedEscape);
 }
 
 void ACMPlayerController::MusicPlay()
@@ -125,6 +126,16 @@ void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerCo
 		{
 		}
 	}
+}
+
+void ACMPlayerController::OnRoundStart()
+{
+
+}
+
+void ACMPlayerController::OnWarmupStart()
+{
+
 }
 
 void ACMPlayerController::OnShopAccessChanged(bool canShop)
@@ -485,43 +496,44 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(int32 cw, int32 pw)
 
 	if (newWeapon != nullptr)
 	{
-		
+		USkeletalMeshComponent* mesh = character->GetMesh();
+
 		//switch case caseroll for Miika to enjoy
 		switch (newWeapon->GetID())
 		{
 		case WEAPONID::SHOT_GUN:
-			newWeapon->weaponMesh->AttachTo(character->Mesh, "ShotgunSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "ShotgunSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::GRENADE_LAUNCHER:
-			newWeapon->weaponMesh->AttachTo(character->Mesh, "MashineSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "MashineSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::MASHINE_GUN:
-			newWeapon->weaponMesh->AttachTo(character->Mesh, "MashineSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "MashineSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::MUDBUSTER_GUN:
-			newWeapon->weaponMesh->AttachTo(character->Mesh, "MBusterSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "MBusterSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::TWISTER_GUN:
-			newWeapon->weaponMesh->AttachTo(character->Mesh, "PocketRocketSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "PocketRocketSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::ROCKET_LAUNCHER:
-			newWeapon->weaponMesh->AttachTo(character->Mesh, "PocketRocketSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "PocketRocketSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::WASP_GUN:
-			newWeapon->weaponMesh->AttachTo(character->Mesh, "WaspGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "WaspGunSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::WATER_GUN:
-			newWeapon->weaponMesh->AttachTo(character->Mesh, "WaterGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "WaterGunSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		default:
-			gunSocket = character->GetMesh()->GetSocketByName("GunSocket_null");
+			gunSocket = mesh->GetSocketByName("GunSocket_null");
 			break;
 		}
 
 		if (gunSocket != nullptr)
 		{
 			//newWeapon->SetActorLocation(gunSocket->GetSocketLocation(character->GetMesh()));
-			newWeapon->weaponMesh->AttachTo(character->Mesh, "ShotgunSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "ShotgunSocket", EAttachLocation::SnapToTargetIncludingScale);
 		}
 		else
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "GunSocket not found pls fix");
@@ -544,4 +556,9 @@ void ACMPlayerController::PrintTarget()
 		else
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: null");
 	}
+}
+void ACMPlayerController::OnPressedEscape()
+{
+	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+	hud->changeUIElement(MenuType::PAUSE_MENU);
 }

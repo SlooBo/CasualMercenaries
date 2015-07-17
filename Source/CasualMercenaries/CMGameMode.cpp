@@ -275,6 +275,7 @@ void ACMGameMode::OnWarmupStart_Implementation()
 	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
 		SetupNewPlayer(*iter);
+		(*iter)->OnWarmupStart();
 	}
 }
 
@@ -283,6 +284,7 @@ void ACMGameMode::OnMatchStart_Implementation()
 	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
 		SetupNewPlayer(*iter);
+		(*iter)->OnRoundStart();
 	}
 }
 

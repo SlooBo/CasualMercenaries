@@ -81,6 +81,8 @@ public:
 	UFUNCTION(Exec)
 	void SetStaminaRate(float rate);
 
+	virtual void FellOutOfWorld(const class UDamageType& DmgType) override;
+
 	virtual void OnDeath_Implementation(ACMPlayerController* killer = NULL) override;
 
 	UFUNCTION(Reliable, Server, WithValidation)
@@ -110,6 +112,9 @@ public:
 	virtual bool IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const override;
 
 	void RestoreActivity();
+
+	UPROPERTY(VisibleAnywhere, Category = "Player actions")
+		bool dashing;
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -137,8 +142,7 @@ private:
 
 
 
-	UPROPERTY(VisibleAnywhere, Category = "Player actions")
-	bool dashing;
+
 
 	FVector dashEndLocation;
 
