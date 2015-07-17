@@ -4,6 +4,7 @@
 #include "Rocket.h"
 #include "PlayerCharacter.h"
 #include "Twister.h"
+#include "DestructibleObject.h"
 
 
 
@@ -127,11 +128,18 @@ void ARocket::Explode()
 
 		if (distance <= ExplosionRadius)
 		{
-			AProjectile* tempChar = Cast<AProjectile>(this->GetOwner());
 			aItr->TakeDamage(ExplosionDamage * 2);
 		}
 	}
+	for (TActorIterator<ADestructibleObject> aItr(GetWorld()); aItr; ++aItr)
+	{
+		float distance = GetDistanceTo(*aItr);
 
+		if (distance <= ExplosionRadius)
+		{
+			aItr->TakeDamage(ExplosionDamage * 2);
+		}
+	}
 
 
 	Destroy();
