@@ -103,7 +103,7 @@ public:
 
 
 protected:
-
+	void OnPressedEscape();
 	const USkeletalMeshSocket* gunSocket;
 
 	bool rightShoulder;

@@ -79,6 +79,7 @@ void ACMPlayerController::SetupInputComponent()
 	InputComponent->BindAction("WeaponSlot4", IE_Pressed, this, &ACMPlayerController::WeaponSlot4);
 
 	InputComponent->BindAction("Reload", IE_Pressed, this, &ACMPlayerController::TryRespawn);
+	InputComponent->BindAction("Escape_Back", IE_Pressed, this, &ACMPlayerController::OnPressedEscape);
 }
 
 void ACMPlayerController::MusicPlay()
@@ -555,4 +556,9 @@ void ACMPlayerController::PrintTarget()
 		else
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: null");
 	}
+}
+void ACMPlayerController::OnPressedEscape()
+{
+	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+	hud->changeUIElement(MenuType::PAUSE_MENU);
 }
