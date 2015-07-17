@@ -433,7 +433,7 @@ void APlayerCharacter::WallJumpServer_Implementation()
 
 void APlayerCharacter::InputDash()
 {
-	if (stamina >= 25)
+	//if (stamina >= 25)
 	{
 		ServerDash(GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"));
 	}
@@ -539,11 +539,17 @@ void APlayerCharacter::UpdateDash()
 		{ 
 			dashing = false;
 			GetCharacterMovement()->Velocity.Normalize();
-			GetCharacterMovement()->Velocity =
-				FVector(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->Velocity.Y,0)* GetCharacterMovement()->MaxWalkSpeed;
+			GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity * GetCharacterMovement()->MaxWalkSpeed;
+				//FVector(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->Velocity.Y,0)* GetCharacterMovement()->MaxWalkSpeed;
 		}
 		else
 		{
+			if (GetCharacterMovement()->IsFalling())
+			{
+				GetCharacterMovement()->Velocity = -(tempActorLocation - dashEndLocation) * 5;
+				return;
+			}
+
 			GetCharacterMovement()->Velocity = -(tempActorLocation - dashEndLocation)*30;
 		}
 	}
