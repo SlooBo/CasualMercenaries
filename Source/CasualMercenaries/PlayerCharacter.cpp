@@ -426,8 +426,10 @@ void APlayerCharacter::WallJumpServer_Implementation()
 
 void APlayerCharacter::InputDash()
 {
-	
-	ServerDash(GetInputAxisValue("MoveForward") , GetInputAxisValue("MoveRight"));
+	if (stamina >= 25)
+	{
+		ServerDash(GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"));
+	}
 }
 
 bool APlayerCharacter::ServerDash_Validate(float _inputForward, float _inputRight)
@@ -479,6 +481,7 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	if (RV_Hit.bBlockingHit)
 	{
 		dashing = true;
+		LoseStamina(25.0f);
 		dashEndLocation = RV_Hit.Location;
 		canWalk = false;
 		UE_LOG(LogTemp, Warning, TEXT("Hit wall"));
@@ -497,6 +500,7 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 			if (RV_Hit.bBlockingHit)
 			{
 				dashing = true;
+				LoseStamina(25.0f);
 				dashEndLocation = RV_Hit.Location;
 				canWalk = false;
 				UE_LOG(LogTemp, Warning, TEXT("Hit wall"));
@@ -504,12 +508,14 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 			}
 
 			dashing = true;
+			LoseStamina(25.0f);
 			dashEndLocation = tempActorLocation - (tempForward * 600 );
 			canWalk = false;
 			return;
 		}
 
 		dashing = true;
+		LoseStamina(25.0f);
 		dashEndLocation = tempActorLocation + tempResult;
 		canWalk = false;
 	}
