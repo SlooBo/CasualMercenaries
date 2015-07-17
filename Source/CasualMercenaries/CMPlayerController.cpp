@@ -501,22 +501,22 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(int32 cw, int32 pw)
 		switch (newWeapon->GetID())
 		{
 		case WEAPONID::SHOT_GUN:
-			newWeapon->weaponMesh->AttachTo(mesh, "ShotgunSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "ShotGunSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::GRENADE_LAUNCHER:
-			newWeapon->weaponMesh->AttachTo(mesh, "MashineSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "GrenadeLauncherSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::MASHINE_GUN:
-			newWeapon->weaponMesh->AttachTo(mesh, "MashineSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "MashineGunSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::MUDBUSTER_GUN:
-			newWeapon->weaponMesh->AttachTo(mesh, "MBusterSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "MudBusterSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::TWISTER_GUN:
-			newWeapon->weaponMesh->AttachTo(mesh, "PocketRocketSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "TwisterTorpedoGunSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::ROCKET_LAUNCHER:
-			newWeapon->weaponMesh->AttachTo(mesh, "PocketRocketSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "RocketLauncherSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::WASP_GUN:
 			newWeapon->weaponMesh->AttachTo(mesh, "WaspGunSocket", EAttachLocation::SnapToTargetIncludingScale);

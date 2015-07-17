@@ -103,7 +103,7 @@ void ARocketLauncher::Fire()
 	
 
 	//Play effect
-	ServerEffect(flavorParticleEffect, this->GetActorLocation());
+	ServerEffect(flavorParticleEffect, weaponMesh->GetSocketLocation("ExhaustSocket"));
 
 	FRotator MuzzleRotation = cameraRot;
 

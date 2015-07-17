@@ -121,9 +121,15 @@ void AGranade::Explode_Implementation()
 			aItr->TakeDamage(ExplosionDamage*2);
 		}
 	}
+	for (TActorIterator<ADestructibleObject> aItr(GetWorld()); aItr; ++aItr)
+	{
+		float distance = GetDistanceTo(*aItr);
 
-	//audioComp->SetSound(audioList[1]);
-	//audioComp->Play();
+		if (distance <= ExplosionRadius)
+		{
+			aItr->TakeDamage(ExplosionDamage * 2);
+		}
+	}
 
 	Destroy();
 }

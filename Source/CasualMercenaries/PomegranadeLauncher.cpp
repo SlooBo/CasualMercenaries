@@ -17,8 +17,6 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/ToasterGun/MAT_toaster.MAT_toaster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
 
-	//Scaling
-	//weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
 
 	//integers
 	maxAmmo = 6;
@@ -65,6 +63,7 @@ void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
 
 void APomeGranadeLauncher::Fire()
 {
+	ammo--;
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
 

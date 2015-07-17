@@ -19,7 +19,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::ROCKET_LAUNCHER, rocketLauncher);
 
 	FWeaponStruct waterGun = FWeaponStruct(
-		100, .05, 0, .1,
+		100, .10, 0, .1,
 		ERANGE_TYPE::CLOSE_RANGE,
 		500, 300, 1000,
 		"Wasserwerfer 'Vermuser'",
@@ -28,7 +28,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::WATER_GUN, waterGun);
 
 	FWeaponStruct grenadeLauncher = FWeaponStruct(
-		12, 3, 25, .5,
+		12, 1, 25, .5,
 		ERANGE_TYPE::MID_RANGE,
 		800, 800, 600,
 		"Grenade Launcher 'Pomegranade launcher'",
@@ -37,7 +37,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::GRENADE_LAUNCHER, grenadeLauncher);
 
 	FWeaponStruct mashineGun = FWeaponStruct(
-		30, 2, 10, .10,
+		30, 1, 10, .10,
 		ERANGE_TYPE::CLOSE_MID_RANGE,
 		200, 200, 300,
 		"Mashine Gun 'Budda bud'",
@@ -46,7 +46,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::MASHINE_GUN, mashineGun);
 
 	FWeaponStruct mudbusterGun = FWeaponStruct(
-		5, 1, 0, .75,
+		5, 1, 0, .5,
 		ERANGE_TYPE::MID_RANGE,
 		100, 200, 300,
 		"Mudbuster Gun 'Liero's dröm'",
@@ -55,7 +55,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::MUDBUSTER_GUN, mudbusterGun);
 
 	FWeaponStruct waspGun = FWeaponStruct(
-		100, 10, 15, .5,
+		100, 1, 15, .5,
 		ERANGE_TYPE::CLOSE_RANGE,
 		200, 1000, 600,
 		"Wasp Stick 'WaspNestCudgel'",
@@ -64,7 +64,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::WASP_GUN, waspGun);
 
 	FWeaponStruct twisterGun = FWeaponStruct(
-		4, 5, 30, 1.5,
+		4, 2, 30, 1.5,
 		ERANGE_TYPE::CLOSE_MID_RANGE,
 		700, 200, 9000,
 		"Twister Torpedo 'Twisted Twister Sisters'",
@@ -73,7 +73,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::TWISTER_GUN, twisterGun);
 
 	FWeaponStruct shotGun = FWeaponStruct(
-		6, 1, 15, 0.5,
+		6, .5, 15, 0.5,
 		ERANGE_TYPE::CLOSE_RANGE,
 		300, 2300, 300,
 		"Shot Gun  'Hyper Shotgun'",
