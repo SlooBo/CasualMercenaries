@@ -117,6 +117,7 @@ void APomeGranadeLauncher::Tick(float DeltaSeconds)
 void APomeGranadeLauncher::Reload()
 {
 	Super::Reload();
+	reloading = true;
 	audioComp->SetSound(audioList[1]);
 	audioComp->Play();
 }
