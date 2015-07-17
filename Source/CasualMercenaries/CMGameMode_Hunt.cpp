@@ -6,6 +6,7 @@
 #include "CMPlayerState.h"
 #include "CMPlayerController.h"
 #include "PlayerCharacter.h"
+#include "DestructibleObject.h"
 #include "Util.h"
 
 ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
@@ -232,6 +233,10 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 		// deny shop access from players
 		player->OnShopAccessChanged(false);
 	}
+
+	// restore destructible objects back to their initial state
+	for (TActorIterator<ADestructibleObject> iter(GetWorld()); iter; ++iter)
+		(*iter)->Respawn();
 }
 
 void ACMGameMode_Hunt::OnRoundEnd_Implementation()
