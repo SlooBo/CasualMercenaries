@@ -43,12 +43,12 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	audioComp->AttachParent = GetRootComponent();
 
 	//	CharacterMesh
-	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver6/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver7/Character_updatedanimations.Character_updatedanimations'"));
 	GetMesh()->SetSkeletalMesh(MeshObj.Object);
-	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/ver6/MATinst_PlayerCharacter.MATinst_PlayerCharacter'"));
+	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/ver7/MAT_PlayerCharacter_updated_Inst.MAT_PlayerCharacter_updated_Inst'"));
 	GetMesh()->SetMaterial(0, MateriaObj.Object);
 	GetMesh()->SetMaterial(1, MateriaObj.Object);
-	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/ver6/APB_PlayerCharacter_ver6.APB_PlayerCharacter_ver6'"));
+	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/ver7/apb_test.apb_test'"));
 	GetMesh()->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
 
 	// Values from blueprint
@@ -552,16 +552,25 @@ void APlayerCharacter::PlaySound_Implementation(USoundCue* _component)
 	audioComp->Play();
 }
 
+bool APlayerCharacter::ChangeShirtColorServer_Validate(FLinearColor color)
+{
+	return true;
+}
+void APlayerCharacter::ChangeShirtColorServer_Implementation(FLinearColor color)
+{
+	ChangeShirtColor(color);
+}
+
 bool APlayerCharacter::ChangeShirtColor_Validate(FLinearColor color)
 {
 	return true;
 }
-
 void APlayerCharacter::ChangeShirtColor_Implementation(FLinearColor color)
 {
 	UMaterialInstanceDynamic *dynamicMesh = GetMesh()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
 	dynamicMesh->SetVectorParameterValue("ShirtColour", color);
 	GetMesh()->SetMaterial(0, dynamicMesh);
+	GetMesh()->SetMaterial(1, dynamicMesh);
 }
 
 bool APlayerCharacter::IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const

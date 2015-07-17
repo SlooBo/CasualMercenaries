@@ -110,9 +110,9 @@ AActor* ACMGameMode::GetRandomSpawnPoint(AController* player)
 
 void ACMGameMode::StartNewPlayer(APlayerController* newPlayer)
 {
-	Super::StartNewPlayer(newPlayer);
-
 	SetupNewPlayer(newPlayer);
+
+	Super::StartNewPlayer(newPlayer);
 }
 
 void ACMGameMode::HandleMatchIsWaitingToStart()
@@ -535,6 +535,6 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 	{
 		ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 		if (playerState != NULL)
-			playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
+			playerCharacter->ChangeShirtColorServer(playerState->GetColor(PlayerColor::Shirt));
 	}
 }

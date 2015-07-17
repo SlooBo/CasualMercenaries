@@ -106,6 +106,9 @@ public:
 	/* Utility                                                              */
 	/************************************************************************/
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ChangeShirtColorServer(FLinearColor color);
+
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 	void ChangeShirtColor(FLinearColor color);
 
