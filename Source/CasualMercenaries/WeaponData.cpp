@@ -14,7 +14,7 @@ void WeaponData::Initialize()
 		1000, 1500, 500,
 		"Rocket Launcher 'Babys first RPG'",
 		"Your generic rocket launcher stolen right from quake",
-		"Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'"
+		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/Bazooka.Bazooka'"
 		);
 	weaponData.Add(WEAPONID::ROCKET_LAUNCHER, rocketLauncher);
 
@@ -24,7 +24,7 @@ void WeaponData::Initialize()
 		500, 300, 1000,
 		"Wasserwerfer 'Vermuser'",
 		"Es werfst wasser 'Soil everything on the field, towel not included'", //sunscreen also not included! 
-		"Texture2D'/Game/Game/UI/Textures/watergunPic.watergunPic'");
+		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/WaterGun.WaterGun'");
 	weaponData.Add(WEAPONID::WATER_GUN, waterGun);
 
 	FWeaponStruct grenadeLauncher = FWeaponStruct(
@@ -42,7 +42,7 @@ void WeaponData::Initialize()
 		200, 200, 300,
 		"Mashine Gun 'Budda bud'",
 		"Shoots mashines which is zulu for machine",
-		"Texture2D'/Game/Game/UI/Textures/GunPic.GunPic'");
+		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/ToasterGun.ToasterGun'");
 	weaponData.Add(WEAPONID::MASHINE_GUN, mashineGun);
 
 	FWeaponStruct mudbusterGun = FWeaponStruct(
@@ -51,7 +51,7 @@ void WeaponData::Initialize()
 		100, 200, 300,
 		"Mudbuster Gun 'Liero's dröm'",
 		"Insta mud instantly just point and shoot! Where ever you need, what ever you want! Aproved by Miika the Great",
-		"Texture2D'/Game/Game/UI/Textures/MudbusterPic.MudbusterPic'");
+		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/MudGun.MudGun'");
 	weaponData.Add(WEAPONID::MUDBUSTER_GUN, mudbusterGun);
 
 	FWeaponStruct waspGun = FWeaponStruct(
@@ -78,7 +78,7 @@ void WeaponData::Initialize()
 		300, 2300, 300,
 		"Shot Gun  'Hyper Shotgun'",
 		"Shoots shots of hyperventilated lead",
-		"Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
+		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/Shotgun.Shotgun'");
 	weaponData.Add(WEAPONID::SHOT_GUN, shotGun);
 
 	FWeaponStruct noWeapon = FWeaponStruct(0, 0, 0, 0, ERANGE_TYPE::CLOSE_RANGE, 0, 0, 0, "fud", "fudud", "Texture2D'/Game/Game/UI/Textures/No_Weapon.No_Weapon'");
