@@ -133,27 +133,25 @@ void ACMGameMode_Hunt::HuntTickSecond()
 	}
 
 	HuntState lastState = huntState;
-	if (huntIntermissionElapsed > huntIntermissionLength)
+	if (huntIntermissionElapsed >= huntIntermissionLength && huntState == HuntState::Intermission)
 	{
 		huntIntermissionElapsed = 0;
+		huntState = HuntState::Freeze;
 		
 		if (huntRoundFreezeLength > 0)
-		{
-			huntState = HuntState::Freeze;
 			OnRoundFreezeStart();
-		}
 	}
-	if (huntFreezeTimeElapsed > huntRoundFreezeLength)
+	if (huntFreezeTimeElapsed >= huntRoundFreezeLength && huntState == HuntState::Freeze)
 	{
 		huntFreezeTimeElapsed = 0;
 		huntState = HuntState::Round;
 
-		if (lastState == HuntState::Freeze)
+		if (huntRoundFreezeLength > 0)
 			OnRoundFreezeEnd();
 
 		OnRoundStart();
 	}
-	if (huntRoundElapsed > huntRoundLength)
+	if (huntRoundElapsed >= huntRoundLength && huntState == HuntState::Round)
 	{
 		huntRoundElapsed = 0;
 		
