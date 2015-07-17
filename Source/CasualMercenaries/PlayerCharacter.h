@@ -113,7 +113,7 @@ public:
 
 	void RestoreActivity();
 
-	UPROPERTY(VisibleAnywhere, Category = "Player actions")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Player actions")
 		bool dashing;
 private:
 
