@@ -30,9 +30,7 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 	SetValueFromWidget(&upgradeButton2, "UpgradeButton2");
 	upgradeButton2->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton2);
 
-	UButton* quitButton = nullptr;
-	SetValueFromWidget(&quitButton, "QuitButton");
-	quitButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedQuit);
+
 
 	SetValueFromWidget(&buyButton, "BuyButton");
 	buyButton->OnClicked.AddDynamic(this, &UShopLogic::OnClickedBuyButton);
