@@ -21,7 +21,7 @@ public:
 	APlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
 	// Called when the game starts or when spawned
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 	//had to be changed so blueprint can run
 
 
@@ -106,10 +106,7 @@ public:
 	/* Utility                                                              */
 	/************************************************************************/
 
-	UFUNCTION(Reliable, Server, WithValidation)
-	void ChangeShirtColorServer(FLinearColor color);
-
-	UFUNCTION(Reliable, NetMulticast, WithValidation)
+	UFUNCTION(Reliable, NetMulticast)
 	void ChangeShirtColor(FLinearColor color);
 
 	virtual bool IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const override;
@@ -144,7 +141,8 @@ private:
 	bool canWalk;
 
 
-
+	UPROPERTY(Replicated)
+	FLinearColor shirtColor;
 
 
 	FVector dashEndLocation;

@@ -13,6 +13,7 @@
 #include "MUDbuster.h"
 #include "WaspNestCudgel.h"
 #include "CMPlayerController.h"
+#include "CMPlayerState.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
@@ -86,7 +87,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	bReplicates = true;
 	/// pleasant surprise 
-	
 }
 
 
@@ -99,6 +99,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	StaminaRegenServer(DeltaTime); 
 	WallCheck();
 	UpdateDash();
+}
+
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	ChangeShirtColor(shirtColor);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type _endPlayReason)
@@ -149,6 +155,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(APlayerCharacter, stamina);
 	DOREPLIFETIME(APlayerCharacter, armor);
 	DOREPLIFETIME(APlayerCharacter, state);
+	DOREPLIFETIME(APlayerCharacter, shirtColor);
 };
 
 void APlayerCharacter::OnStartJump()
@@ -552,23 +559,11 @@ void APlayerCharacter::PlaySound_Implementation(USoundCue* _component)
 	audioComp->Play();
 }
 
-bool APlayerCharacter::ChangeShirtColorServer_Validate(FLinearColor color)
-{
-	return true;
-}
-void APlayerCharacter::ChangeShirtColorServer_Implementation(FLinearColor color)
-{
-	ChangeShirtColor(color);
-}
-
-bool APlayerCharacter::ChangeShirtColor_Validate(FLinearColor color)
-{
-	return true;
-}
 void APlayerCharacter::ChangeShirtColor_Implementation(FLinearColor color)
 {
+	shirtColor = color;
 	UMaterialInstanceDynamic *dynamicMesh = GetMesh()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
-	dynamicMesh->SetVectorParameterValue("ShirtColour", color);
+	dynamicMesh->SetVectorParameterValue("ShirtColour", shirtColor);
 	GetMesh()->SetMaterial(0, dynamicMesh);
 	GetMesh()->SetMaterial(1, dynamicMesh);
 }
