@@ -190,7 +190,6 @@ void AMashineGun::Reload()
 	{
 		reloading = true;
 		audioComp->SetSound(audioList[1]);
-		audioComp->SetVolumeMultiplier(2);
 		audioComp->Play();
 	}
 }

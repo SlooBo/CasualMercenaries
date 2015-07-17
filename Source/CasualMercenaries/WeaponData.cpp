@@ -9,7 +9,7 @@ void WeaponData::Initialize()
 	//	FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice,
 	//uint32 upgradePrice1, uint32 upgradePrice2, FString name, FString description, FString iconPath)
 	FWeaponStruct rocketLauncher = FWeaponStruct(
-		4, 4, 50, 0.75,
+		6, 2, 50, 0.75,
 		ERANGE_TYPE::MID_LONG_RANGE,
 		1000, 1500, 500,
 		"Rocket Launcher 'Babys first RPG'",
