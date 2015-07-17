@@ -532,7 +532,8 @@ void APlayerCharacter::UpdateDash()
 		{ 
 			dashing = false;
 			GetCharacterMovement()->Velocity.Normalize();
-			GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity * GetCharacterMovement()->MaxWalkSpeed;
+			GetCharacterMovement()->Velocity =
+				FVector(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->Velocity.Y,0)* GetCharacterMovement()->MaxWalkSpeed;
 		}
 		else
 		{
