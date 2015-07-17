@@ -127,6 +127,16 @@ void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerCo
 	}
 }
 
+void ACMPlayerController::OnRoundStart()
+{
+
+}
+
+void ACMPlayerController::OnWarmupStart()
+{
+
+}
+
 void ACMPlayerController::OnShopAccessChanged(bool canShop)
 {
 	this->canShop = canShop;
