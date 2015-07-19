@@ -81,6 +81,15 @@ void WeaponData::Initialize()
 		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/Shotgun.Shotgun'");
 	weaponData.Add(WEAPONID::SHOT_GUN, shotGun);
 
+	FWeaponStruct hook = FWeaponStruct(
+		6, .5, 15, 0.5,
+		ERANGE_TYPE::CLOSE_RANGE,
+		300, 2300, 300,
+		"Hook",
+		"Hook that hooks",
+		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/Shotgun.Shotgun'");
+	weaponData.Add(WEAPONID::HOOK, hook);
+
 	FWeaponStruct noWeapon = FWeaponStruct(0, 0, 0, 0, ERANGE_TYPE::CLOSE_RANGE, 0, 0, 0, "fud", "fudud", "Texture2D'/Game/Game/UI/Textures/No_Weapon.No_Weapon'");
 	weaponData.Add(WEAPONID::NO_WEAPON, noWeapon);
 }

@@ -20,6 +20,7 @@ enum class WEAPONID : uint8
 	WASP_GUN,
 	TWISTER_GUN,
 	SHOT_GUN,
+	HOOK,
 	NO_WEAPON,
 };
 

@@ -13,7 +13,7 @@
 #include "TwisterSister.h"
 #include "WaspNestCudgel.h"
 #include "Shotgun.h"
-
+#include "Hook.h"
 void FInventory::ClearInventory()
 {
 	for (int i = 0; i < weapons.Num(); i++)
@@ -114,6 +114,12 @@ void FInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
 		{
 			weaponClass = AShotgun::StaticClass();
 			weapon = owningPlayer->GetWorld()->SpawnActor<AShotgun>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			break;
+		}
+		case WEAPONID::HOOK:
+		{
+			weaponClass = AHook::StaticClass();
+			weapon = owningPlayer->GetWorld()->SpawnActor<AHook>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
 			break;
 		}
 		default:
