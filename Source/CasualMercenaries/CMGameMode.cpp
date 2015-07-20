@@ -284,7 +284,7 @@ void ACMGameMode::OnMatchStart_Implementation()
 	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
 		SetupNewPlayer(*iter);
-		//(*iter)->OnRoundStart();
+		(*iter)->OnMatchStart();
 	}
 }
 
@@ -301,6 +301,7 @@ void ACMGameMode::SetupNewPlayer(APlayerController* newPlayer)
 		// assign random color for the player
 		FLinearColor randomColor = FLinearColor::MakeRandomColor();
 		playerState->SetColorId(randomColor);
+
 		APlayerCharacter* pc = Cast<APlayerCharacter>(newPlayer->GetPawn());
 		if (pc != NULL)
 			pc->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
@@ -344,12 +345,11 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	}
 	playerState->AddDeaths(1);
 
+	player->OnPlayerDeath();
+
 	// broadcast death for everyone
-	for (auto iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-	{
-		ACMPlayerController* playerController = Cast<ACMPlayerController>((*iter).Get());
-		playerController->OnPlayerDeath(player, killer);
-	}
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+		(*iter)->OnPlayerDeathBroadcast(player, killer);
 
 	// turn player into spectator
 	SpectatePlayer(player);
