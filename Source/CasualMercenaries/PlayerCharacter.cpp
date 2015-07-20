@@ -551,17 +551,19 @@ void APlayerCharacter::UpdateDash()
 			dashing = false;
 			GetCharacterMovement()->Velocity.Normalize();
 			GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity * GetCharacterMovement()->MaxWalkSpeed;
-				//FVector(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->Velocity.Y,0)* GetCharacterMovement()->MaxWalkSpeed;
 		}
 		else
 		{
 			if (GetCharacterMovement()->IsFalling())
 			{
-				GetCharacterMovement()->Velocity = -(tempActorLocation - dashEndLocation) * 5;
+				FVector tempVel = -(tempActorLocation - dashEndLocation);
+				tempVel.Normalize();
+				GetCharacterMovement()->Velocity = tempVel * 3000;
 				return;
 			}
-
-			GetCharacterMovement()->Velocity = -(tempActorLocation - dashEndLocation)*30;
+			FVector tempVel = -(tempActorLocation - dashEndLocation);
+			tempVel.Normalize();
+			GetCharacterMovement()->Velocity = tempVel * 9700;
 		}
 	}
 	else
