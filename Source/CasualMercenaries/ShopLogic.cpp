@@ -41,7 +41,7 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 	SetValueFromWidget(&descriptionTextBox, "DescriptionTextBox");
 	SetValueFromWidget(&statTextBox, "StatText");
 
-	SetValueFromWidget(&cashText, "CashText");
+
 
 	UButton *tempWeaponButton = nullptr;
 	for (int i = 0; i < 4; i++)
@@ -369,7 +369,6 @@ void UShopLogic::Update()
 {
 	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
 	ACMPlayerState *playerState = Cast<ACMPlayerState>(controller->PlayerState);
-	cashText->SetText(FText::FromString(FString::FromInt(playerState->GetMoney()) + " $"));
 
 	
 	if (controller->GetInventory().currentWeapon != currentWeaponIndex)

@@ -110,9 +110,9 @@ AActor* ACMGameMode::GetRandomSpawnPoint(AController* player)
 
 void ACMGameMode::StartNewPlayer(APlayerController* newPlayer)
 {
-	Super::StartNewPlayer(newPlayer);
-
 	SetupNewPlayer(newPlayer);
+
+	Super::StartNewPlayer(newPlayer);
 }
 
 void ACMGameMode::HandleMatchIsWaitingToStart()

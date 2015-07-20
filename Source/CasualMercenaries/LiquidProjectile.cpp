@@ -17,6 +17,7 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 	projectileMesh->SetRelativeScale3D(FVector(.1, .1, .1));
 	projectileMesh->SetSimulatePhysics(false);
 	projectileMesh->SetVisibility(false);
+	projectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	//Movement
 	ProjectileMovement->ProjectileGravityScale = 0.3;
@@ -96,6 +97,6 @@ void ALiquidProjectile::Splash_Implementation()
 {	
 	//Splashing
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
-	particle->SetRelativeScale3D(FVector(40,40,40));
+	particle->SetRelativeScale3D(FVector(4,4,4));
 	Destroy();
 }

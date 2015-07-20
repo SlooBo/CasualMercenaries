@@ -37,7 +37,6 @@ private:
 	UButton* upgradeButton1;
 	UButton* upgradeButton2;
 	UTextBlock *buyButtonText;
-	UTextBlock *cashText;
 	UImage* weaponImage;
 	UTextBlock* tooltipText;
 	UMultiLineEditableTextBox* descriptionTextBox;

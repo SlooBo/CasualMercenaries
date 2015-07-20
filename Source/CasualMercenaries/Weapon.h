@@ -20,6 +20,7 @@ enum class WEAPONID : uint8
 	WASP_GUN,
 	TWISTER_GUN,
 	SHOT_GUN,
+	HOOK,
 	NO_WEAPON,
 };
 
@@ -78,8 +79,6 @@ public:
 
 	virtual void Fire(){};
 
-	virtual void IncreaseAmmoAmount(int32 Ammo);
-
 	/************************************************************************/
 	/* Utility                                                              */
 	/************************************************************************/
@@ -97,6 +96,7 @@ public:
 
 	bool GetFiring(){return firing;};
 
+	// if the weapon was fired passedTimeFirin == 0 then true;
 	bool GetJustFired()
 	{ 
 		return passedTimeFiring == 0;

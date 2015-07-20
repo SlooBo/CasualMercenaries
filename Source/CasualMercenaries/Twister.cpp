@@ -47,7 +47,6 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	particleSystem = ObjectInitializer.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Tornado.P_Tornado'"));
 	particleSystem->Template = ParticleObj.Object;
-	//particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
 	particleSystem->Activate();
 	particleSystem->SetRelativeScale3D(FVector(4.0f, 4.0f, 2.0f));
 	particleSystem->SetRelativeLocation(FVector(0.0f, 0.0f, -100.0f));
@@ -79,6 +78,7 @@ void ATwister::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Norma
 
 void ATwister::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	// throws other colliding projectiles around 
 	AProjectile* projectile = Cast<AProjectile>(OtherActor);
 	if (projectile)
 	{

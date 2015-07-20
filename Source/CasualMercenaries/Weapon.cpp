@@ -9,22 +9,28 @@
 // Sets default values
 AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	//Initialize weaponMesh
 	weaponMesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh"));
-	//weaponMesh->SetWorldScale3D(FVector(.6,.6,.6));
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Hides Weapons unless called from code
 	this->SetActorHiddenInGame(true);
 
+	//default price
 	price = 5;
 
+
+	//trigger initial values
 	reloading = false;
 	firing = false;
 
-	bReplicates = true;
-
 	passedTimeFiring = 1;
-}
 
+	//Replicates itself overserver
+	bReplicates = true;
+}
+// Function that sets values from WeaponData file to weapons 
+// should be called after id has been set.
 void AWeapon::SuperFunctioAlaMiika()
 {
 	FWeaponStruct* data	= WeaponData::Get()->GetWeaponData(id);
@@ -33,20 +39,24 @@ void AWeapon::SuperFunctioAlaMiika()
 	damage = data->damage;
 	firingInterval = data->fireRate;
 	reloadTime = data->reloadTime;
-	//muzzleOffset = FVector( 0, 0, 0);
 }
 
 // Called when the game starts or when spawned
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AWeapon::Tick( float DeltaTime )
 {
 	Super::Tick(DeltaTime);
+
+	// reloading can start only on tick
+	// may induce unwanted consequenses
+
+	passedTimeFiring += DeltaTime;
+
 	if (reloading)
 	{
 		passedTimeReloading += DeltaTime;
@@ -57,9 +67,15 @@ void AWeapon::Tick( float DeltaTime )
 			passedTimeReloading = 0;
 			reloading = false;
 		}
+		else
+		{
+			return;
+		}
 	}
 
-	passedTimeFiring += DeltaTime;
+
+
+	// firing can start only on tick
 	if (firing)
 	{
 		if (passedTimeFiring > firingInterval)
@@ -77,36 +93,30 @@ void AWeapon::Tick( float DeltaTime )
 
 void AWeapon::PrimaryFunction(APlayerCharacter* user)
 {
-
-
 }
 
 void AWeapon::SecondaryFunction(APlayerCharacter* user)
 {
-
 }
 
 void AWeapon::Reload()
 {
 
 }
-
+// Old method that was used to child weapons to PlayerCharacter parents
 void AWeapon::SetRoot(APlayerCharacter* user)
 {
 	this->SetOwner(user);
 	this->AttachRootComponentToActor(user);
 }
-
-void AWeapon::IncreaseAmmoAmount(int32 ammo)
-{
-	clips += ammo;
-}
-
+// Gets you the weapon ID
 WEAPONID AWeapon::GetIDFromInt(uint8 value)
 {
 	return static_cast<WEAPONID>(value);
 }
 
+// Function to preserve weapons from carbage collecting
+// may be unnesessary now
 void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

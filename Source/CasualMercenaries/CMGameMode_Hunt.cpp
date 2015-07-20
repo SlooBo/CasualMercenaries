@@ -6,6 +6,7 @@
 #include "CMPlayerState.h"
 #include "CMPlayerController.h"
 #include "PlayerCharacter.h"
+#include "DestructibleObject.h"
 #include "Util.h"
 
 ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
@@ -29,7 +30,7 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	respawnMode = RespawnMode::AtGhost;
 	playerRespawnTime = 20;
 	warmupRespawnTime = 1;
-	playerRespawnTimeMinimum = 1;
+	playerRespawnTimeMinimum = 5;
 	warmupRespawnTimeMinimum = 0;
 }
 
@@ -133,27 +134,25 @@ void ACMGameMode_Hunt::HuntTickSecond()
 	}
 
 	HuntState lastState = huntState;
-	if (huntIntermissionElapsed > huntIntermissionLength)
+	if (huntIntermissionElapsed >= huntIntermissionLength && huntState == HuntState::Intermission)
 	{
 		huntIntermissionElapsed = 0;
+		huntState = HuntState::Freeze;
 		
 		if (huntRoundFreezeLength > 0)
-		{
-			huntState = HuntState::Freeze;
 			OnRoundFreezeStart();
-		}
 	}
-	if (huntFreezeTimeElapsed > huntRoundFreezeLength)
+	if (huntFreezeTimeElapsed >= huntRoundFreezeLength && huntState == HuntState::Freeze)
 	{
 		huntFreezeTimeElapsed = 0;
 		huntState = HuntState::Round;
 
-		if (lastState == HuntState::Freeze)
+		if (huntRoundFreezeLength > 0)
 			OnRoundFreezeEnd();
 
 		OnRoundStart();
 	}
-	if (huntRoundElapsed > huntRoundLength)
+	if (huntRoundElapsed >= huntRoundLength && huntState == HuntState::Round)
 	{
 		huntRoundElapsed = 0;
 		
@@ -234,6 +233,10 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 		// deny shop access from players
 		player->OnShopAccessChanged(false);
 	}
+
+	// restore destructible objects back to their initial state
+	for (TActorIterator<ADestructibleObject> iter(GetWorld()); iter; ++iter)
+		(*iter)->Respawn();
 }
 
 void ACMGameMode_Hunt::OnRoundEnd_Implementation()

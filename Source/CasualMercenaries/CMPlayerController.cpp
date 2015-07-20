@@ -552,6 +552,7 @@ void ACMPlayerController::PrintTarget()
 		if (pawn != nullptr)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: " +pawn->GetName());
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt Color: " + Cast<ACMPlayerState>(pawn->PlayerState)->GetColorId().ToString());
 		}
 		else
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: null");

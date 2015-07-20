@@ -14,16 +14,22 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	projectileMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("RocketMesh"));
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/RocketLauncher/Rocket.Rocket'"));
 	projectileMesh->SetStaticMesh(MeshObj.Object);
+	projectileMesh->IgnoreActorWhenMoving(this->GetOwner(), true);
+
+	//RootComponent = projectileMesh;
+
+
+	CollisionComp->IgnoreActorWhenMoving(this->GetOwner(), true);
 	//Material MISSING!
 
 	//Movement
 	ProjectileMovement->InitialSpeed = 3000.0f;
 	ProjectileMovement->ProjectileGravityScale = 0.0;
 
-
 	//Delegate
 	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
 
+	
 
 	//Stuff
 	SetActorEnableCollision(true);
@@ -69,6 +75,13 @@ void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Normal
 	if (OtherActor != this->GetOwner())
 		if (!Cast<ATwister>(OtherActor))
 			Explode();
+
+	if (OtherActor == this->GetOwner())
+	{
+		NormalImpulse = FVector::ZeroVector;
+		SelfActor->SetActorLocation(SelfActor->GetActorLocation() + SelfActor->GetVelocity() * 0.01);
+	}
+
 }
 
 void ARocket::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

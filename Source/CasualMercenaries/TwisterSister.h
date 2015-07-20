@@ -46,11 +46,11 @@ private:
 
 	void Fire();
 
-
 	/************************************************************************/
 	/* ServerFunctions                                                      */
 	/************************************************************************/
-	
+
+	//The effect that should play for everyone not only for the instigator 
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 		void ServerEffect(UParticleSystem* particle, FVector location);
 };

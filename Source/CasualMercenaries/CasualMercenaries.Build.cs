@@ -24,8 +24,10 @@ public class CasualMercenaries : ModuleRules
 			                    }
             );
 		// Uncomment if you are using Slate UI
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" ,"CableComponent"});
+
+        PrivateIncludePathModuleNames.AddRange(new string[] { "CableComponent" });
+
 		// Uncomment if you are using online features
         PrivateDependencyModuleNames.Add("OnlineSubsystem");
         if ((Target.Platform == UnrealTargetPlatform.Win32) || (Target.Platform == UnrealTargetPlatform.Win64))

@@ -9,13 +9,13 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 {
 	//StaticMesh
 	projectileMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
-	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Props/Plant/MESH_Plant.MESH_Plant'"));
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Props/Firehydrant/firehydrant.firehydrant'"));
 	projectileMesh->SetStaticMesh(MeshObj.Object);
 	//Material
-	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Props/Plant/MAT_Plant.MAT_Plant'"));
+	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Props/Firehydrant/MAT_firehydrant.MAT_firehydrant'"));
 	projectileMesh->SetMaterial(0, MateriaObj.Object);
 	//Scale
-	projectileMesh->SetRelativeScale3D(FVector(1, 1, 1));
+	projectileMesh->SetRelativeScale3D(FVector(.1, .1, .1));
 	projectileMesh->SetSimulatePhysics(true);
 
 
@@ -144,6 +144,11 @@ void AGranade::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Norma
 	APlayerCharacter* temp = Cast<APlayerCharacter>(OtherActor);
 	if (temp)
 		Explode();
+	if (OtherActor == this->GetOwner())
+	{
+		NormalImpulse = FVector::ZeroVector;
+		SelfActor->SetActorLocation(SelfActor->GetActorLocation() + SelfActor->GetVelocity() * 0.01);
+	}
 }
 
 //float AGranade::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)

@@ -13,7 +13,8 @@
 #include "MUDbuster.h"
 #include "WaspNestCudgel.h"
 #include "CMPlayerController.h"
-
+#include "CMPlayerState.h"
+#include "Hook.h"
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
@@ -43,12 +44,12 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	audioComp->AttachParent = GetRootComponent();
 
 	//	CharacterMesh
-	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver6/MESH_PlayerCharacter.MESH_PlayerCharacter'"));
+	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver7/Character_updatedanimations.Character_updatedanimations'"));
 	GetMesh()->SetSkeletalMesh(MeshObj.Object);
-	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/ver6/MATinst_PlayerCharacter.MATinst_PlayerCharacter'"));
+	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/ver7/MAT_PlayerCharacter_updated_Inst.MAT_PlayerCharacter_updated_Inst'"));
 	GetMesh()->SetMaterial(0, MateriaObj.Object);
 	GetMesh()->SetMaterial(1, MateriaObj.Object);
-	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/ver6/APB_PlayerCharacter_ver6.APB_PlayerCharacter_ver6'"));
+	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/ver7/apb_test.apb_test'"));
 	GetMesh()->AnimBlueprintGeneratedClass = AnimBuleprintObj.Object->GetAnimBlueprintGeneratedClass();
 
 	// Values from blueprint
@@ -57,7 +58,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	GetMesh()->SetRelativeLocation(FVector(-9.999983f, -0.000022f, -84.614967f));
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	GetMesh()->SetRelativeScale3D(FVector(0.6f, 0.6f, 0.6f));
-
 
 	rightShoulder = false;
 
@@ -86,7 +86,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	bReplicates = true;
 	/// pleasant surprise 
-	
 }
 
 
@@ -101,8 +100,22 @@ void APlayerCharacter::Tick(float DeltaTime)
 	UpdateDash();
 }
 
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	UMaterialInstanceDynamic *dynamicMesh = GetMesh()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
+	GetMesh()->SetMaterial(0, dynamicMesh);
+	GetMesh()->SetMaterial(1, dynamicMesh);
+
+	if (Role < ROLE_Authority)
+		ChangeShirtColor(shirtColor);
+}
+
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type _endPlayReason)
 {
+	Super::EndPlay(_endPlayReason);
+
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 }
 
@@ -149,6 +162,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(APlayerCharacter, stamina);
 	DOREPLIFETIME(APlayerCharacter, armor);
 	DOREPLIFETIME(APlayerCharacter, state);
+	DOREPLIFETIME(APlayerCharacter, shirtColor);
 };
 
 void APlayerCharacter::OnStartJump()
@@ -158,6 +172,10 @@ void APlayerCharacter::OnStartJump()
 
 	if (state == CHARACTER_STATE::ALIVE)
 	bPressedJump = true;
+	ACMPlayerController *controller = Cast<ACMPlayerController>(GetController()); 
+	AHook *hook = Cast<AHook>(controller->GetInventory().GetWeapon(controller->GetInventory().currentWeapon));
+	if (hook != nullptr && hook->hooked)
+		hook->ReleaseHook();
 
 }
 
@@ -426,7 +444,7 @@ void APlayerCharacter::WallJumpServer_Implementation()
 
 void APlayerCharacter::InputDash()
 {
-	if (stamina >= 25)
+	//if (stamina >= 25)
 	{
 		ServerDash(GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"));
 	}
@@ -533,9 +551,16 @@ void APlayerCharacter::UpdateDash()
 			dashing = false;
 			GetCharacterMovement()->Velocity.Normalize();
 			GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity * GetCharacterMovement()->MaxWalkSpeed;
+				//FVector(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->Velocity.Y,0)* GetCharacterMovement()->MaxWalkSpeed;
 		}
 		else
 		{
+			if (GetCharacterMovement()->IsFalling())
+			{
+				GetCharacterMovement()->Velocity = -(tempActorLocation - dashEndLocation) * 5;
+				return;
+			}
+
 			GetCharacterMovement()->Velocity = -(tempActorLocation - dashEndLocation)*30;
 		}
 	}
@@ -551,16 +576,16 @@ void APlayerCharacter::PlaySound_Implementation(USoundCue* _component)
 	audioComp->Play();
 }
 
-bool APlayerCharacter::ChangeShirtColor_Validate(FLinearColor color)
-{
-	return true;
-}
-
 void APlayerCharacter::ChangeShirtColor_Implementation(FLinearColor color)
 {
-	UMaterialInstanceDynamic *dynamicMesh = GetMesh()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
-	dynamicMesh->SetVectorParameterValue("ShirtColour", color);
+	shirtColor = color;
+	UMaterialInstanceDynamic *dynamicMesh = Cast<UMaterialInstanceDynamic>(GetMesh()->GetMaterial(0));
+	if (dynamicMesh != NULL)
+		dynamicMesh->SetVectorParameterValue("ShirtColour", shirtColor);
+	/*UMaterialInstanceDynamic *dynamicMesh = GetMesh()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
+	dynamicMesh->SetVectorParameterValue("ShirtColour", shirtColor);
 	GetMesh()->SetMaterial(0, dynamicMesh);
+	GetMesh()->SetMaterial(1, dynamicMesh);*/
 }
 
 bool APlayerCharacter::IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const

@@ -9,7 +9,7 @@ void WeaponData::Initialize()
 	//	FWeaponData(uint16 clipSize, float reloadTime, uint16 damage, float fireRate, RANGE_TYPE range, uint32 buyPrice,
 	//uint32 upgradePrice1, uint32 upgradePrice2, FString name, FString description, FString iconPath)
 	FWeaponStruct rocketLauncher = FWeaponStruct(
-		4, 4, 50, 0.75,
+		6, 2, 50, 0.75,
 		ERANGE_TYPE::MID_LONG_RANGE,
 		1000, 1500, 500,
 		"Rocket Launcher 'Babys first RPG'",
@@ -80,6 +80,15 @@ void WeaponData::Initialize()
 		"Shoots shots of hyperventilated lead",
 		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/Shotgun.Shotgun'");
 	weaponData.Add(WEAPONID::SHOT_GUN, shotGun);
+
+	FWeaponStruct hook = FWeaponStruct(
+		1, .5, 15, 0.5,
+		ERANGE_TYPE::CLOSE_RANGE,
+		300, 2300, 300,
+		"Hook",
+		"Hook that hooks",
+		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/Shotgun.Shotgun'");
+	weaponData.Add(WEAPONID::HOOK, hook);
 
 	FWeaponStruct noWeapon = FWeaponStruct(0, 0, 0, 0, ERANGE_TYPE::CLOSE_RANGE, 0, 0, 0, "fud", "fudud", "Texture2D'/Game/Game/UI/Textures/No_Weapon.No_Weapon'");
 	weaponData.Add(WEAPONID::NO_WEAPON, noWeapon);
