@@ -41,6 +41,7 @@ public:
 	InGameState GetInGameState() { return inGameState; };
 
 	virtual void StartNewPlayer(APlayerController* newPlayer) override;
+	virtual void Logout(AController* exiting) override;
 	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void StartMatch() override;
 

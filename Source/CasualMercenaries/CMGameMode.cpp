@@ -115,6 +115,17 @@ void ACMGameMode::StartNewPlayer(APlayerController* newPlayer)
 	Super::StartNewPlayer(newPlayer);
 }
 
+void ACMGameMode::Logout(AController* exiting)
+{
+	ACMPlayerController* pc = Cast<ACMPlayerController>(exiting);
+
+	// remove ongoing respawn timers if player disconnects
+	if (pc != NULL && respawnTimerList.Contains(pc))
+		GetWorld()->GetTimerManager().ClearTimer(respawnTimerList[pc]);
+
+	Super::Logout(exiting);
+}
+
 void ACMGameMode::HandleMatchIsWaitingToStart()
 {
 	Super::HandleMatchIsWaitingToStart();
@@ -467,13 +478,19 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	ACMPlayerController* player = Cast<ACMPlayerController>(controller->CastToPlayerController());
 	if (player == NULL)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer controller is not PlayerController"));
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer, controller is not PlayerController"));
 		return;
 	}
 
 	//clear respawn timers if player respawned early
 	if (respawnTimerList.Contains(player))
 		GetWorld()->GetTimerManager().ClearTimer(respawnTimerList[player]);
+
+	if (player->PlayerState == NULL)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer, PlayerState is null (player disconnected?)"));
+		return;
+	}
 
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 	if (playerState != NULL)
