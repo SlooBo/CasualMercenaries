@@ -24,13 +24,16 @@ public:
 	void PrimaryFunctionReleased(APlayerCharacter* user);
 	void Reload();
 	void Fire();
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Cable")
+		UMyCable *cableComponent;
+	void ReleaseHook();
+	bool hooked;
 private:
 	FVector hookedLocation;
 	FVector startLocation;
-	bool hooked;
+
 	FTimerHandle hookReleaseHandle;
-	void ReleaseHook();
-	UPROPERTY()
-	UMyCable *cableComponent;
+
+
 	float EasedValue(float currentTime, float startValue, float changeInValue, float duration);
 };

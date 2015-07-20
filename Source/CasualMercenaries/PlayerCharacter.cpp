@@ -14,7 +14,7 @@
 #include "WaspNestCudgel.h"
 #include "CMPlayerController.h"
 #include "CMPlayerState.h"
-
+#include "Hook.h"
 // Sets default values
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer)
 {
@@ -165,6 +165,10 @@ void APlayerCharacter::OnStartJump()
 
 	if (state == CHARACTER_STATE::ALIVE)
 	bPressedJump = true;
+	ACMPlayerController *controller = Cast<ACMPlayerController>(GetController()); 
+	AHook *hook = Cast<AHook>(controller->GetInventory().GetWeapon(controller->GetInventory().currentWeapon));
+	if (hook != nullptr && hook->hooked)
+		hook->ReleaseHook();
 
 }
 

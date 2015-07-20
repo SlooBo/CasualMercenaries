@@ -14,8 +14,8 @@ AHook::AHook(const FObjectInitializer& FOI) : AWeapon(FOI)
 	//Integers
 	maxAmmo = 6;
 	clips = 999;
-	ammo = 4;
-	ammoInClip = 4;
+	ammo = 1;
+	ammoInClip = 1;
 
 
 	//Floats
@@ -49,12 +49,13 @@ void AHook::Tick(float DeltaTime)
 	{
 		FVector forwardVector = hookedLocation - player->GetActorLocation();
 		forwardVector.Normalize();
-		player->GetCharacterMovement()->Velocity = forwardVector * 1000;
-
+		float currentTime = GetWorld()->GetTimerManager().GetTimerElapsed(hookReleaseHandle);
+		float test = EasedValue(currentTime, 0, 5000, 3.0f);
+		player->GetCharacterMovement()->Velocity = forwardVector * test;
 
 
 	}
-	if (FVector::Dist(player->GetActorLocation(), hookedLocation) < 300.0f)
+	if (FVector::Dist(player->GetActorLocation(), hookedLocation) < 500.0f)
 	{
 		ReleaseHook();
 	}
@@ -63,11 +64,11 @@ void AHook::Tick(float DeltaTime)
 void AHook::PrimaryFunction(APlayerCharacter* user)
 {
 	this->SetOwner(user);
-	if (ammo > 0)
+	if (ammo > 0 && !hooked)
 	{
 		firing = true;
 	}
-	else
+	else if (!hooked)
 	{
 		Reload();
 	}
@@ -141,6 +142,7 @@ void AHook::ReleaseHook()
 	if (player != nullptr)
 	{
 		player->GetCharacterMovement()->GravityScale = 1.0f;
+		
 	}
 
 }

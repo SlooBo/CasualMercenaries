@@ -82,7 +82,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::SHOT_GUN, shotGun);
 
 	FWeaponStruct hook = FWeaponStruct(
-		6, .5, 15, 0.5,
+		1, .5, 15, 0.5,
 		ERANGE_TYPE::CLOSE_RANGE,
 		300, 2300, 300,
 		"Hook",
