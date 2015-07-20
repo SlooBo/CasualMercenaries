@@ -21,6 +21,7 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 
 	this->RootComponent = projectileMesh;
 
+	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	//Movement
 	ProjectileMovement->ProjectileGravityScale = 1.0;
@@ -107,8 +108,7 @@ void AGranade::Explode_Implementation()
 		
 		if (distance <= ExplosionRadius)
 		{
-			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			aItr->TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(tempChar->GetController()));
+			aItr->TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, controller);
 		}
 	}
 	for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
@@ -117,7 +117,6 @@ void AGranade::Explode_Implementation()
 
 		if (distance <= ExplosionRadius)
 		{
-			AProjectile* tempChar = Cast<AProjectile>(this->GetOwner());
 			aItr->TakeDamage(ExplosionDamage*2);
 		}
 	}
@@ -144,14 +143,6 @@ void AGranade::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Norma
 	APlayerCharacter* temp = Cast<APlayerCharacter>(OtherActor);
 	if (temp)
 		Explode();
-	if (OtherActor == this->GetOwner())
-	{
+	if (Cast<AGhostCharacter>(OtherActor))
 		NormalImpulse = FVector::ZeroVector;
-		SelfActor->SetActorLocation(SelfActor->GetActorLocation() + SelfActor->GetVelocity() * 0.01);
-	}
 }
-
-//float AGranade::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
-//{
-//	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-//}

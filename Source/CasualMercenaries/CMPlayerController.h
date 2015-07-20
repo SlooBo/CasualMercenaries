@@ -37,10 +37,23 @@ public:
 	virtual void Possess(APawn* inPawn) override;
 	virtual void UnPossess() override;
 	
-	void OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/);
-	void OnAnnouncement(FString announceText/*, USoundCue* announceSoundCue*/);
+	void OnPlayerDeath();
+
+	UFUNCTION(Reliable, Client)
+	void OnPlayerDeathBroadcast(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/);
+
+	UFUNCTION(Reliable, Client)
+	void OnAnnouncement(const FString& announceText/*, USoundCue* announceSoundCue*/);
+
+	UFUNCTION(Reliable, Client)
+	void OnMatchStart();
+
+	UFUNCTION(Reliable, Client)
 	void OnRoundStart();
+
+	UFUNCTION(Reliable, Client)
 	void OnWarmupStart();
+
 	void OnShopAccessChanged(bool canShop);
 
 	UFUNCTION()

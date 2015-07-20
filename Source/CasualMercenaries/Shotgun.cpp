@@ -87,11 +87,11 @@ void AShotgun::Fire()
 
 
 
-	this->GetOwner()->GetActorEyesViewPoint(userLoc2, cameraRot);
+	controller->GetPawn()->GetActorEyesViewPoint(userLoc2, cameraRot);
 
-	FVector cameraLoc = Cast<APlayerCharacter>(GetOwner())->GetCamera()->GetComponentLocation();
+	FVector cameraLoc = Cast<APlayerCharacter>(controller->GetPawn())->GetCamera()->GetComponentLocation();
 
-	userLoc = this->GetOwner()->GetActorLocation();
+	userLoc = controller->GetPawn()->GetActorLocation();
 
 	FVector shootDir = cameraRot.Vector();
 	for (int i = 0; i < 10; i++)
@@ -111,7 +111,7 @@ void AShotgun::Fire()
 		FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
 		traceParams.bTraceAsyncScene = true;
 		traceParams.bReturnPhysicalMaterial = true;
-		traceParams.AddIgnoredActor(this->GetOwner());
+		traceParams.AddIgnoredActor(controller->GetPawn());
 
 		FHitResult hit(ForceInit);
 
@@ -128,7 +128,7 @@ void AShotgun::Fire()
 		//Hit resolve
 		ABaseCharacter* player = Cast<ABaseCharacter>(hit.GetActor());
 		if (player != nullptr)
-			player->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(Cast<class APlayerCharacter>(this->GetOwner())->GetController()));
+			player->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(Cast<class APlayerCharacter>(controller->GetPawn())->GetController()));
 		else
 		{
 			AProjectile* projectile = Cast<AProjectile>(hit.GetActor());

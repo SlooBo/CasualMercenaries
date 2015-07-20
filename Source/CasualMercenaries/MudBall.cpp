@@ -18,6 +18,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 	//NavMeshIntegration
 	projectileMesh->SetCanEverAffectNavigation(true);
+	projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	
 	//Movement
@@ -27,7 +28,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 	//CollisionComponent
 	CollisionComp->InitSphereRadius(15.0f);
-
+	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	//Delegate
 	OnActorHit.AddDynamic(this, &AMudBall::OnMyActorHit);
@@ -77,8 +78,14 @@ AMudBall::~AMudBall()
 
 void AMudBall::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	ProjectileMovement->SetActive(false, false);
-	inflating = true;
+	if (!OtherActor)
+	{
+	}
+	else
+	{
+		ProjectileMovement->SetActive(false, false);
+		inflating = true;
+	}
 }
 
 void AMudBall::Tick(float DeltaSeconds)

@@ -130,19 +130,19 @@ void AWaspNestCudgel::Fire()
 
 	particleSystem->Activate();
 	//should keep the beeswarm centered around the user, but doesn't
-	particleSystem->SetWorldLocation(GetOwner()->GetActorLocation(), false, nullptr);
+	particleSystem->SetWorldLocation(controller->GetPawn()->GetActorLocation(), false, nullptr);
 
 	// Goes through all AplyerCharacterActor and those that are in range take damage
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 	{
-		if (*aItr != Cast<APlayerCharacter>(this->GetOwner()))
+		if (*aItr != Cast<APlayerCharacter>(controller->GetPawn()))
 		{
 			float distance = GetDistanceTo(*aItr);
 
 			if (distance <= damageRadius)
 			{
 				UGameplayStatics::ApplyDamage(*aItr, damage, GetInstigatorController(), this, UDamageType::StaticClass());
-				APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
+				APlayerCharacter* tempChar = Cast<APlayerCharacter>(controller->GetPawn());
 				aItr->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(tempChar->GetController()));
 			}
 		}

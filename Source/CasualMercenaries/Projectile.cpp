@@ -2,6 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "Projectile.h"
+#include "GhostCharacter.h"
 
 
 // Sets default values
@@ -15,7 +16,8 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	CollisionComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	//Set Root component
 	RootComponent = CollisionComp;
-	
+
+
 
 	//MovementComponent  
 	ProjectileMovement = ObjectInitializer.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("ProjectileComp"));
@@ -32,6 +34,9 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	deathTime = 300;
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+
+	controller = Cast<ACMPlayerController>(GetOwner());
 }
 
 // Called when the game starts or when spawned

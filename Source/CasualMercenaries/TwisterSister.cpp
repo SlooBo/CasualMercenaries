@@ -98,8 +98,8 @@ void ATwisterSister::Fire()
 	FVector userLoc;
 	FRotator cameraRot;
 
-	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
-	userLoc = this->GetOwner()->GetActorLocation();
+	controller->GetPawn()->GetActorEyesViewPoint(userLoc, cameraRot);
+	userLoc = controller->GetPawn()->GetActorLocation();
 
 	cameraRot.Pitch = 0;
 
@@ -111,13 +111,14 @@ void ATwisterSister::Fire()
 	if (World != NULL)
 	{
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this->GetOwner();
+		SpawnParams.Owner = controller->GetPawn();
 		SpawnParams.Instigator = Instigator;
 
 		ATwister* const projectile = World->SpawnActor<ATwister>(ATwister::StaticClass(), MuzzleLocation, MuzzleRotation, SpawnParams);
 
 		if (projectile)
 		{
+			projectile->SetController(controller);
 			FVector const LaunchDir = MuzzleRotation.Vector();
 			projectile->InitVelocity(LaunchDir);
 		}

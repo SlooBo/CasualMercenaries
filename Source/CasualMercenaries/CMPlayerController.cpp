@@ -111,29 +111,44 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 }
 
 
-void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
+void ACMPlayerController::OnPlayerDeath()
 {
-	if (killed->inventory.GetCurrentWeapon() != NULL)
+	if (inventory.GetCurrentWeapon() != NULL)
 	{
-		killed->inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
-		killed->inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
+		inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
 	}
+}
 
+void ACMPlayerController::OnPlayerDeathBroadcast_Implementation(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
+{
 	if (killed == this)
 	{
-		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(GetPawn());
-		if (playerCharacter != NULL)
-		{
-		}
+		// handle clientside death here
 	}
+	
+	// handle kill messages and other death related stuff here
 }
 
-void ACMPlayerController::OnRoundStart()
+void ACMPlayerController::OnAnnouncement_Implementation(const FString& announceText/*, USoundCue* announceSoundCue*/)
 {
 
 }
 
-void ACMPlayerController::OnWarmupStart()
+
+void ACMPlayerController::OnMatchStart_Implementation()
+{
+
+}
+
+void ACMPlayerController::OnRoundStart_Implementation()
+{
+	APlayerHud* hud = Cast<APlayerHud>(GetHUD());
+	if (hud != NULL)
+		hud->CreateTestHavoc();
+}
+
+void ACMPlayerController::OnWarmupStart_Implementation()
 {
 
 }
@@ -185,15 +200,6 @@ void ACMPlayerController::Possess(APawn* inPawn)
 			{
 				weapon->SetRoot(pc);
 				weapon->SetOwner(pc);
-
-				//this->GetInventory().GetWeapon(i)->SetActorLocation(
-				//	Cast<APlayerCharacter>(pc)->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(
-				//	Cast<APlayerCharacter>(pc)->Mesh
-				//	)
-				//	);
-				//this->GetInventory().GetWeapon(i)->SetActorRotation(
-				//	Cast<APlayerCharacter>(pc)->Mesh->GetSocketByName("GunSocket")->RelativeRotation
-				//	);
 			}
 		}
 		
@@ -554,11 +560,17 @@ void ACMPlayerController::PrintTarget()
 		APawn *pawn = state->GetHuntTarget();
 		if (pawn != nullptr)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: " +pawn->GetName());
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt Color: " + Cast<ACMPlayerState>(pawn->PlayerState)->GetColorId().ToString());
+			if (pawn->PlayerState != nullptr)
+			{
+				FLinearColor color = Cast<ACMPlayerState>(pawn->PlayerState)->GetColorId();
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: " + pawn->GetName());
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt Color: " + color.ToString());
+			}
+			else
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target playerstate: null");
 		}
 		else
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: null");
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: null");
 	}
 }
 void ACMPlayerController::OnPressedEscape()

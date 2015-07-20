@@ -4,6 +4,9 @@
 
 #include "GameFramework/Actor.h"
 #include "DamageTypes.h"
+#include "CMPlayerController.h"
+
+
 #include "Projectile.generated.h"
 
 #pragma warning(disable : 4263) // C4263: member function does not override any base class virtual member function
@@ -56,6 +59,8 @@ public:
 
 	virtual void TakeDamage(float damage){};
 
+	void SetController(ACMPlayerController *controller){ this->controller = controller; };
+
 
 protected:
 
@@ -80,5 +85,7 @@ protected:
 
 	UPROPERTY()
 		TArray<USoundWave*> audioList;
+
+	ACMPlayerController *controller;
 
 };

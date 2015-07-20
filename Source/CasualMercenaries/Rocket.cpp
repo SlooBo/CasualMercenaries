@@ -15,7 +15,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/RocketLauncher/Rocket.Rocket'"));
 	projectileMesh->SetStaticMesh(MeshObj.Object);
 	projectileMesh->IgnoreActorWhenMoving(this->GetOwner(), true);
-
+	projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	//RootComponent = projectileMesh;
 
 
@@ -30,6 +30,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
 
 	
+	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	//Stuff
 	SetActorEnableCollision(true);
@@ -72,15 +73,10 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor != this->GetOwner())
-		if (!Cast<ATwister>(OtherActor))
-			Explode();
-
-	if (OtherActor == this->GetOwner())
-	{
+	if (!Cast<ATwister>(OtherActor))
+		Explode();
+	if (Cast<AGhostCharacter>(OtherActor))
 		NormalImpulse = FVector::ZeroVector;
-		SelfActor->SetActorLocation(SelfActor->GetActorLocation() + SelfActor->GetVelocity() * 0.01);
-	}
 
 }
 
@@ -131,8 +127,8 @@ void ARocket::Explode()
 
 			ExplosionDamage *= x;
 			UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
-			APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
-			aItr->TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(tempChar->GetController()));
+
+			aItr->TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));
 		}
 	}
 	for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)

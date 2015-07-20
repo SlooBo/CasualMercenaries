@@ -30,7 +30,6 @@ AHook::AHook(const FObjectInitializer& FOI) : AWeapon(FOI)
 	cableComponent->SetMaterial(0, MateriaObj.Object);
 	cableComponent->CableLength = 0;
 	cableComponent->NumSegments = 1;
-	//cableComponent = FOI.CreateDefaultSubobject<UCableComponent>(this, TEXT("MyCable"));
 }
 
 void AHook::BeginPlay()

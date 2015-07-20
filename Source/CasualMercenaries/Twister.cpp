@@ -13,7 +13,7 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	CapsuleComp->InitCapsuleSize(100.0f, 200.0f);
 	CapsuleComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	CapsuleComp->SetNotifyRigidBodyCollision(true);
-
+	CapsuleComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	//Movement
 	ProjectileMovement->InitialSpeed = 1200.0f;
@@ -95,7 +95,5 @@ void ATwister::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponen
 }
 void ATwister::FlipShitUp()
 {
-	
-
 
 }
