@@ -18,7 +18,6 @@ public:
 
 	AWaspNestCudgel(const FObjectInitializer& FOI);
 
-	// Called every frame
 	void Tick(float DeltaSeconds);
 
 	void BeginPlay();

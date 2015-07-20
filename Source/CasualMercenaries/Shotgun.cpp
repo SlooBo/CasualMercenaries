@@ -11,10 +11,11 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/Weapons/Shotgun/MESH_Shotgun.MESH_Shotgun'"));
 	weaponMesh->SetSkeletalMesh(MeshObj.Object);
 
+
 	//Material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/Shotgun/MAT_Shotgun.MAT_Shotgun'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
-	//weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
+
 
 	//Integer values
 	maxAmmo = 120;
@@ -23,10 +24,12 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	ammoInClip = 6;
 	price = 600;
 
+
 	//Float values
 	passedTimeReloading = 0;
 	reloadTime = 2;
 	firingInterval = .50;
+
 
 	//Audio
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
@@ -46,6 +49,7 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	if (audio3.Object)
 		audioList.Add(audio3.Object);
 
+
 	//Particles
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
 	flavorParticleEffect = ParticleObj.Object;
@@ -54,9 +58,14 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Bullet_Trail.P_Bullet_Trail'"));
 	bulletTrail = ParticleObj.Object;
 
+
 	//ID
 	id = WEAPONID::SHOT_GUN;
+
+
 	SuperFunctioAlaMiika();
+
+	//Replicates
 	bReplicates = true;
 }
 
@@ -164,8 +173,7 @@ void AShotgun::ServerDrawLine_Implementation(FVector begin, FVector end)
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
 
-	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
-	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator/*this->GetActorRotation()*/, true);
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, this->GetActorRotation(), true);
 	particlen->SetVectorParameter("BulletTrailEnd", end);
 }
 

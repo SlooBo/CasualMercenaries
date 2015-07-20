@@ -14,8 +14,8 @@ ATwisterSister::ATwisterSister(const FObjectInitializer& FOI) : AWeapon(FOI)
 	//Material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/ToasterGun/MAT_toaster.MAT_toaster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
+
 	//Scale
-	//weaponMesh->SetRelativeScale3D(FVector(0.05, 0.05, 0.05));
 
 	//integer values
 	maxAmmo = 120;
@@ -51,10 +51,6 @@ ATwisterSister::ATwisterSister(const FObjectInitializer& FOI) : AWeapon(FOI)
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
 	flavorParticleEffect = ParticleObj.Object;
 
-
-	//const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_BulletTrail.P_BulletTrail'"));
-	//bulletTrail = ParticleObj.Object;
-
 	//ID
 	id = WEAPONID::TWISTER_GUN;
 	SuperFunctioAlaMiika();
@@ -88,12 +84,14 @@ void ATwisterSister::SecondaryFunction(APlayerCharacter* user)
 
 void ATwisterSister::Reload()
 {
+	//Play reload sound
 	audioComp->SetSound(audioList[1]);
 	audioComp->Play();
 }
 
 void ATwisterSister::Fire()
 {
+	//play firing sound
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
 
