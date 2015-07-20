@@ -47,4 +47,7 @@ private:
 	void Explode();
 	URadialForceComponent *radialForceComponent;
 
+	bool casd;
+	float asd;
+
 };

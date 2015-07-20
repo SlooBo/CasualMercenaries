@@ -125,11 +125,6 @@ void AMashineGun::Fire()
 	GetWorld()->LineTraceSingleByChannel(hit, startTrace, sardines, ECollisionChannel::ECC_Destructible, traceParams);
 
 
-	//GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
-	//
-	//GetWorld()->LineTraceSingleByChannel(hit, startTrace, hit.ImpactPoint, ECollisionChannel::ECC_Destructible, traceParams);
-
-
 	//Play effect 
 	ServerEffect(flavorParticleEffect, startTrace);
 
@@ -142,7 +137,7 @@ void AMashineGun::Fire()
 	{
 		AProjectile* projectile = Cast<AProjectile>(hit.GetActor());
 		if (projectile != nullptr)
-			projectile->TakeDamage(damage);// , FDamageEvent::FDamageEvent(), Cast<APlayerCharacter>(this->GetOwner())->GetController(), this);
+			projectile->TakeDamage(damage);
 	}
 
 	muzzleOffset.X = 100;
