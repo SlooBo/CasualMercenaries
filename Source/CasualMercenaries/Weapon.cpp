@@ -5,6 +5,7 @@
 #include "WeaponData.h"
 #include "PlayerCharacter.h"
 #include "UnrealNetwork.h"
+#include "CMPlayerController.h"
 
 // Sets default values
 AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -13,8 +14,10 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	weaponMesh = ObjectInitializer.CreateDefaultSubobject<USkeletalMeshComponent>(this, TEXT("WeaponMesh"));
 	PrimaryActorTick.bCanEverTick = true;
 
+
 	//Hides Weapons unless called from code
 	this->SetActorHiddenInGame(true);
+
 
 	//default price
 	price = 5;
@@ -26,9 +29,11 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 
 	passedTimeFiring = 1;
 
+
 	//Replicates itself overserver
 	bReplicates = true;
 }
+
 // Function that sets values from WeaponData file to weapons 
 // should be called after id has been set.
 void AWeapon::SuperFunctioAlaMiika()
@@ -106,8 +111,9 @@ void AWeapon::Reload()
 // Old method that was used to child weapons to PlayerCharacter parents
 void AWeapon::SetRoot(APlayerCharacter* user)
 {
-	this->SetOwner(user);
+	this->SetOwner(user->GetController());
 	this->AttachRootComponentToActor(user);
+	controller = Cast<ACMPlayerController>(user->GetController());
 }
 // Gets you the weapon ID
 WEAPONID AWeapon::GetIDFromInt(uint8 value)

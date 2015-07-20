@@ -13,8 +13,8 @@ ARocketLauncher::ARocketLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
 	//Integers
 	maxAmmo = 6;
 	clips = 999;
-	ammo = 4;
-	ammoInClip = 4;
+	ammo = 6;
+	ammoInClip = 6;
 
 
 	//Floats
@@ -97,7 +97,7 @@ void ARocketLauncher::Fire()
 
 	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
 
-	userLoc = this->GetOwner()->GetActorLocation();
+	userLoc = controller->GetPawn()->GetActorLocation();
 	muzzleOffset.X = 25;
 	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(muzzleOffset);
 	
@@ -112,7 +112,7 @@ void ARocketLauncher::Fire()
 	if (World != NULL)
 	{
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this->GetOwner();
+		SpawnParams.Owner = controller->GetPawn();
 		SpawnParams.Instigator = Instigator;
 		SpawnParams.bNoCollisionFail = true;
 
@@ -122,6 +122,7 @@ void ARocketLauncher::Fire()
 
 		if (projectile)
 		{
+			projectile->SetController(controller);
 			FVector const LaunchDir = MuzzleRotation.Vector();
 			projectile->InitVelocity(LaunchDir);
 		}

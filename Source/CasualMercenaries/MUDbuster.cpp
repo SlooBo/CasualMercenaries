@@ -93,8 +93,8 @@ void AMUDbuster::Fire()
 	FVector tempUserLoc;
 	FRotator tempCameraRot;
 
-	this->GetOwner()->GetActorEyesViewPoint(tempUserLoc, tempCameraRot);
-	tempUserLoc = this->GetOwner()->GetActorLocation();
+	controller->GetPawn()->GetActorEyesViewPoint(tempUserLoc, tempCameraRot);
+	tempUserLoc = controller->GetPawn()->GetActorLocation();
 
 	muzzleOffset.X = 100;
 	FVector const muzzleLocation = tempUserLoc + FTransform(tempCameraRot).TransformVector(muzzleOffset);
@@ -106,7 +106,7 @@ void AMUDbuster::Fire()
 	if (World != NULL)
 	{
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this->GetOwner();
+		SpawnParams.Owner = controller->GetPawn();
 		SpawnParams.Instigator = Instigator;
 		SpawnParams.bNoCollisionFail = true;
 
@@ -116,6 +116,7 @@ void AMUDbuster::Fire()
 
 		if (projectile)
 		{
+			projectile->SetController(controller);
 			FVector const tempLaunchDir = tempMuzzleRotation.Vector();
 			projectile->InitVelocity(tempLaunchDir);
 		}

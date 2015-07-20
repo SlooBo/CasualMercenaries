@@ -4,10 +4,13 @@
 
 #include "GameFramework/Actor.h"
 #include "DamageTypes.h"
+
+
+
 #include "Weapon.generated.h"
 
-
 class APlayerCharacter;
+class ACMPlayerController;
 
 UENUM(BlueprintType)
 enum class WEAPONID : uint8
@@ -107,6 +110,10 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+
+	
+
+
 protected:
 
 	/************************************************************************/
@@ -124,6 +131,8 @@ protected:
 	WEAPONID id;
 	UPROPERTY(Replicated)
 	int32 ammo;
+
+	ACMPlayerController* controller;
 
 	/************************************************************************/
 	/* Timers and triggers                                                  */

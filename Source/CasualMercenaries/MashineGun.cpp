@@ -85,11 +85,11 @@ void AMashineGun::Fire()
 	FRotator cameraRot;
 
 
-	this->GetOwner()->GetActorEyesViewPoint(userLoc2, cameraRot);
+	controller->GetPawn()->GetActorEyesViewPoint(userLoc2, cameraRot);
 
 	FVector cameraLoc = Cast<APlayerCharacter>(GetOwner())->GetCamera()->GetComponentLocation();
 
-	userLoc = this->GetOwner()->GetActorLocation();
+	userLoc = controller->GetPawn()->GetActorLocation();
 
 
 	FVector shootDir = cameraRot.Vector();
@@ -110,14 +110,24 @@ void AMashineGun::Fire()
 	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
 	traceParams.bTraceAsyncScene = true;
 	traceParams.bReturnPhysicalMaterial = true;
-	traceParams.AddIgnoredActor(this->GetOwner());
+	traceParams.AddIgnoredActor(controller->GetPawn());
 
 	FHitResult hit(ForceInit);
 
 
 	GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	GetWorld()->LineTraceSingleByChannel(hit, startTrace, hit.ImpactPoint, ECollisionChannel::ECC_Destructible, traceParams);
+	FVector midle = hit.ImpactPoint;
+
+	FVector tardines = (midle - startTrace) * 1.1;
+	FVector sardines = startTrace + tardines;
+
+	GetWorld()->LineTraceSingleByChannel(hit, startTrace, sardines, ECollisionChannel::ECC_Destructible, traceParams);
+
+
+	//GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
+	//
+	//GetWorld()->LineTraceSingleByChannel(hit, startTrace, hit.ImpactPoint, ECollisionChannel::ECC_Destructible, traceParams);
 
 
 	//Play effect 

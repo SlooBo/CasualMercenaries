@@ -29,8 +29,6 @@ AHook::AHook(const FObjectInitializer& FOI) : AWeapon(FOI)
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Materials/ParticleMaterials/M_Paper.M_Paper'"));
 	cableComponent->SetMaterial(0, MateriaObj.Object);
 	cableComponent->CableLength = 0;
-
-	//cableComponent = FOI.CreateDefaultSubobject<UCableComponent>(this, TEXT("MyCable"));
 }
 
 void AHook::BeginPlay()

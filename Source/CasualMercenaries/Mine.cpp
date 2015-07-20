@@ -83,7 +83,7 @@ void AMine::Explode()
 
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Splosion");
 			//UGameplayStatics::ApplyDamage(*aItr, explosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
-			//APlayerCharacter* tempChar = Cast<APlayerCharacter>(this->GetOwner());
+			//APlayerCharacter* tempChar = Cast<APlayerCharacter>(controller->GetPawn());
 			//aItr->TakeDamage(explosionDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(tempChar->GetController()));
 		}
 	}

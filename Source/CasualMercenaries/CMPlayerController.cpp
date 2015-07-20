@@ -185,15 +185,6 @@ void ACMPlayerController::Possess(APawn* inPawn)
 			{
 				weapon->SetRoot(pc);
 				weapon->SetOwner(pc);
-
-				//this->GetInventory().GetWeapon(i)->SetActorLocation(
-				//	Cast<APlayerCharacter>(pc)->Mesh->GetSocketByName("GunSocket")->GetSocketLocation(
-				//	Cast<APlayerCharacter>(pc)->Mesh
-				//	)
-				//	);
-				//this->GetInventory().GetWeapon(i)->SetActorRotation(
-				//	Cast<APlayerCharacter>(pc)->Mesh->GetSocketByName("GunSocket")->RelativeRotation
-				//	);
 			}
 		}
 		
