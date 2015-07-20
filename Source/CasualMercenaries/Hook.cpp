@@ -107,7 +107,12 @@ void AHook::Fire()
 
 	GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
 
-	GetWorld()->LineTraceSingleByChannel(hit, startTrace, hit.ImpactPoint, ECollisionChannel::ECC_Destructible, traceParams);
+	FVector midle = hit.ImpactPoint;
+
+	FVector tardines = (midle - startTrace) * 1.1;
+	FVector sardines = startTrace + tardines;
+
+	GetWorld()->LineTraceSingleByChannel(hit, startTrace, sardines, ECollisionChannel::ECC_Destructible, traceParams);
 	hookedLocation = hit.ImpactPoint;
 
 	ammo--;
