@@ -36,6 +36,8 @@ void AGhostCharacter::SetupPlayerInputComponent(class UInputComponent* InputComp
 
 void AGhostCharacter::BeginPlay()
 {
+	Super::BeginPlay();
+
 	this->ChangeShirtColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 
 	// hide other players

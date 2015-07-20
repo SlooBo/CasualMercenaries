@@ -59,7 +59,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 	GetMesh()->SetRelativeScale3D(FVector(0.6f, 0.6f, 0.6f));
 
-
 	rightShoulder = false;
 
 	health_Max = 100.0f;
@@ -104,11 +103,19 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	ChangeShirtColor(shirtColor);
+
+	UMaterialInstanceDynamic *dynamicMesh = GetMesh()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
+	GetMesh()->SetMaterial(0, dynamicMesh);
+	GetMesh()->SetMaterial(1, dynamicMesh);
+
+	if (Role < ROLE_Authority)
+		ChangeShirtColor(shirtColor);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type _endPlayReason)
 {
+	Super::EndPlay(_endPlayReason);
+
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 }
 
@@ -572,10 +579,13 @@ void APlayerCharacter::PlaySound_Implementation(USoundCue* _component)
 void APlayerCharacter::ChangeShirtColor_Implementation(FLinearColor color)
 {
 	shirtColor = color;
-	UMaterialInstanceDynamic *dynamicMesh = GetMesh()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
+	UMaterialInstanceDynamic *dynamicMesh = Cast<UMaterialInstanceDynamic>(GetMesh()->GetMaterial(0));
+	if (dynamicMesh != NULL)
+		dynamicMesh->SetVectorParameterValue("ShirtColour", shirtColor);
+	/*UMaterialInstanceDynamic *dynamicMesh = GetMesh()->CreateDynamicMaterialInstance(0, GetMesh()->GetMaterial(0));
 	dynamicMesh->SetVectorParameterValue("ShirtColour", shirtColor);
 	GetMesh()->SetMaterial(0, dynamicMesh);
-	GetMesh()->SetMaterial(1, dynamicMesh);
+	GetMesh()->SetMaterial(1, dynamicMesh);*/
 }
 
 bool APlayerCharacter::IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const
