@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Weapon.h"
-#include "MyCable.h"
+#include "CableComponent.h"
 #include "Hook.generated.h"
 
 /**
@@ -25,7 +25,7 @@ public:
 	void Reload();
 	void Fire();
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Cable")
-		UMyCable *cableComponent;
+		UCableComponent *cableComponent;
 	void ReleaseHook();
 	bool hooked;
 private:

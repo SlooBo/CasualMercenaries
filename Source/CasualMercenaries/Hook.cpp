@@ -25,7 +25,10 @@ AHook::AHook(const FObjectInitializer& FOI) : AWeapon(FOI)
 	SuperFunctioAlaMiika();
 	bReplicates = true;
 
-	cableComponent = FOI.CreateDefaultSubobject<UMyCable>(this, "cable");
+	cableComponent = FOI.CreateDefaultSubobject<UCableComponent>(this, "cable");
+	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Materials/ParticleMaterials/M_Paper.M_Paper'"));
+	cableComponent->SetMaterial(0, MateriaObj.Object);
+	cableComponent->CableLength = 0;
 
 	//cableComponent = FOI.CreateDefaultSubobject<UCableComponent>(this, TEXT("MyCable"));
 }
@@ -132,6 +135,24 @@ void AHook::Fire()
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, startLocation.ToString() + FString(",") + hookedLocation.ToString());
 	cableComponent->EndLocation = hookedLocation;
+	cableComponent->Activate(true);
+	//cableComponent->
+	for (TActorIterator<AActor> ait(GetWorld()); ait; ++ait)
+	{
+		FString name = "MyTempActor";
+		if (ait->GetName().Contains(name))
+		{
+			TArray<UActorComponent*> components = ait->GetComponents();
+			for (int i = 0; i < components.Num(); i++)
+			{
+				UCableComponent *component =  Cast<UCableComponent>(components[i]);
+				if (component != nullptr)
+					break;
+			}
+			break;
+		}
+	}
+
 }
 void AHook::ReleaseHook()
 {
