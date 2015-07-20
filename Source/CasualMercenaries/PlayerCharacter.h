@@ -134,6 +134,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Player|Effects")
 	USoundCue* dashSound;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Player|Effects")
+		USoundCue* bulletHitSound;
+
 	//Status timers and boold
 	FTimerHandle stunTimerHandle;
 	bool canLook;

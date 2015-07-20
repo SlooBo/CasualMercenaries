@@ -43,6 +43,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	audioComp->bAutoDestroy = false;
 	audioComp->AttachParent = GetRootComponent();
 
+	
+
+
 	//	CharacterMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver7/Character_updatedanimations.Character_updatedanimations'"));
 	GetMesh()->SetSkeletalMesh(MeshObj.Object);
@@ -192,6 +195,10 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 	switch (_type)
 	{
 	case DAMAGE_TYPE::NORMAL:
+		if (bulletHitSound)
+		{
+			PlaySound(bulletHitSound);
+		}
 		break;
 	case DAMAGE_TYPE::STUN:
 		SetState(CHARACTER_STATE::STUNNED);
