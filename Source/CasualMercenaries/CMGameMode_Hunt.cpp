@@ -225,13 +225,12 @@ void ACMGameMode_Hunt::OnRoundFreezeEnd_Implementation()
 
 void ACMGameMode_Hunt::OnRoundStart_Implementation()
 {
-	// respawn players
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
-		ACMPlayerController* player = Cast<ACMPlayerController>((*iter).Get());
+		(*iter)->OnRoundStart();
 
 		// deny shop access from players
-		player->OnShopAccessChanged(false);
+		(*iter)->OnShopAccessChanged(false);
 	}
 
 	// restore destructible objects back to their initial state
@@ -241,15 +240,14 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 
 void ACMGameMode_Hunt::OnRoundEnd_Implementation()
 {
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
-		ACMPlayerController* player = Cast<ACMPlayerController>((*iter).Get());
 		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
 		if (playerState != NULL)
 			playerState->AddMoney(huntRoundReward);
 
 		// allow shop access
-		player->OnShopAccessChanged(true);
+		(*iter)->OnShopAccessChanged(true);
 	}
 }
 
@@ -259,12 +257,12 @@ void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 
 void ACMGameMode_Hunt::OnWarmupStart_Implementation()
 {
-	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
-		ACMPlayerController* player = Cast<ACMPlayerController>((*iter).Get());
+		(*iter)->OnWarmupStart();
 
 		// allow shop access
-		player->OnShopAccessChanged(true);
+		(*iter)->OnShopAccessChanged(true);
 	}
 }
 
@@ -314,8 +312,8 @@ void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(ACMPlayerController* player)
 		return;
 
 	TArray<ACMPlayerController*> players;
-	for (auto iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-		players.Add(Cast<ACMPlayerController>((*iter).Get()));
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+		players.Add(*iter);
 
 	ACMPlayerController* target = NULL;
 	uint32 targetId = 0;

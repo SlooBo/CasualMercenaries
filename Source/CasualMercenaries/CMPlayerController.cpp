@@ -111,7 +111,7 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 }
 
 
-void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
+void ACMPlayerController::OnPlayerDeath_Implementation(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
 {
 	if (killed->inventory.GetCurrentWeapon() != NULL)
 	{
@@ -128,12 +128,19 @@ void ACMPlayerController::OnPlayerDeath(ACMPlayerController* killed, ACMPlayerCo
 	}
 }
 
-void ACMPlayerController::OnRoundStart()
+void ACMPlayerController::OnAnnouncement_Implementation(const FString& announceText/*, USoundCue* announceSoundCue*/)
 {
 
 }
 
-void ACMPlayerController::OnWarmupStart()
+void ACMPlayerController::OnRoundStart_Implementation()
+{
+	APlayerHud* hud = Cast<APlayerHud>(GetHUD());
+	if (hud != NULL)
+		hud->CreateTestHavoc();
+}
+
+void ACMPlayerController::OnWarmupStart_Implementation()
 {
 
 }
@@ -551,11 +558,17 @@ void ACMPlayerController::PrintTarget()
 		APawn *pawn = state->GetHuntTarget();
 		if (pawn != nullptr)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: " +pawn->GetName());
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt Color: " + Cast<ACMPlayerState>(pawn->PlayerState)->GetColorId().ToString());
+			if (pawn->PlayerState != nullptr)
+			{
+				FLinearColor color = Cast<ACMPlayerState>(pawn->PlayerState)->GetColorId();
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: " + pawn->GetName());
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt Color: " + color.ToString());
+			}
+			else
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target playerstate: null");
 		}
 		else
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: null");
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: null");
 	}
 }
 void ACMPlayerController::OnPressedEscape()
