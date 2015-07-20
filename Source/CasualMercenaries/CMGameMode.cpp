@@ -115,6 +115,17 @@ void ACMGameMode::StartNewPlayer(APlayerController* newPlayer)
 	Super::StartNewPlayer(newPlayer);
 }
 
+void ACMGameMode::Logout(AController* exiting)
+{
+	ACMPlayerController* pc = Cast<ACMPlayerController>(exiting);
+
+	// remove ongoing respawn timers if player disconnects
+	if (pc != NULL && respawnTimerList.Contains(pc))
+		GetWorld()->GetTimerManager().ClearTimer(respawnTimerList[pc]);
+
+	Super::Logout(exiting);
+}
+
 void ACMGameMode::HandleMatchIsWaitingToStart()
 {
 	Super::HandleMatchIsWaitingToStart();
@@ -284,7 +295,7 @@ void ACMGameMode::OnMatchStart_Implementation()
 	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
 		SetupNewPlayer(*iter);
-		//(*iter)->OnRoundStart();
+		(*iter)->OnMatchStart();
 	}
 }
 
@@ -301,6 +312,7 @@ void ACMGameMode::SetupNewPlayer(APlayerController* newPlayer)
 		// assign random color for the player
 		FLinearColor randomColor = FLinearColor::MakeRandomColor();
 		playerState->SetColorId(randomColor);
+
 		APlayerCharacter* pc = Cast<APlayerCharacter>(newPlayer->GetPawn());
 		if (pc != NULL)
 			pc->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
@@ -344,12 +356,11 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	}
 	playerState->AddDeaths(1);
 
+	player->OnPlayerDeath();
+
 	// broadcast death for everyone
-	for (auto iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
-	{
-		ACMPlayerController* playerController = Cast<ACMPlayerController>((*iter).Get());
-		playerController->OnPlayerDeath(player, killer);
-	}
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+		(*iter)->OnPlayerDeathBroadcast(player, killer);
 
 	// turn player into spectator
 	SpectatePlayer(player);
@@ -467,13 +478,19 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	ACMPlayerController* player = Cast<ACMPlayerController>(controller->CastToPlayerController());
 	if (player == NULL)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer controller is not PlayerController"));
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer, controller is not PlayerController"));
 		return;
 	}
 
 	//clear respawn timers if player respawned early
 	if (respawnTimerList.Contains(player))
 		GetWorld()->GetTimerManager().ClearTimer(respawnTimerList[player]);
+
+	if (player->PlayerState == NULL)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: RestartPlayer, PlayerState is null (player disconnected?)"));
+		return;
+	}
 
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 	if (playerState != NULL)

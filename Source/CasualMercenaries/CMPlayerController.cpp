@@ -111,24 +111,32 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 }
 
 
-void ACMPlayerController::OnPlayerDeath_Implementation(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
+void ACMPlayerController::OnPlayerDeath()
 {
-	if (killed->inventory.GetCurrentWeapon() != NULL)
+	if (inventory.GetCurrentWeapon() != NULL)
 	{
-		killed->inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
-		killed->inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
-	}
-
-	if (killed == this)
-	{
-		APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(GetPawn());
-		if (playerCharacter != NULL)
-		{
-		}
+		inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
+		inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
 	}
 }
 
+void ACMPlayerController::OnPlayerDeathBroadcast_Implementation(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
+{
+	if (killed == this)
+	{
+		// handle clientside death here
+	}
+	
+	// handle kill messages and other death related stuff here
+}
+
 void ACMPlayerController::OnAnnouncement_Implementation(const FString& announceText/*, USoundCue* announceSoundCue*/)
+{
+
+}
+
+
+void ACMPlayerController::OnMatchStart_Implementation()
 {
 
 }
