@@ -30,7 +30,7 @@ ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	respawnMode = RespawnMode::AtGhost;
 	playerRespawnTime = 20;
 	warmupRespawnTime = 1;
-	playerRespawnTimeMinimum = 1;
+	playerRespawnTimeMinimum = 5;
 	warmupRespawnTimeMinimum = 0;
 }
 
