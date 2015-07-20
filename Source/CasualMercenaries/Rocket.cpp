@@ -15,7 +15,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/RocketLauncher/Rocket.Rocket'"));
 	projectileMesh->SetStaticMesh(MeshObj.Object);
 	projectileMesh->IgnoreActorWhenMoving(this->GetOwner(), true);
-	projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	
 	//RootComponent = projectileMesh;
 
 
@@ -30,7 +30,6 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
 
 	
-	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	//Stuff
 	SetActorEnableCollision(true);
@@ -69,6 +68,10 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	//Replication
 	bReplicates = true;
 	bReplicateMovement = true;
+
+
+	asd = 0;
+	casd = false;
 }
 
 void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
@@ -92,7 +95,16 @@ ARocket::~ARocket()
 
 void ARocket::Tick(float DeltaSeconds)
 {
-
+	asd += DeltaSeconds;
+	if (!casd)
+	{
+		if (asd > 1)
+		{
+			casd = true;
+			CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+			projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+		}
+	}
 }
 
 void ARocket::BeginPlay()
