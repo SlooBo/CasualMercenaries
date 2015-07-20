@@ -3,7 +3,7 @@
 #include "CasualMercenaries.h"
 #include "Hook.h"
 #include "PlayerCharacter.h"
-
+#include "math.h"
 AHook::AHook(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
 	//SkeletonMesh
@@ -50,6 +50,9 @@ void AHook::Tick(float DeltaTime)
 		FVector forwardVector = hookedLocation - player->GetActorLocation();
 		forwardVector.Normalize();
 		player->GetCharacterMovement()->Velocity = forwardVector * 1000;
+
+
+
 	}
 	if (FVector::Dist(player->GetActorLocation(), hookedLocation) < 300.0f)
 	{
@@ -136,3 +139,7 @@ void AHook::ReleaseHook()
 	}
 
 }
+float AHook::EasedValue(float currentTime, float startValue, float changeInValue, float duration) 
+{
+	return changeInValue * (-pow(2, -10 * currentTime / duration) + 1) + startValue;
+};

@@ -32,5 +32,5 @@ private:
 	void ReleaseHook();
 	UPROPERTY()
 	UMyCable *cableComponent;
-	
+	float EasedValue(float currentTime, float startValue, float changeInValue, float duration);
 };
