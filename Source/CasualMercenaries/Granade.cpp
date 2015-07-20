@@ -144,6 +144,11 @@ void AGranade::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Norma
 	APlayerCharacter* temp = Cast<APlayerCharacter>(OtherActor);
 	if (temp)
 		Explode();
+	if (OtherActor == this->GetOwner())
+	{
+		NormalImpulse = FVector::ZeroVector;
+		SelfActor->SetActorLocation(SelfActor->GetActorLocation() + SelfActor->GetVelocity() * 0.01);
+	}
 }
 
 //float AGranade::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)

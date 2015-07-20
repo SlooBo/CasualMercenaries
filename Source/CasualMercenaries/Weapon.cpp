@@ -54,6 +54,9 @@ void AWeapon::Tick( float DeltaTime )
 
 	// reloading can start only on tick
 	// may induce unwanted consequenses
+
+	passedTimeFiring += DeltaTime;
+
 	if (reloading)
 	{
 		passedTimeReloading += DeltaTime;
@@ -64,9 +67,13 @@ void AWeapon::Tick( float DeltaTime )
 			passedTimeReloading = 0;
 			reloading = false;
 		}
+		else
+		{
+			return;
+		}
 	}
 
-	passedTimeFiring += DeltaTime;
+
 
 	// firing can start only on tick
 	if (firing)
