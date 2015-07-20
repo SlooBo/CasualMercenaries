@@ -284,7 +284,7 @@ void ACMGameMode::OnMatchStart_Implementation()
 	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
 		SetupNewPlayer(*iter);
-		(*iter)->OnRoundStart();
+		//(*iter)->OnRoundStart();
 	}
 }
 
@@ -301,6 +301,9 @@ void ACMGameMode::SetupNewPlayer(APlayerController* newPlayer)
 		// assign random color for the player
 		FLinearColor randomColor = FLinearColor::MakeRandomColor();
 		playerState->SetColorId(randomColor);
+		APlayerCharacter* pc = Cast<APlayerCharacter>(newPlayer->GetPawn());
+		if (pc != NULL)
+			pc->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
 	}
 }
 

@@ -113,7 +113,7 @@ public:
 
 	void RestoreActivity();
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Player actions")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player actions")
 		bool dashing;
 private:
 
@@ -133,6 +133,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player|Effects")
 	USoundCue* dashSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player|Effects")
+		USoundCue* bulletHitSound;
 
 	//Status timers and boold
 	FTimerHandle stunTimerHandle;

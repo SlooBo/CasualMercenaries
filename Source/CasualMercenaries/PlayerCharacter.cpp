@@ -43,6 +43,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	audioComp->bAutoDestroy = false;
 	audioComp->AttachParent = GetRootComponent();
 
+	
+
+
 	//	CharacterMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver7/Character_updatedanimations.Character_updatedanimations'"));
 	GetMesh()->SetSkeletalMesh(MeshObj.Object);
@@ -192,6 +195,10 @@ void APlayerCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerCon
 	switch (_type)
 	{
 	case DAMAGE_TYPE::NORMAL:
+		if (bulletHitSound)
+		{
+			PlaySound(bulletHitSound);
+		}
 		break;
 	case DAMAGE_TYPE::STUN:
 		SetState(CHARACTER_STATE::STUNNED);
@@ -551,17 +558,19 @@ void APlayerCharacter::UpdateDash()
 			dashing = false;
 			GetCharacterMovement()->Velocity.Normalize();
 			GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity * GetCharacterMovement()->MaxWalkSpeed;
-				//FVector(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->Velocity.Y,0)* GetCharacterMovement()->MaxWalkSpeed;
 		}
 		else
 		{
 			if (GetCharacterMovement()->IsFalling())
 			{
-				GetCharacterMovement()->Velocity = -(tempActorLocation - dashEndLocation) * 5;
+				FVector tempVel = -(tempActorLocation - dashEndLocation);
+				tempVel.Normalize();
+				GetCharacterMovement()->Velocity = tempVel * 3000;
 				return;
 			}
-
-			GetCharacterMovement()->Velocity = -(tempActorLocation - dashEndLocation)*30;
+			FVector tempVel = -(tempActorLocation - dashEndLocation);
+			tempVel.Normalize();
+			GetCharacterMovement()->Velocity = tempVel * 9700;
 		}
 	}
 	else

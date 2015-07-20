@@ -47,6 +47,8 @@ public:
 	void ChangeUI(int32 interfaceID);
 	UFUNCTION()
 	UUILogicBase *GetCurrentUILogic();
+	UFUNCTION(Exec)
+	void CreateTestHavoc();
 private:
 	UPROPERTY()
 	MenuType currentMenu;
