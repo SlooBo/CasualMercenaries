@@ -525,6 +525,9 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(int32 cw, int32 pw)
 		case WEAPONID::WATER_GUN:
 			newWeapon->weaponMesh->AttachTo(mesh, "WaterGunSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
+		case WEAPONID::HOOK:
+			newWeapon->weaponMesh->AttachTo(mesh, "ShotGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+			break;
 		default:
 			gunSocket = mesh->GetSocketByName("GunSocket_null");
 			break;

@@ -29,7 +29,7 @@ AHook::AHook(const FObjectInitializer& FOI) : AWeapon(FOI)
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Materials/ParticleMaterials/M_Paper.M_Paper'"));
 	cableComponent->SetMaterial(0, MateriaObj.Object);
 	cableComponent->CableLength = 0;
-
+	cableComponent->NumSegments = 1;
 	//cableComponent = FOI.CreateDefaultSubobject<UCableComponent>(this, TEXT("MyCable"));
 }
 
@@ -133,24 +133,9 @@ void AHook::Fire()
 		startLocation = player->GetActorLocation();
 		player->Jump();
 	}
-	cableComponent->EndLocation = hookedLocation;
+	cableComponent->EndLocation = hookedLocation - userLoc;
 	cableComponent->Activate(true);
-	//cableComponent->
-	for (TActorIterator<AActor> ait(GetWorld()); ait; ++ait)
-	{
-		FString name = "MyTempActor";
-		if (ait->GetName().Contains(name))
-		{
-			TArray<UActorComponent*> components = ait->GetComponents();
-			for (int i = 0; i < components.Num(); i++)
-			{
-				UCableComponent *component =  Cast<UCableComponent>(components[i]);
-				if (component != nullptr)
-					break;
-			}
-			break;
-		}
-	}
+
 
 }
 void AHook::ReleaseHook()
@@ -158,6 +143,7 @@ void AHook::ReleaseHook()
 	if (!hooked)
 		return;
 	hooked = false;
+	cableComponent->EndLocation = FVector::ZeroVector;
 	APlayerCharacter *player = Cast<APlayerCharacter>(GetOwner());
 	if (player != nullptr)
 	{
