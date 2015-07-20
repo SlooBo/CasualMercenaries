@@ -5,6 +5,7 @@
 #include "ServerBrowserLogic.h"
 #include "ShopLogic.h"
 #include "HUDLogic.h"
+#include "Util.h"
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
 	currentMenu = MenuType::NO_UI;
@@ -96,10 +97,9 @@ void APlayerHud::changeUIElement(MenuType menu)
 	}
 	case MenuType::SHOP:
 	{
-
-
 		//also show hud
 		UUserWidget* widget;
+
 		widget = changeUIElement(gameUIClass);
 		UHUDLogic* hudLogic = NewObject<UHUDLogic>();
 		hudLogic->SetUp(widget, GetWorld());
@@ -155,4 +155,11 @@ UUILogicBase *APlayerHud::GetCurrentUILogic()
 		return logicClasses[0];
 	}
 	return nullptr;
+}
+void APlayerHud::CreateTestHavoc()
+{
+		UUserWidget *havoc = CreateWidget<UUserWidget>(GetWorld(), Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/Wreak_Havoc_Final.Wreak_Havoc_Final_C'")));
+		havoc->AddToViewport(1);
+		UBlueprint *bp = Cast<UBlueprint>(havoc);
+	return;
 }

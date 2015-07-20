@@ -133,7 +133,6 @@ void AHook::Fire()
 		startLocation = player->GetActorLocation();
 		player->Jump();
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, startLocation.ToString() + FString(",") + hookedLocation.ToString());
 	cableComponent->EndLocation = hookedLocation;
 	cableComponent->Activate(true);
 	//cableComponent->
