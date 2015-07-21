@@ -91,6 +91,11 @@ public:
 	void OnPlayerDeath(ACMPlayerController* player, ACMPlayerController* killer = NULL);
 	virtual void OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer = NULL);
 
+	// Event when player respawns
+	UFUNCTION(BlueprintNativeEvent, Meta = (DisplayName = "On Player Respawn"), Category = "Gameplay|Player")
+	void OnPlayerRespawn(ACMPlayerController* player);
+	virtual void OnPlayerRespawn_Implementation(ACMPlayerController* player);
+
 	int32 GetPlayerMaxMoney() { return playerMaxMoney; };
 
 protected:

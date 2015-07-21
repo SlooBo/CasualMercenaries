@@ -384,6 +384,12 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	RespawnPlayer(player, respawnTime);
 }
 
+void ACMGameMode::OnPlayerRespawn_Implementation(ACMPlayerController* player)
+{
+	for (TActorIterator<AGhostCharacter> iter(GetWorld()); iter; ++iter)
+		(*iter)->SetPlayerVisibility(false);
+}
+
 void ACMGameMode::RespawnPlayer(APlayerController* player, float respawnDelay)
 {
 	if (player == NULL)
@@ -538,6 +544,8 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->ServerInitInventory();
 
 	AllowPlayerRespawn(player);
+
+	OnPlayerRespawn(player);
 }
 
 void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)

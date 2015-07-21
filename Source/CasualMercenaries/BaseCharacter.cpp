@@ -181,9 +181,18 @@ void ABaseCharacter::OnDeath_Implementation(ACMPlayerController* damageSource)
 	// delay the destruction until the player controller no longer controls this character
 	// if pawn is destroyed before the controller acknowledges it, crash happens
 
+	DelayedDestroy();
+}
+
+void ABaseCharacter::DelayedDestroy()
+{
 	FTimerHandle timerHandle;
 	FTimerDelegate destroyDelegate = FTimerDelegate::CreateUObject<ABaseCharacter, FTimerHandle&>(this, &ABaseCharacter::DelayedDestroy, timerHandle);
 	GetWorld()->GetTimerManager().SetTimer(timerHandle, destroyDelegate, 1.0f, true);
+
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
 }
 
 void ABaseCharacter::DelayedDestroy(FTimerHandle& timerHandle)

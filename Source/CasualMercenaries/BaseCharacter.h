@@ -86,6 +86,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		virtual void SetState(CHARACTER_STATE _state);
 
+	void DelayedDestroy();
+
 protected:
 	UPROPERTY(VisibleAnywhere, Replicated, Category = "PlayerCondition")
 	float health;

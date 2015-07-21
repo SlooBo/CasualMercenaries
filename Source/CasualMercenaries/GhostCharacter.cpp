@@ -42,28 +42,28 @@ void AGhostCharacter::BeginPlay()
 
 	// hide other players
 	if (Role < ROLE_Authority)
-	{
-		for (TActorIterator<APlayerCharacter> iter(GetWorld()); iter; ++iter)
-		{
-			if (*iter != this && Cast<AGhostCharacter>(*iter) == NULL)
-				(*iter)->SetActorHiddenInGame(true);
-		}
-	}
+		SetPlayerVisibility(false);
 }
 
 void AGhostCharacter::EndPlay(const EEndPlayReason::Type endPlayReason)
 {
 	// reveal all players
 	if (Role < ROLE_Authority)
-	{
-		for (TActorIterator<APlayerCharacter> iter(GetWorld()); iter; ++iter)
-		{
-			if (*iter != this && Cast<AGhostCharacter>(*iter) == NULL)
-				(*iter)->SetActorHiddenInGame(false);
-		}
-	}
+		SetPlayerVisibility(true);
 
 	Super::EndPlay(endPlayReason);
+}
+
+void AGhostCharacter::SetPlayerVisibility_Implementation(bool visible)
+{
+	if (Role >= ROLE_Authority)
+		return;
+
+	for (TActorIterator<APlayerCharacter> iter(GetWorld()); iter; ++iter)
+	{
+		if (*iter != this && Cast<AGhostCharacter>(*iter) == NULL)
+			(*iter)->SetActorHiddenInGame(!visible);
+	}
 }
 
 void AGhostCharacter::TakeDamage(float _damage, DAMAGE_TYPE _type, ACMPlayerController* killer)
