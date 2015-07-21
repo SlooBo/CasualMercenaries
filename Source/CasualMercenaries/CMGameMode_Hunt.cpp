@@ -165,7 +165,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		OnIntermissionStart();
 	}
 
-	UpdateGameState();
+	//UpdateGameState();
 }
 
 void ACMGameMode_Hunt::UpdateGameState()
