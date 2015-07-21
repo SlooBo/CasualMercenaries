@@ -30,6 +30,7 @@ AHook::AHook(const FObjectInitializer& FOI) : AWeapon(FOI)
 	cableComponent->SetMaterial(0, MateriaObj.Object);
 	cableComponent->CableLength = 0;
 	cableComponent->NumSegments = 1;
+	currentState = HOOKSTATE::NOT_STARTED;
 }
 
 void AHook::BeginPlay()
@@ -42,35 +43,50 @@ void AHook::BeginPlay()
 void AHook::Tick(float DeltaTime)
 {
 	AWeapon::Tick(DeltaTime);
-	if (!hooked)
+	if (projectile == nullptr || !projectile->IsValidLowLevel())
 	{
 		return;
 	}
-	APlayerCharacter *player = Cast<APlayerCharacter>(GetOwner());
-	if (player != nullptr)
+	switch (currentState)
 	{
-		FVector forwardVector = hookedLocation - player->GetActorLocation();
-		forwardVector.Normalize();
-		float currentTime = GetWorld()->GetTimerManager().GetTimerElapsed(hookReleaseHandle);
-		float test = EasedValue(currentTime, 0, 5000, 3.0f);
-		player->GetCharacterMovement()->Velocity = forwardVector * test;
+		case HOOKSTATE::PROJECTILE_SHOT:
+		{
+			if (projectile->hit)
+			{
+				FlyTowardsProjectile();
+				currentState = HOOKSTATE::GOING_TOWARDS_PROJECTILE;
+			}
+			break;
+
+		}
+		case HOOKSTATE::GOING_TOWARDS_PROJECTILE:
+		{
+			MoveTick();
+			APlayerCharacter *player = Cast<APlayerCharacter>(GetOwner());
+			if (FVector::Dist(player->GetActorLocation(), hookedLocation) < 1000.0f)
+			{
+				ReleaseHook();
+			}
+			break;
+		}
+	}
 
 
-	}
-	if (FVector::Dist(player->GetActorLocation(), hookedLocation) < 500.0f)
-	{
-		ReleaseHook();
-	}
+
+
+
+
+
 }
 
 void AHook::PrimaryFunction(APlayerCharacter* user)
 {
 	this->SetOwner(user);
-	if (ammo > 0 && !hooked)
+	if (ammo > 0 && !hooked && !shotProjectile)
 	{
 		firing = true;
 	}
-	else if (!hooked)
+	else if (!hooked && !shotProjectile)
 	{
 		Reload();
 	}
@@ -122,26 +138,30 @@ void AHook::Fire()
 	hookedLocation = hit.ImpactPoint;
 
 	ammo--;
-	hooked = true;
-	GetWorld()->GetTimerManager().SetTimer(hookReleaseHandle, this, &AHook::ReleaseHook, 3.0f, false);
-	APlayerCharacter *player = Cast<APlayerCharacter>(GetOwner());
-	if (player != nullptr)
+	//hooked = true;
+	shotProjectile = true;
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = controller->GetPawn();
+	SpawnParams.Instigator = Instigator;
+
+	AHookProjectile* const projectile = GetWorld()->SpawnActor<AHookProjectile>(AHookProjectile::StaticClass(), startTrace, LookAtRotator(startTrace,sardines), SpawnParams);
+	this->projectile = projectile;
+	if (projectile)
 	{
-		player->GetCharacterMovement()->GravityScale = 0.0f;
-		player->GetCharacterMovement()->Velocity = FVector::ZeroVector;
-		startLocation = player->GetActorLocation();
-		player->Jump();
+		projectile->SetController(controller);
+		FVector const LaunchDir = LookAtRotator(startTrace, sardines).Vector();
+		projectile->InitVelocity(LaunchDir);
 	}
-	cableComponent->EndLocation = hookedLocation - userLoc;
-	cableComponent->Activate(true);
-
-
+	currentState = HOOKSTATE::PROJECTILE_SHOT;
+	//FlyTowardsProjectile();
 }
 void AHook::ReleaseHook()
 {
-	if (!hooked)
-		return;
+	currentState = HOOKSTATE::NOT_STARTED;
 	hooked = false;
+	shotProjectile = false;
+	projectile->Destroy();
 	cableComponent->EndLocation = FVector::ZeroVector;
 	APlayerCharacter *player = Cast<APlayerCharacter>(GetOwner());
 	if (player != nullptr)
@@ -155,3 +175,42 @@ float AHook::EasedValue(float currentTime, float startValue, float changeInValue
 {
 	return changeInValue * (-pow(2, -10 * currentTime / duration) + 1) + startValue;
 };
+void AHook::FlyTowardsProjectile()
+{
+	GetWorld()->GetTimerManager().SetTimer(hookReleaseHandle, this, &AHook::ReleaseHook, 3.0f, false);
+	APlayerCharacter *player = Cast<APlayerCharacter>(GetOwner());
+	if (player != nullptr)
+	{
+		player->GetCharacterMovement()->GravityScale = 0.0f;
+		player->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+		startLocation = player->GetActorLocation();
+		player->Jump();
+	}
+	if (projectile != nullptr && projectile->IsValidLowLevel())
+	{
+		FString name = "RocketMesh";
+		cableComponent->SetAttachEndTo(projectile, FName(*name));
+		cableComponent->Activate(true);
+	}
+
+}
+FRotator AHook::LookAtRotator(FVector lookfrom, FVector lookat)
+{
+	FVector const worldUp(1.0f, 1.0f, 1.0f); // World Z Axis.
+	return FRotationMatrix::MakeFromX(lookat - lookfrom).Rotator();
+	
+}
+void AHook::MoveTick()
+{
+	APlayerCharacter *player = Cast<APlayerCharacter>(GetOwner());
+	if (player != nullptr)
+	{
+		FVector forwardVector = projectile->GetActorLocation() - player->GetActorLocation();
+		forwardVector.Normalize();
+		float currentTime = GetWorld()->GetTimerManager().GetTimerElapsed(hookReleaseHandle);
+		float easedvalue = EasedValue(currentTime, 0, 5000, 3.0f);
+		player->GetCharacterMovement()->Velocity = forwardVector * easedvalue;
+
+
+	}
+}
