@@ -53,10 +53,6 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	particleSystem->Template = ParticleObj.Object;
 	particleSystem->AttachTo(weaponMesh, "exhaustSocket");
 					
-	//particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
-	//const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
-	//particleSystem->Template = ParticleObj.Object;
-	//particleSystem->AttachTo(weaponMesh, "exhaustSocket");
 
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj3(TEXT("ParticleSystem'/Game/Game/Particles/P_Bullet_Trail.P_Bullet_Trail'"));
 	bulletTrail = ParticleObj3.Object;

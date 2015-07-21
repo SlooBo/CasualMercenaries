@@ -3,6 +3,7 @@
 #include "CasualMercenaries.h"
 #include "MUDbuster.h"
 #include "MudBall.h"
+#include "PlayerCharacter.h"
 
 
 
@@ -89,22 +90,63 @@ void AMUDbuster::Fire()
 {
 	firing = false;
 
-	//Get & set the orientation of projectile to be created
-	FVector tempUserLoc;
-	FRotator tempCameraRot;
+	//one less bullet
+	ammo--;
 
-	controller->GetPawn()->GetActorEyesViewPoint(tempUserLoc, tempCameraRot);
-	tempUserLoc = controller->GetPawn()->GetActorLocation();
+	FVector userLoc;
+	FRotator cameraRot;
 
-	muzzleOffset.X = 100;
-	FVector const muzzleLocation = tempUserLoc + FTransform(tempCameraRot).TransformVector(muzzleOffset);
-	FRotator tempMuzzleRotation = tempCameraRot;
+	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
+
+	userLoc = weaponMesh->GetSocketLocation("ExhaustSocket");// controller->GetPawn()->GetActorLocation();
+
+	FVector cameraLoc = Cast<APlayerCharacter>(GetOwner())->GetCamera()->GetComponentLocation();
+
+	//muzzleoffset sets where the object spawns
+	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(muzzleOffset);
+
+	FVector shootDir = cameraRot.Vector();
 
 
-	
+	//LineTrace
+	const FVector startTrace = userLoc;
+	const FVector endTrace = startTrace + shootDir * 20000;
+
+	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
+	traceParams.bTraceAsyncScene = true;
+	traceParams.bReturnPhysicalMaterial = true;
+	traceParams.AddIgnoredActor(controller->GetPawn());
+
+	FHitResult hit(ForceInit);
+
+	GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
+
+
+	FVector midle = hit.ImpactPoint;
+
+	FVector tardines = (midle - startTrace);
+	FVector sardines = startTrace + tardines;
+
+	float asd1 = FVector::Dist(hit.Location, cameraLoc);
+	float asd2 = FVector::Dist(userLoc, cameraLoc);
+	if (asd1 < asd2)
+	{
+		traceParams.AddIgnoredActor(hit.GetActor());
+		traceParams.AddIgnoredActor(hit.GetActor());
+		GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
+	}
+
+	GetWorld()->LineTraceSingleByChannel(hit, startTrace, sardines, ECollisionChannel::ECC_Destructible, traceParams);
+
+
+	//Play effect
+	//ServerEffect(flavorParticleEffect, weaponMesh->GetSocketLocation("ExhaustSocket"));
+
+	//get world
 	UWorld* const World = GetWorld();
 	if (World != NULL)
 	{
+		//spawnparameters for projectile(rocket)
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = controller->GetPawn();
 		SpawnParams.Instigator = Instigator;
@@ -112,13 +154,17 @@ void AMUDbuster::Fire()
 
 
 		// spawn the projectile at the muzzle
-		AMudBall* const projectile = World->SpawnActor<AMudBall>(AMudBall::StaticClass(), muzzleLocation, tempMuzzleRotation, SpawnParams);
+		AMudBall* const projectile = World->SpawnActor<AMudBall>(AMudBall::StaticClass(), MuzzleLocation, FRotator::ZeroRotator, SpawnParams);
 
 		if (projectile)
 		{
+			//sets the owner(controller) of the projectile
 			projectile->SetController(controller);
-			FVector const tempLaunchDir = tempMuzzleRotation.Vector();
-			projectile->InitVelocity(tempLaunchDir);
+
+			//gives to the spawned projectile launch velocity
+
+			projectile->InitVelocity(tardines.SafeNormal());
+
 		}
 	}
 }

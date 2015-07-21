@@ -14,6 +14,7 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	CapsuleComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	CapsuleComp->SetNotifyRigidBodyCollision(true);
 	CapsuleComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	CapsuleComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 
 	//Movement
 	ProjectileMovement->InitialSpeed = 1200.0f;
@@ -59,11 +60,39 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	//Replication
 	bReplicates = true;
 	bReplicateMovement = true;
+
+	timer = 0;
 }
 
 void ATwister::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	timer += DeltaSeconds;
+
+	if (timer > .25)
+	{
+		float radius = 300;
+		float damage = 10;
+		for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
+		{
+			float distance = GetDistanceTo(*aItr);
+
+			if (distance <= radius)
+			{
+				float x = 1;
+				if (distance <= (radius / 2))
+					;
+				else
+					x = 1 - (0.8 * (distance / radius));
+
+				damage *= x;
+				UGameplayStatics::ApplyDamage(*aItr, damage, GetInstigatorController(), this, UDamageType::StaticClass());
+
+				aItr->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));
+			}
+		}
+	}
 }
 
 void ATwister::BeginPlay()

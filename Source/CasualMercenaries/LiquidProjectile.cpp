@@ -103,5 +103,26 @@ void ALiquidProjectile::Splash_Implementation()
 	//Splashing
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
 	particle->SetRelativeScale3D(FVector(4,4,4));
+
+	float damage = 10;
+	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
+	{
+		float distance = GetDistanceTo(*aItr);
+
+		if (distance <= 100)
+		{
+			float x = 1;
+			if (distance <= (1000 / 2))
+				;
+			else
+				x = 1 - (0.8 * (distance / 1000));
+
+			damage *= x;
+			UGameplayStatics::ApplyDamage(*aItr, damage, GetInstigatorController(), this, UDamageType::StaticClass());
+
+			aItr->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));
+		}
+	}
+
 	Destroy();
 }
