@@ -115,6 +115,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player actions")
 		bool dashing;
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void UpdateDash();
+
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -159,7 +163,6 @@ private:
 
 	void WallCheck();
 	void InputDash();
-	void UpdateDash();
 
 	float staminaIncrease;
 

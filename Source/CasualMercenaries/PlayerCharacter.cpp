@@ -475,7 +475,7 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	FVector tempRightResult = tempRight * _inputRight;
 	FVector tempResult = tempForwardResult + tempRightResult;
 	tempResult.Normalize();
-	tempResult = tempResult * 600;
+	tempResult = tempResult * 650;
 
 	if (dashSound)
 	{
@@ -519,7 +519,7 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 			GetWorld()->LineTraceSingleByChannel(
 				RV_Hit,//result
 				tempActorLocation,//start of line trace
-				tempActorLocation - (tempForward * 600),//end of line trace
+				tempActorLocation - (tempForward * 650),//end of line trace
 				ECC_Visibility,//collision channel, maybe wrong
 				TraceParams);
 			if (RV_Hit.bBlockingHit)
@@ -534,7 +534,7 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 
 			dashing = true;
 			LoseStamina(25.0f);
-			dashEndLocation = tempActorLocation - (tempForward * 600 );
+			dashEndLocation = tempActorLocation - (tempForward * 650 );
 			canWalk = false;
 			return;
 		}
@@ -546,18 +546,26 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	}
 }
 
-void APlayerCharacter::UpdateDash()
+bool APlayerCharacter::UpdateDash_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::UpdateDash_Implementation()
 {
 	if (dashing)
 	{
 		FVector tempActorLocation = this->GetActorLocation();
 		FVector tempDistance = tempActorLocation - dashEndLocation;
 		
-		if (tempDistance.Size() < 50)
+		if (tempDistance.Size() < 100)
 		{ 
 			dashing = false;
-			GetCharacterMovement()->Velocity.Normalize();
-			GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity * GetCharacterMovement()->MaxWalkSpeed;
+			FVector tempVel = GetCharacterMovement()->Velocity;
+			float tempZ = tempVel.Z;
+			tempVel.Normalize();
+			tempVel = tempVel * GetCharacterMovement()->MaxWalkSpeed;
+			GetCharacterMovement()->Velocity = FVector(tempVel.X, tempVel.Y, tempZ);
 		}
 		else
 		{
@@ -570,7 +578,7 @@ void APlayerCharacter::UpdateDash()
 			}
 			FVector tempVel = -(tempActorLocation - dashEndLocation);
 			tempVel.Normalize();
-			GetCharacterMovement()->Velocity = tempVel * 9700;
+			GetCharacterMovement()->Velocity = tempVel * 8300;
 		}
 	}
 	else
