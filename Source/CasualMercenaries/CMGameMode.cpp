@@ -74,8 +74,8 @@ AActor* ACMGameMode::ChoosePlayerStart_Implementation(AController* player)
 		if (playerController != NULL)
 		{
 			spawnLocation = playerController->GetPawnOrSpectator();
-			if (spawnLocation == NULL)
-				GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Warning: Unable to get ghost/spectator pawn, choosing best spawn point instead"));
+			//if (spawnLocation == NULL)
+			//	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Warning: Unable to get ghost/spectator pawn, choosing best spawn point instead"));
 		}
 	}
 	
@@ -419,6 +419,8 @@ void ACMGameMode::SpectatePlayer(ACMPlayerController* player)
 		AActor* spawnActor = GetRandomSpawnPoint(player);
 		if (spawnActor != NULL)
 			Cast<AGhostCharacter>(player->GetPawn())->SetActorLocation(spawnActor->GetActorLocation());
+		else
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: Could not move Ghost Character"));
 		return;
 	}
 
@@ -462,6 +464,9 @@ void ACMGameMode::SpectatePlayer(ACMPlayerController* player)
 		player->Possess(pawn);
 
 		player->SetControlRotation(newControlRot);
+
+		if (pawn == NULL)
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: Could not spawn Ghost Character, overlapping with another actor?"));
 	}
 }
 
@@ -488,7 +493,7 @@ void ACMGameMode::RestartPlayer(AController* controller)
 		return;
 	}
 
-	//clear respawn timers if player respawned early
+	// clear respawn timers if player respawned early
 	if (respawnTimerList.Contains(player))
 		GetWorld()->GetTimerManager().ClearTimer(respawnTimerList[player]);
 
@@ -498,15 +503,21 @@ void ACMGameMode::RestartPlayer(AController* controller)
 		return;
 	}
 
-	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
-	if (playerState != NULL)
-		playerState->SetAlive(true);
-
 	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(player->GetPawn());
 	AGhostCharacter* ghostCharacter = Cast<AGhostCharacter>(player->GetPawn());
 	if (playerCharacter != NULL && ghostCharacter == NULL)
 	{
 		// do nothing if player is already alive
+		return;
+	}
+
+	// create and place player pawn
+	AActor* startPos = FindPlayerStart(player);
+	APawn* newPawn = SpawnDefaultPawnFor(player, startPos);
+	if (newPawn == NULL)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: SetPlayerDefaults player pawn is not PlayerCharacter"));
+		SpectatePlayer(player);
 		return;
 	}
 
@@ -520,10 +531,6 @@ void ACMGameMode::RestartPlayer(AController* controller)
 	player->PlayerState->bIsSpectator = false;
 	player->ChangeState(NAME_Playing);
 	player->ClientGotoState(NAME_Playing);
-
-	// create and place player pawn
-	AActor* startPos = FindPlayerStart(player);
-	APawn* newPawn = SpawnDefaultPawnFor(player, startPos);
 
 	FRotator NewControllerRot = startPos->GetActorRotation();
 	NewControllerRot.Roll = 0.f;
@@ -540,8 +547,6 @@ void ACMGameMode::RestartPlayer(AController* controller)
 
 	if (ghostCharacter != NULL)
 		ghostCharacter->Destroy();
-
-	player->ServerInitInventory();
 
 	AllowPlayerRespawn(player);
 
@@ -565,4 +570,10 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 		if (playerState != NULL)
 			playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
 	}
+
+	player->ServerInitInventory();
+
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
+	if (playerState != NULL)
+		playerState->SetAlive(true);
 }

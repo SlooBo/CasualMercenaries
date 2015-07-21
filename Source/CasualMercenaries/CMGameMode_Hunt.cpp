@@ -300,10 +300,11 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(ACMPlayerController* player, ACMPlaye
 	// TODO: move huntTarget to PlayerCharacter in order to prevent cheating (every player can read PlayerState)
 
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
+	if (playerState != NULL)
+		playerState->SetHuntTarget((killer != NULL) ? killer->GetPawn() : NULL);
 
-	playerState->SetHuntTarget((killer != NULL) ? killer->GetPawn() : NULL);
-	FString killerName = (killer != NULL) ? killer->GetName() : TEXT("NULL");
-	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killerName);
+	//FString killerName = (killer != NULL) ? killer->GetName() : TEXT("NULL");
+	//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killerName);
 }
 
 void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(ACMPlayerController* player)
