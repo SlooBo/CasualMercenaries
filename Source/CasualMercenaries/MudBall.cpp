@@ -74,14 +74,12 @@ AMudBall::~AMudBall()
 
 void AMudBall::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (!OtherActor)
-	{
-	}
-	else
-	{
-		ProjectileMovement->SetActive(false, false);
-		inflating = true;
-	}
+	ProjectileMovement->StopMovementImmediately();
+	ProjectileMovement->SetActive(false, false);
+
+	inflating = true;
+	isProjectile = false;
+}
 
 void AMudBall::TakeDamage(float damage)
 {
