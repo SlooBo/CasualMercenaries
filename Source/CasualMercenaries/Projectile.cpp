@@ -14,6 +14,7 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	CollisionComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	CollisionComp->SetNotifyRigidBodyCollision(true);
 	CollisionComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	CollisionComp->SetCollisionProfileName(TEXT("Projectile"));
 	//Set Root component
 	RootComponent = CollisionComp;
 
@@ -43,6 +44,18 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+// Called every second checking if actor should be replicated to target
+bool AProjectile::IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const
+{
+	bool relevant = Super::IsNetRelevantFor(realViewer, viewTarget, srcLocation);
+
+	// deny actor updates for ghost characters
+	if (viewTarget != this && Cast<AGhostCharacter>(viewTarget) != NULL)
+		relevant = false;
+
+	return relevant;
 }
 
 // Called every frame

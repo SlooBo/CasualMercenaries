@@ -18,13 +18,10 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 	projectileMesh->SetSimulatePhysics(false);
 	projectileMesh->SetVisibility(false);
 	projectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-
 
 	//Movement
 	ProjectileMovement->ProjectileGravityScale = 0.3;
 	ProjectileMovement->InitialSpeed = 1600.f;
-
 
 	//CollisionComponent
 	CollisionComp->InitSphereRadius(5.0f);
@@ -77,11 +74,9 @@ ALiquidProjectile::~ALiquidProjectile()
 
 void ALiquidProjectile::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (!Cast<ALiquidProjectile>(OtherActor))
+	if (Cast<ALiquidProjectile>(OtherActor))
 		if (!Cast<APlayerCharacter>(OtherActor))
 			Splash();
-	if (Cast<AGhostCharacter>(OtherActor))
-		NormalImpulse = FVector::ZeroVector;
 }
 
 void ALiquidProjectile::Tick(float DeltaSeconds)

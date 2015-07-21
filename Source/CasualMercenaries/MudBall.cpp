@@ -18,17 +18,13 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 	//NavMeshIntegration
 	projectileMesh->SetCanEverAffectNavigation(true);
-	projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
-	
 	//Movement
 	ProjectileMovement->ProjectileGravityScale = 0.1;
 	ProjectileMovement->InitialSpeed = 2500.f;
 
-
 	//CollisionComponent
 	CollisionComp->InitSphereRadius(15.0f);
-	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	//Delegate
 	OnActorHit.AddDynamic(this, &AMudBall::OnMyActorHit);
@@ -43,7 +39,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 	//Triggers
 	inflating = false;
-
+	isProjectile = true;
 
 	//Audio
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
@@ -86,18 +82,28 @@ void AMudBall::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Norma
 		ProjectileMovement->SetActive(false, false);
 		inflating = true;
 	}
+
+void AMudBall::TakeDamage(float damage)
+{
+	if (Role < ROLE_Authority)
+		return;
+
+	health -= damage;
 }
 
 void AMudBall::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if (!HasAuthority())
-		return;
-		if (health <= 0)	
-			Explode();
+
+	if (health <= 0)
+		Explode();
 
 	if (inflating)
-	{		
+	{
+		// fixes replication issues
+		ProjectileMovement->StopMovementImmediately();
+		ProjectileMovement->SetActive(false, false);
+
 		if (size > 1)
 		{	
 			inflating = false;
@@ -134,3 +140,29 @@ void AMudBall::Expand_Implementation()
 	size += 0.1;
 	projectileMesh->SetRelativeScale3D(FVector(size, size, size));
 }
+
+// Called every second checking if actor should be replicated to target
+bool AMudBall::IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const
+{
+	bool relevant = Super::IsNetRelevantFor(realViewer, viewTarget, srcLocation);
+
+	// deny actor updates for ghost characters
+	if (viewTarget != this && Cast<class AGhostCharacter>(viewTarget) != NULL)
+		relevant = false;
+
+	// mark as relevant when the mudball starts expanding
+	if (!isProjectile)
+		relevant = true;
+
+	return relevant;
+}
+
+void AMudBall::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMudBall, health);
+	DOREPLIFETIME(AMudBall, size);
+	DOREPLIFETIME(AMudBall, inflating);
+	DOREPLIFETIME(AMudBall, isProjectile);
+};

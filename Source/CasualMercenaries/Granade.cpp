@@ -140,9 +140,7 @@ void AGranade::BeginPlay()
 
 void AGranade::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	APlayerCharacter* temp = Cast<APlayerCharacter>(OtherActor);
-	if (temp)
+	APlayerCharacter* pc = Cast<APlayerCharacter>(OtherActor);
+	if (pc != nullptr && Cast<AGhostCharacter>(OtherActor) == nullptr)
 		Explode();
-	if (Cast<AGhostCharacter>(OtherActor))
-		NormalImpulse = FVector::ZeroVector;
 }

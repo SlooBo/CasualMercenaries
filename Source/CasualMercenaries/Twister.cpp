@@ -11,7 +11,6 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	RootComponent = CapsuleComp;
 	CapsuleComp = ObjectInitializer.CreateDefaultSubobject<UCapsuleComponent>(this, TEXT("CapsuleComp"));
 	CapsuleComp->InitCapsuleSize(100.0f, 200.0f);
-	CapsuleComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	CapsuleComp->SetNotifyRigidBodyCollision(true);
 	CapsuleComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	CapsuleComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);

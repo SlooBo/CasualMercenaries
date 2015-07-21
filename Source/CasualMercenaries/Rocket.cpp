@@ -15,7 +15,8 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/RocketLauncher/Rocket.Rocket'"));
 	projectileMesh->SetStaticMesh(MeshObj.Object);
 	projectileMesh->IgnoreActorWhenMoving(this->GetOwner(), true);
-	projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	
+	//RootComponent = projectileMesh;
 
 
 	CollisionComp->IgnoreActorWhenMoving(this->GetOwner(), true);
@@ -28,8 +29,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	//Delegate
 	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
 
-	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-	projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	
 
 	//Stuff
 	SetActorEnableCollision(true);
@@ -76,13 +76,8 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	int asd = 1;
-	if (OtherActor != GetOwner())
-		if (!Cast<ATwister>(OtherActor))
-			if (Cast<AGhostCharacter>(OtherActor))
-				NormalImpulse = FVector::ZeroVector;
-			else
-				Explode();
+	if (!Cast<ATwister>(OtherActor))
+		Explode();
 }
 
 void ARocket::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -103,8 +98,8 @@ void ARocket::Tick(float DeltaSeconds)
 		if (asd > 1)
 		{
 			casd = true;
-			CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
-			projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+			CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+			projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 		}
 	}
 }

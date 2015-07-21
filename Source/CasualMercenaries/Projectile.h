@@ -48,6 +48,9 @@ public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	// Called every second checking if actor should be replicated to target
+	virtual bool IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const;
+
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 

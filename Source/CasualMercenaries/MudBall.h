@@ -26,6 +26,8 @@ public:
 	void Tick(float DeltaSeconds);
 	void BeginPlay();
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 	/************************************************************************/
 	/* Functionality                                                        */
 	/************************************************************************/
@@ -33,7 +35,7 @@ public:
 	UFUNCTION()
 	void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 
-	void TakeDamage(float damage){ health -= damage; };
+	virtual void TakeDamage(float damage) override;
 
 
 private:
@@ -48,19 +50,28 @@ private:
 	UFUNCTION(Reliable, NetMulticast, WithValidation)
 		void Expand();
 
+	// Called every second checking if actor should be replicated to target
+	virtual bool IsNetRelevantFor(const AActor* realViewer, const AActor* viewTarget, const FVector& srcLocation) const;
+
 	/************************************************************************/
 	/* Values                                                               */
 	/************************************************************************/
 
+	UPROPERTY(Replicated)
 	float health;
+
+	UPROPERTY(Replicated)
 	float size;
 
 	/************************************************************************/
 	/* Timers and triggers                                                  */
 	/************************************************************************/
 
+	UPROPERTY(Replicated)
 	bool inflating;
-
+	
+	UPROPERTY(Replicated)
+	bool isProjectile;
 
 	
 };
