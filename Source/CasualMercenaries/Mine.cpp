@@ -9,6 +9,7 @@
 // Sets default values
 AMine::AMine(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	/*
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
@@ -39,6 +40,7 @@ AMine::AMine(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitiali
 
 	//Controller
 	AIControllerClass = AMineAIController::StaticClass();
+	*/
 }
 
 // Called when the game starts or when spawned
