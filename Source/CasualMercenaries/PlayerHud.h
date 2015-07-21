@@ -49,7 +49,11 @@ public:
 	UUILogicBase *GetCurrentUILogic();
 	UFUNCTION(Exec)
 	void CreateTestHavoc();
+	UFUNCTION(Exec)
+	void ShowText(int32 x, int32 y, int32 lifetime,int32 fontsize, FString text);
 private:
+	//UPROPERTY()
+	//TArray<UU
 	UPROPERTY()
 	MenuType currentMenu;
 	UPROPERTY()

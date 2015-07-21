@@ -63,7 +63,7 @@ void AHook::Tick(float DeltaTime)
 		{
 			MoveTick();
 			APlayerCharacter *player = Cast<APlayerCharacter>(GetOwner());
-			if (FVector::Dist(player->GetActorLocation(), hookedLocation) < 1000.0f)
+			if (FVector::Dist(player->GetActorLocation(), projectile->GetActorLocation()) < 1000.0f)
 			{
 				ReleaseHook();
 			}
@@ -82,13 +82,12 @@ void AHook::Tick(float DeltaTime)
 void AHook::PrimaryFunction(APlayerCharacter* user)
 {
 	this->SetOwner(user);
-	if (ammo > 0 && !hooked && !shotProjectile)
+	if (currentState == HOOKSTATE::NOT_STARTED)
 	{
-		firing = true;
-	}
-	else if (!hooked && !shotProjectile)
-	{
-		Reload();
+		if (ammo > 0)
+			firing = true;
+		else
+			reloading = true;
 	}
 }
 void AHook::PrimaryFunctionReleased(APlayerCharacter* user)
@@ -196,8 +195,8 @@ void AHook::FlyTowardsProjectile()
 }
 FRotator AHook::LookAtRotator(FVector lookfrom, FVector lookat)
 {
-	FVector const worldUp(1.0f, 1.0f, 1.0f); // World Z Axis.
-	return FRotationMatrix::MakeFromX(lookat - lookfrom).Rotator();
+	FVector result = (lookat - lookfrom).SafeNormal();
+	return result.Rotation();
 	
 }
 void AHook::MoveTick()

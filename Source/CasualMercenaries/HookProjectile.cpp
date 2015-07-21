@@ -11,7 +11,7 @@ AHookProjectile::AHookProjectile(const FObjectInitializer& ObjectInitializer) : 
 {
 	//StaticMesh
 	projectileMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("RocketMesh"));
-	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/RocketLauncher/Rocket.Rocket'"));
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/Hook/hook.hook'"));
 	projectileMesh->SetStaticMesh(MeshObj.Object);
 	projectileMesh->IgnoreActorWhenMoving(this->GetOwner(), true);
 

@@ -77,6 +77,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 	}
 	case MenuType::GAME_UI:
 	{
+		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 		//this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 		UUserWidget* widget;
 
@@ -114,6 +115,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 	}
 	case MenuType::PAUSE_MENU:
 	{
+		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		changeUIElement(pauseClass);
 		break;
 	}
@@ -162,4 +164,26 @@ void APlayerHud::CreateTestHavoc()
 		havoc->AddToViewport(1);
 		UBlueprint *bp = Cast<UBlueprint>(havoc);
 	return;
+}
+void APlayerHud::ShowText(int32 x, int32 y, int32 lifetime, int32 fontsize,FString text)
+{
+	UClass *widgetType = Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/UIText.UIText_C'"));
+	UUserWidget *widgetInstance = CreateWidget<UUserWidget>(GetWorld(), widgetType);
+
+	TArray<UWidget*> children;
+	widgetInstance->WidgetTree->GetAllWidgets(children);
+
+	int childcount = children.Num();
+	UCanvasPanel *canvaspanel = Cast<UCanvasPanel>(children[0]);
+
+	UTextBlock *textblock = NewObject<UTextBlock>(UTextBlock::StaticClass());
+	textblock->RenderTransform.Translation = FVector2D(x, y);
+	textblock->SetText(FText::FromString(text));
+	textblock->Font.Size = fontsize;
+	UCanvasPanelSlot *panelslot = Cast<UCanvasPanelSlot>(textblock->Slot);
+	panelslot->LayoutData.Offsets.Right += 512;
+	panelslot->LayoutData.Offsets.Left += 512;
+	canvaspanel->AddChild(textblock);
+	widgetInstance->AddToViewport(1);
+	//widgetInstance->Slot;
 }
