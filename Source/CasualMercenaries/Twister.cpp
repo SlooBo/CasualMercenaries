@@ -55,6 +55,10 @@ ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion.P_Explosion'"));
 	flavorParticleEffect = ParticleObj2.Object;
 
+	//radial force
+	radialForceComponent = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
+	radialForceComponent->ForceStrength = 5000000;
+	radialForceComponent->AttachTo(projectileMesh, "ExhaustSocket");
 
 	//Replication
 	bReplicates = true;
@@ -68,7 +72,7 @@ void ATwister::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	timer += DeltaSeconds;
-
+	if (HasAuthority())
 	if (timer > .25)
 	{
 		float radius = 300;
@@ -86,12 +90,22 @@ void ATwister::Tick(float DeltaSeconds)
 					x = 1 - (0.8 * (distance / radius));
 
 				damage *= x;
+				aItr->Jump();
 				UGameplayStatics::ApplyDamage(*aItr, damage, GetInstigatorController(), this, UDamageType::StaticClass());
-
+				FVector tempActorLocVector = aItr->GetActorLocation();
+				tempActorLocVector.Z += 100;
+				aItr->SetActorLocation(tempActorLocVector);
 				aItr->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));
+
+				timer = 0;
 			}
+
 		}
+
+		radialForceComponent->FireImpulse();
 	}
+
+
 }
 
 void ATwister::BeginPlay()
@@ -110,15 +124,15 @@ void ATwister::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponen
 	AProjectile* projectile = Cast<AProjectile>(OtherActor);
 	if (projectile)
 	{
-		float random1 = FMath::FRand();
-		float random2 = FMath::FRand();
-		float random3 = FMath::FRand();
+		float random1 = FMath::FRand() * 2 - 1;
+		float random2 = FMath::FRand() * 2 - 1;
+		float random3 = FMath::FRand() * 2 - 1;
 
 		FVector velocity = projectile->GetVelocity();
 		velocity.X *= random1;
 		velocity.Y *= random2;
 		velocity.Z *= random3;
-		projectile->InitVelocity(FVector(random1 ,random2, random3) * 1000);
+		projectile->InitVelocity(FVector(random1, random2, random3));
 	}
 }
 void ATwister::FlipShitUp()

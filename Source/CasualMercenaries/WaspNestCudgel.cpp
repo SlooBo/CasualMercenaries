@@ -30,7 +30,7 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 	// - other needed sounds
 
 	//loading of an audiosnippet
-	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/Bees.Bees'"));
 	if (audio1.Object)
 		audioList.Add(audio1.Object);
 
@@ -78,6 +78,7 @@ AWaspNestCudgel::AWaspNestCudgel(const FObjectInitializer& FOI) : Super(FOI)
 
 void AWaspNestCudgel::PrimaryFunction(APlayerCharacter* user)
 {
+	particleSystem->Activate();
 	// sets firing true and plays sound
 	firing = true;
 	audioComp->SetSound(audioList[0]);
@@ -115,10 +116,6 @@ void AWaspNestCudgel::Reload()
 void AWaspNestCudgel::Tick(float DeltaSeconds)
 {
 	//should keep the beeswarm centered around the user, but doesn't
-	if (firing)
-	{
-		particleSystem->SetWorldLocation(GetOwner()->GetActorLocation(), false, nullptr);
-	}
 	Super::Tick(DeltaSeconds);
 }
 
@@ -130,7 +127,7 @@ void AWaspNestCudgel::Fire()
 
 	particleSystem->Activate();
 	//should keep the beeswarm centered around the user, but doesn't
-	particleSystem->SetWorldLocation(controller->GetPawn()->GetActorLocation(), false, nullptr);
+	//particleSystem->SetWorldLocation(controller->GetPawn()->GetActorLocation(), false, nullptr);
 
 	// Goes through all AplyerCharacterActor and those that are in range take damage
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)

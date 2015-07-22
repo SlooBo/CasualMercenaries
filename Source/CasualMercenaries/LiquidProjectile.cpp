@@ -62,9 +62,6 @@ ALiquidProjectile::ALiquidProjectile(const FObjectInitializer& ObjectInitializer
 	//replication
 	bReplicates = true;
 	bReplicateMovement = true;
-
-	//particleSystem->BeginPlay();
-	//particleSystem->trail
 }
 
 ALiquidProjectile::~ALiquidProjectile()
@@ -74,7 +71,7 @@ ALiquidProjectile::~ALiquidProjectile()
 
 void ALiquidProjectile::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (Cast<ALiquidProjectile>(OtherActor))
+	if (!Cast<ALiquidProjectile>(OtherActor))
 		if (!Cast<APlayerCharacter>(OtherActor))
 			Splash();
 }

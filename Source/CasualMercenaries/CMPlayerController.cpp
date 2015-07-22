@@ -27,10 +27,20 @@ ACMPlayerController::ACMPlayerController(const FObjectInitializer& objectInitial
 	musicComponent->bAutoActivate = false;
 	musicCurrentTrack = -1;
 
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("WeaponAudioComponent"));
+	audioComp->SetVolumeMultiplier(0.125f);
+	audioComp->bAutoActivate = false;
+	audioComp->AttachParent = GetRootComponent();
+
+
 	//TODO: add all music automatically if possible
 	static ConstructorHelpers::FObjectFinder<USoundWave> Music1(TEXT("SoundWave'/Game/Game/Audio/Music/Artemisia_-_BiPilar.Artemisia_-_BiPilar'"));
 	if (Music1.Object)
 		musicList.AddUnique(Music1.Object);
+
+	//loading of an audiosnippet
+	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/NotDash.NotDash'"));
+	audioComp->SetSound(audio1.Object);
 }
 
 void ACMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -132,7 +142,9 @@ void ACMPlayerController::OnPlayerDeathBroadcast_Implementation(ACMPlayerControl
 
 void ACMPlayerController::OnAnnouncement_Implementation(const FString& announceText/*, USoundCue* announceSoundCue*/)
 {
-
+	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+	if (hud != nullptr)
+		hud->ShowText(announceText);
 }
 
 
@@ -268,8 +280,56 @@ void ACMPlayerController::BuyWeapon_Implementation(uint8 weaponIndex, WEAPONID w
 		}
 		playerState->AddMoney(-(int32)weaponStruct->buyPrice);
 	
-			inventory.ChangeWeaponAtSlot(weaponIndex, weaponid);
-		
+		inventory.ChangeWeaponAtSlot(weaponIndex, weaponid);
+		inventory.GetWeapon(weaponIndex)->SetActorHiddenInGame(false);
+
+		//////////////////////////////Stuff////////////////////////////
+		APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
+		AWeapon* newWeapon = inventory.GetWeapon(weaponIndex);
+
+		if (newWeapon != nullptr)
+		{
+			USkeletalMeshComponent* mesh = character->GetMesh();
+
+			//switch case caseroll for Miika to enjoy
+			switch (newWeapon->GetID())
+			{
+			case WEAPONID::SHOT_GUN:
+				newWeapon->weaponMesh->AttachTo(mesh, "ShotGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			case WEAPONID::GRENADE_LAUNCHER:
+				newWeapon->weaponMesh->AttachTo(mesh, "GrenadeLauncherSocket", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			case WEAPONID::MASHINE_GUN:
+				newWeapon->weaponMesh->AttachTo(mesh, "MashineGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			case WEAPONID::MUDBUSTER_GUN:
+				newWeapon->weaponMesh->AttachTo(mesh, "MudBusterSocket", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			case WEAPONID::TWISTER_GUN:
+				newWeapon->weaponMesh->AttachTo(mesh, "TwisterTorpedoGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			case WEAPONID::ROCKET_LAUNCHER:
+				newWeapon->weaponMesh->AttachTo(mesh, "RocketLauncherSocket", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			case WEAPONID::WASP_GUN:
+				newWeapon->weaponMesh->AttachTo(mesh, "WaspGunSocket_R", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			case WEAPONID::WATER_GUN:
+				newWeapon->weaponMesh->AttachTo(mesh, "WaterGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			case WEAPONID::HOOK:
+				newWeapon->weaponMesh->AttachTo(mesh, "ShotGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			case WEAPONID::SMOKE_GUN:
+				newWeapon->weaponMesh->AttachTo(mesh, "MashineGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+				break;
+			default:
+				gunSocket = mesh->GetSocketByName("GunSocket_null");
+				break;
+			}
+		}
+			////////////////////////EndStuff////////////////////////
 	}
 	else
 	{
@@ -526,13 +586,16 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(int32 cw, int32 pw)
 			newWeapon->weaponMesh->AttachTo(mesh, "RocketLauncherSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::WASP_GUN:
-			newWeapon->weaponMesh->AttachTo(mesh, "WaspGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+			newWeapon->weaponMesh->AttachTo(mesh, "WaspGunSocket_R", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::WATER_GUN:
 			newWeapon->weaponMesh->AttachTo(mesh, "WaterGunSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		case WEAPONID::HOOK:
 			newWeapon->weaponMesh->AttachTo(mesh, "ShotGunSocket", EAttachLocation::SnapToTargetIncludingScale);
+			break;
+		case WEAPONID::SMOKE_GUN:
+			newWeapon->weaponMesh->AttachTo(mesh, "MashineGunSocket", EAttachLocation::SnapToTargetIncludingScale);
 			break;
 		default:
 			gunSocket = mesh->GetSocketByName("GunSocket_null");
@@ -548,7 +611,11 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(int32 cw, int32 pw)
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "GunSocket not found pls fix");
 
 		newWeapon->SetOwner(character);
-		newWeapon->SetActorHiddenInGame(false);// ->weaponMesh->SetVisibility(true);
+		newWeapon->SetActorHiddenInGame(false);
+
+
+		audioComp->Play();
+
 	}
 
 }

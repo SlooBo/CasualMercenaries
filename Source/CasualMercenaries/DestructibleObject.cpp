@@ -70,7 +70,7 @@ void ADestructibleObject::CheckStatus()
 	{
 		GoInvisible();
 		health = healthMax;
-		GetWorld()->GetTimerManager().SetTimer(respawnTimerHandle, this, &ADestructibleObject::Respawn, 10.0f, false);
+		GetWorld()->GetTimerManager().SetTimer(respawnTimerHandle, this, &ADestructibleObject::Respawn, 20, false);
 		timerActive = true;
 	}
 }

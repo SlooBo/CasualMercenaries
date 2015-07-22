@@ -54,5 +54,6 @@ private:
 
 	float timer;
 	
+	URadialForceComponent *radialForceComponent;
 	
 };

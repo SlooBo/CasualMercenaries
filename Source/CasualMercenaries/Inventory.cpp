@@ -14,6 +14,7 @@
 #include "WaspNestCudgel.h"
 #include "Shotgun.h"
 #include "Hook.h"
+#include "SmokeGun.h"
 void FInventory::ClearInventory()
 {
 	for (int i = 0; i < weapons.Num(); i++)
@@ -120,6 +121,12 @@ void FInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
 		{
 			weaponClass = AHook::StaticClass();
 			weapon = owningPlayer->GetWorld()->SpawnActor<AHook>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			break;
+		}
+		case WEAPONID::SMOKE_GUN:
+		{
+			weaponClass = ASmokeGun::StaticClass();
+			weapon = owningPlayer->GetWorld()->SpawnActor<ASmokeGun>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
 			break;
 		}
 		default:

@@ -195,7 +195,7 @@ void AHook::FlyTowardsProjectile()
 }
 FRotator AHook::LookAtRotator(FVector lookfrom, FVector lookat)
 {
-	FVector result = (lookat - lookfrom).SafeNormal();
+	FVector result = (lookat - lookfrom).GetSafeNormal();
 	return result.Rotation();
 	
 }
