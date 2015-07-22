@@ -73,7 +73,7 @@ public:
 	UFUNCTION(Exec)
 	void CreateTestHavoc();
 	UFUNCTION(Exec)
-	void ShowText(int32 x, int32 y, int32 lifetime,int32 fontsize, float anchorX, float anchorY, FString text);
+	void ShowText(FString text, int32 fontsize = 32, float anchorX = 0.5f, float anchorY = 0.5f, int32 lifetime = 2, FLinearColor color = FLinearColor::White);
 private:
 	
 	UPROPERTY()

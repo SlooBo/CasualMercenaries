@@ -132,7 +132,9 @@ void ACMPlayerController::OnPlayerDeathBroadcast_Implementation(ACMPlayerControl
 
 void ACMPlayerController::OnAnnouncement_Implementation(const FString& announceText/*, USoundCue* announceSoundCue*/)
 {
-
+	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+	if (hud != nullptr)
+		hud->ShowText(announceText);
 }
 
 
