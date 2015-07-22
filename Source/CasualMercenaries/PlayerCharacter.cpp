@@ -451,7 +451,7 @@ void APlayerCharacter::WallJumpServer_Implementation()
 
 void APlayerCharacter::InputDash()
 {
-	//if (stamina >= 25)
+	if (stamina >= 25)
 	{
 		ServerDash(GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"));
 		PlaySound(dashSound);
