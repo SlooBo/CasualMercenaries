@@ -22,7 +22,7 @@ UShopLogic::~UShopLogic()
 void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 {
 	this->world = world;
-	shopMenu = shopWidget;
+	baseWidget = shopWidget;
 
 	SetValueFromWidget(&upgradeButton1, "UpgradeButton1");
 	upgradeButton1->OnClicked.AddDynamic(this, &UShopLogic::OnClickedUpgradeButton1);
@@ -403,9 +403,9 @@ void UShopLogic::SetInputMode_UIOnly()
 		FInputModeUIOnly InputMode;
 		//InputMode.SetLockMouseToViewport(bLockMouseToViewport);
 
-		if (shopMenu != nullptr)
+		if (baseWidget != nullptr)
 		{
-			InputMode.SetWidgetToFocus(shopMenu->TakeWidget());
+			InputMode.SetWidgetToFocus(baseWidget->TakeWidget());
 		}
 		controller->SetInputMode(InputMode);
 	}

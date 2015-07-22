@@ -18,6 +18,7 @@ enum class MenuType : uint8
 	SERVER_BROWSER 	UMETA(DisplayName = "SERVER_BROWSER"),
 	SHOP			UMETA(DisplayName = "SHOP"),
 	PAUSE_MENU		UMETA(DisplayName = "PAUSE_MENU"),
+	SCOREBOARD		UMETA(DisplayName = "SCOREBOARD"),
 	NO_UI			UMETA(DisplayName = "NO_UI")
 };
 

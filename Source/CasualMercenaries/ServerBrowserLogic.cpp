@@ -14,7 +14,7 @@ UServerBrowserLogic::~UServerBrowserLogic()
 }
 void UServerBrowserLogic::SetUp(UUserWidget *widget,UWorld *world)
 {
-	this->widget = widget;
+	this->baseWidget = widget;
 	this->world = world;
 
 	SetValueFromWidget(&createSessionButton, "CreateSession");
@@ -145,7 +145,7 @@ void UServerBrowserLogic::AddSessionToGUI(int32 searchIndex)
 	buttonServerInfos.Add(serverInfo);
 	
 	//serverInfo->SetFlags(RF_RootSet);
-	UWidgetTree *widgetTree = widget->WidgetTree;
+	UWidgetTree *widgetTree = baseWidget->WidgetTree;
 	TArray<UWidget*> children;
 	widgetTree->GetAllWidgets(children);
 

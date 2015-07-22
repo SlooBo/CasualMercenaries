@@ -90,6 +90,8 @@ void ACMPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("Reload", IE_Pressed, this, &ACMPlayerController::TryRespawn);
 	InputComponent->BindAction("Escape_Back", IE_Pressed, this, &ACMPlayerController::OnPressedEscape);
+	InputComponent->BindAction("ScoreSreen", IE_Pressed, this, &ACMPlayerController::PressedOpenScore);
+	InputComponent->BindAction("ScoreSreen", IE_Released, this, &ACMPlayerController::PressedCloseScore);
 }
 
 void ACMPlayerController::MusicPlay()
@@ -644,4 +646,14 @@ void ACMPlayerController::OnPressedEscape()
 {
 	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
 	hud->changeUIElement(MenuType::PAUSE_MENU);
+}
+void ACMPlayerController::PressedOpenScore()
+{
+		APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+	hud->changeUIElement(MenuType::SCOREBOARD);
+}
+void ACMPlayerController::PressedCloseScore()
+{
+	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+	hud->changeUIElement(MenuType::GAME_UI);
 }

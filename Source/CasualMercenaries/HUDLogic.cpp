@@ -20,7 +20,7 @@ UHUDLogic::~UHUDLogic()
 
 void UHUDLogic::SetUp(UUserWidget *widget, UWorld *world)
 {
-	thisWidget = widget;
+	this->baseWidget = widget;
 	this->world = world;
 	SetValueFromWidget(&healthProgressBar, "HealthProgressBar");
 	SetValueFromWidget(&staminaProgressBar, "StaminaProgressBar");

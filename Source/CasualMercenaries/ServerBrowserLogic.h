@@ -37,8 +37,6 @@ private:
 	UPROPERTY()
 	UWorld *world;
 	UPROPERTY()
-	UUserWidget *widget;
-	UPROPERTY()
 	UButton *createSessionButton;
 	UPROPERTY()
 	UButton *findSessionsButton;
@@ -68,26 +66,6 @@ private:
 	UFUNCTION()
 		void ForceGarbageCollector();
 
-	template <typename type>
-	bool SetValueFromWidget(type **saveValueHere, FString name)
-	{
-		UWidgetTree *widgetTree = widget->WidgetTree;
-		TArray<UWidget*> children;
-		widgetTree->GetAllWidgets(children);
-
-		int childcount = children.Num();
-		for (int i = 0; i < childcount; i++)
-		{
-			type *tempValue = Cast<type>(children[i]);
-			UWidget *userWidget = Cast<UWidget>(children[i]);
-			if (tempValue != nullptr && userWidget != nullptr && userWidget->GetName().ToLower().Equals(name.ToLower()))
-			{
-				*saveValueHere = Cast<type>(children[i]);
-				return true;
-			}
-		}
-		return false;
-	}
 };
 UCLASS()
 class UServerInfo: public UObject

@@ -94,6 +94,7 @@ public:
 	void WeaponSlot3();
 	void WeaponSlot4();
 
+
 	void SwitchWeapon(int32 newWeapon);
 
 	UFUNCTION(Reliable, Server, WithValidation)
@@ -117,7 +118,8 @@ public:
 	UFUNCTION(Exec)
 	void PrintTarget();
 
-
+	void PressedOpenScore();
+	void PressedCloseScore();
 protected:
 	void OnPressedEscape();
 	const USkeletalMeshSocket* gunSocket;

@@ -5,6 +5,7 @@
 #include "ServerBrowserLogic.h"
 #include "ShopLogic.h"
 #include "HUDLogic.h"
+#include "ScoreBoard.h"
 #include "Util.h"
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
@@ -102,6 +103,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 	}
 	case MenuType::SERVER_BROWSER:
 	{
+		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		UUserWidget* widget;
 		widget = changeUIElement(serverBrowserClass);
 		UServerBrowserLogic* serverBrowser = NewObject<UServerBrowserLogic>();
@@ -130,6 +132,16 @@ void APlayerHud::changeUIElement(MenuType menu)
 	{
 		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		changeUIElement(pauseClass);
+		break;
+	}
+	case MenuType::SCOREBOARD:
+	{
+		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+		UClass *scoreboardClass = Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/ScoreBoard.ScoreBoard_C'"));
+		UUserWidget *widget = changeUIElement(scoreboardClass);
+		UScoreBoard *scoreboard = NewObject<UScoreBoard>();
+		scoreboard->SetUp(widget, GetWorld());
+		logicClasses.Add(scoreboard);
 		break;
 	}
 	case MenuType::NO_UI:
