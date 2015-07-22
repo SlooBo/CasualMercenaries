@@ -9,7 +9,7 @@
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
 	currentMenu = MenuType::NO_UI;
-	static ConstructorHelpers::FObjectFinder<UClass> MainMenuBP(TEXT("'/Game/Game/UI/MainMenu.MainMenu_C'"));
+	static ConstructorHelpers::FObjectFinder<UClass> MainMenuBP(TEXT("'/Game/Game/UI/AnimatedMainMenu.AnimatedMainMenu'"));
 	if (MainMenuBP.Object){
 		mainMenuClass = (UClass*)MainMenuBP.Object;
 	}
@@ -54,7 +54,13 @@ void APlayerHud::BeginPlayCplusplus()
 // Called every frame
 void APlayerHud::Tick(float DeltaSeconds)
 {
-
+	for (int i = 0; i < screenMessages.Num(); i++)
+	{
+		if (screenMessages[i].currentTime >= screenMessages[i].maxTime)
+		{
+			//screenMessages[i].widget->
+		}
+	}
 }
 void APlayerHud::changeUIElement(MenuType menu)
 {
@@ -165,25 +171,35 @@ void APlayerHud::CreateTestHavoc()
 		UBlueprint *bp = Cast<UBlueprint>(havoc);
 	return;
 }
-void APlayerHud::ShowText(int32 x, int32 y, int32 lifetime, int32 fontsize,FString text)
+void APlayerHud::ShowText(int32 x, int32 y, int32 lifetime, int32 fontsize, float anchorX, float anchorY, FString text)
 {
-	UClass *widgetType = Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/UIText.UIText_C'"));
+	UClass *widgetType = Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/OnScreenMessage.OnScreenMessage_C'"));
 	UUserWidget *widgetInstance = CreateWidget<UUserWidget>(GetWorld(), widgetType);
 
 	TArray<UWidget*> children;
 	widgetInstance->WidgetTree->GetAllWidgets(children);
 
 	int childcount = children.Num();
-	UCanvasPanel *canvaspanel = Cast<UCanvasPanel>(children[0]);
 
-	UTextBlock *textblock = NewObject<UTextBlock>(UTextBlock::StaticClass());
+	UTextBlock *textblock = Cast<UTextBlock>(children[1]);
 	textblock->RenderTransform.Translation = FVector2D(x, y);
 	textblock->SetText(FText::FromString(text));
 	textblock->Font.Size = fontsize;
+
 	UCanvasPanelSlot *panelslot = Cast<UCanvasPanelSlot>(textblock->Slot);
-	panelslot->LayoutData.Offsets.Right += 512;
-	panelslot->LayoutData.Offsets.Left += 512;
-	canvaspanel->AddChild(textblock);
+	panelslot->LayoutData.Offsets.Right += x;
+	panelslot->LayoutData.Offsets.Left += y;
+
+	//Anchors (between 0.0-1.0)
+	panelslot->LayoutData.Anchors.Maximum.X = anchorX;
+	panelslot->LayoutData.Anchors.Minimum.X = anchorX;
+
+	panelslot->LayoutData.Anchors.Maximum.Y = anchorY;
+	panelslot->LayoutData.Anchors.Minimum.Y = anchorY;
+
 	widgetInstance->AddToViewport(1);
+	FScreenMessage message;
+	message.widget = widgetInstance;
+	screenMessages.Add(message);
 	//widgetInstance->Slot;
 }

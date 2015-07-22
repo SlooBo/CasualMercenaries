@@ -163,7 +163,7 @@ void AMUDbuster::Fire()
 
 			//gives to the spawned projectile launch velocity
 
-			projectile->InitVelocity(tardines.SafeNormal());
+			projectile->InitVelocity(tardines.GetSafeNormal());
 
 		}
 	}
