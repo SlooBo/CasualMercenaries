@@ -17,6 +17,9 @@ class CASUALMERCENARIES_API ACMPlayerController : public APlayerController
 	
 public:
 
+	UPROPERTY()
+		UAudioComponent* audioComp;
+
 	ACMPlayerController(const class FObjectInitializer& objectInitializer);
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -138,4 +141,7 @@ protected:
 	void OpenTeamChat();
 	void OpenAllChat();
 	void OpenShop();
+
+	UPROPERTY()
+	USoundWave* audio;
 };

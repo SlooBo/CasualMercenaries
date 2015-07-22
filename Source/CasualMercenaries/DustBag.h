@@ -2,29 +2,26 @@
 
 #pragma once
 
-#include "Object.h"
 #include "Projectile.h"
-#include "Rocket.generated.h"
+#include "DustBag.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CASUALMERCENARIES_API ARocket : public AProjectile
+class CASUALMERCENARIES_API ADustBag : public AProjectile
 {
-
 	GENERATED_BODY()
 
 public:
-
 	/************************************************************************/
 	/* Defaults                                                             */
 	/************************************************************************/
 
-	ARocket(const FObjectInitializer& ObjectInitializer);
+	ADustBag(const FObjectInitializer& ObjectInitializer);
 
-	~ARocket();
-	
+	~ADustBag();
+
 	void Tick(float DeltaSeconds);
 	void BeginPlay();
 
@@ -32,27 +29,26 @@ public:
 	/* Functionality                                                        */
 	/************************************************************************/
 
-	UFUNCTION()
-	void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION(Reliable, NetMulticast, WithValidation)
+		void Explode();
 
 	UFUNCTION()
-	virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+		void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+
+
+	//float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 
 private:
 
 	/************************************************************************/
-	/* Hidden functionality                                                 */
+	/* Values										                        */
 	/************************************************************************/
 
-	void Explode();
-
-	/************************************************************************/
-	/* Values				                                                */
-	/************************************************************************/
+	float lifeTime, livedTime;
 
 	URadialForceComponent *radialForceComponent;
-
-	bool casd;
-	float asd;
-
+	
+	
 };

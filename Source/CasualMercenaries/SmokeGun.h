@@ -2,34 +2,26 @@
 
 #pragma once
 
-#include "Projectile.h"
-#include "Twister.generated.h"
+#include "Weapon.h"
+#include "SmokeGun.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CASUALMERCENARIES_API ATwister : public AProjectile
+class CASUALMERCENARIES_API ASmokeGun : public AWeapon
 {
 	GENERATED_BODY()
-	
+
 public:
-
-	/************************************************************************/
-	/* UProperties                                                          */
-	/************************************************************************/
-
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
-		UCapsuleComponent* CapsuleComp;
 
 	/************************************************************************/
 	/* Defaults                                                             */
 	/************************************************************************/
 
-	ATwister(const FObjectInitializer& ObjectInitializer);
+	ASmokeGun(const FObjectInitializer& FOI);
 
-	~ATwister(){};
-
+	// Called every frame
 	void Tick(float DeltaSeconds);
 
 	void BeginPlay();
@@ -38,11 +30,13 @@ public:
 	/* Functionality                                                        */
 	/************************************************************************/
 
-	UFUNCTION()
-		void OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
+	void PrimaryFunction(APlayerCharacter* user);
 
-	UFUNCTION()
-		virtual void OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void PrimaryFunctionReleased(APlayerCharacter* user);
+
+	void SecondaryFunction(APlayerCharacter* user);
+
+	void Reload();
 
 private:
 
@@ -50,10 +44,8 @@ private:
 	/* Hidden functionality                                                 */
 	/************************************************************************/
 
-	void FlipShitUp();
+	void Fire();
 
-	float timer;
 	
-	URadialForceComponent *radialForceComponent;
 	
 };

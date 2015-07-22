@@ -61,7 +61,6 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	id = WEAPONID::MASHINE_GUN;
 	SuperFunctioAlaMiika();
 	bReplicates = true;
-
 }
 
 void AMashineGun::BeginPlay()
@@ -100,7 +99,7 @@ void AMashineGun::Fire()
 
 
 	//LineTrace
-	const FVector startTrace = userLoc;
+	const FVector startTrace = this->weaponMesh->GetSocketLocation("ExhaustSocket");
 	const FVector endTrace = startTrace + shootDir * 20000;
 
 	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
@@ -178,6 +177,7 @@ void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 	//bulletTrail->SetVectorParameter("BulletTrailEnd", end);
 	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
 	particlen->SetVectorParameter("BulletTrailEnd", end);
+	particlen->SetActorParameter("BulletTrailBegin", this);
 }
 
 void AMashineGun::SecondaryFunction(APlayerCharacter* user)

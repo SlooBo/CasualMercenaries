@@ -59,6 +59,7 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	bulletTrail = ParticleObj.Object;
 
 
+
 	//ID
 	id = WEAPONID::SHOT_GUN;
 
@@ -105,7 +106,7 @@ void AShotgun::Fire()
 		shootDir += random;
 
 		//LineTrace
-		const FVector startTrace = userLoc;
+		const FVector startTrace = this->weaponMesh->GetSocketLocation("ExhaustSocket");
 		const FVector endTrace = startTrace + shootDir * 20000;
 
 		FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
@@ -175,6 +176,7 @@ void AShotgun::ServerDrawLine_Implementation(FVector begin, FVector end)
 
 	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, this->GetActorRotation(), true);
 	particlen->SetVectorParameter("BulletTrailEnd", end);
+	particlen->SetActorParameter("BulletTrailBegin", this);
 }
 
 void AShotgun::SecondaryFunction(APlayerCharacter* user)

@@ -17,7 +17,6 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	//skeletalMesh
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Weapons/MudBuster/Weapon/MAT_Mudbuster.MAT_Mudbuster'"));
 	weaponMesh->SetMaterial(0, MateriaObj.Object);
-	//weaponMesh->SetRelativeScale3D(FVector(0.5, 0.5, 0.25));
 
 	// integers
 	maxAmmo = 120;
@@ -51,6 +50,7 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	//ID
 	id = WEAPONID::MUDBUSTER_GUN;
 	SuperFunctioAlaMiika();
+
 	//replication
 	bReplicates = true;
 }
@@ -77,6 +77,7 @@ void AMUDbuster::BeginPlay()
 
 void AMUDbuster::Reload()
 {
+	reloading = true;
 	audioComp->SetSound(audioList[1]);
 	audioComp->Play();
 }
@@ -98,7 +99,7 @@ void AMUDbuster::Fire()
 
 	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
 
-	userLoc = weaponMesh->GetSocketLocation("ExhaustSocket");// controller->GetPawn()->GetActorLocation();
+	userLoc = weaponMesh->GetSocketLocation("ExhaustSocket");
 
 	FVector cameraLoc = Cast<APlayerCharacter>(GetOwner())->GetCamera()->GetComponentLocation();
 

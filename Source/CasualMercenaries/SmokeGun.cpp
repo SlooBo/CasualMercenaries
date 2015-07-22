@@ -1,13 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CasualMercenaries.h"
-#include "PlayerCharacter.h"
-#include "PomegranadeLauncher.h"
+#include "SmokeGun.h"
 #include "DustBag.h"
 
-
-
-APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWeapon(FOI)
+ASmokeGun::ASmokeGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 {
 	//SkeletonMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/Weapons/ToasterGun/MESH_Toaster.MESH_Toaster'"));
@@ -54,14 +51,14 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 	bReplicates = true;
 }
 
-void APomeGranadeLauncher::PrimaryFunction(APlayerCharacter* user)
+void ASmokeGun::PrimaryFunction(APlayerCharacter* user)
 {
 	this->SetOwner(user);
 	if (ammo > 0)
 		firing = true;
 }
 
-void APomeGranadeLauncher::Fire()
+void ASmokeGun::Fire()
 {
 	ammo--;
 	audioComp->SetSound(audioList[0]);
@@ -84,7 +81,7 @@ void APomeGranadeLauncher::Fire()
 		SpawnParams.Owner = controller->GetPawn();
 		SpawnParams.Instigator = Instigator;
 
-		AGranade* const projectile = World->SpawnActor<AGranade>(AGranade::StaticClass(), MuzzleLocation, MuzzleRotation, SpawnParams);
+		ADustBag* const projectile = World->SpawnActor<ADustBag>(ADustBag::StaticClass(), MuzzleLocation, MuzzleRotation, SpawnParams);
 
 		if (projectile)
 		{
@@ -95,29 +92,31 @@ void APomeGranadeLauncher::Fire()
 	}
 }
 
-void APomeGranadeLauncher::PrimaryFunctionReleased(APlayerCharacter* user)
+void ASmokeGun::PrimaryFunctionReleased(APlayerCharacter* user)
 {
 	firing = false;
 }
 
-void APomeGranadeLauncher::SecondaryFunction(APlayerCharacter* user)
+void ASmokeGun::SecondaryFunction(APlayerCharacter* user)
 {
 
 }
 
-void APomeGranadeLauncher::BeginPlay()
+void ASmokeGun::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void APomeGranadeLauncher::Tick(float DeltaSeconds)
+void ASmokeGun::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 }
 
-void APomeGranadeLauncher::Reload()
+void ASmokeGun::Reload()
 {
 	reloading = true;
 	audioComp->SetSound(audioList[1]);
 	audioComp->Play();
 }
+
+
