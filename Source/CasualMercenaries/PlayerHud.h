@@ -21,6 +21,29 @@ enum class MenuType : uint8
 	NO_UI			UMETA(DisplayName = "NO_UI")
 };
 
+USTRUCT()
+struct FScreenMessage
+{
+	GENERATED_USTRUCT_BODY()
+
+		UPROPERTY()
+		float currentTime;
+	UPROPERTY()
+		float maxTime;
+	UPROPERTY()
+		UUserWidget *widget;
+
+
+	//Constructor
+	FScreenMessage()
+	{
+		currentTime = 0.0f;
+		maxTime = 0.0f;
+		this->widget = nullptr;
+	}
+}; 
+
+
 UCLASS()
 class CASUALMERCENARIES_API APlayerHud : public AHUD
 {
@@ -50,10 +73,11 @@ public:
 	UFUNCTION(Exec)
 	void CreateTestHavoc();
 	UFUNCTION(Exec)
-	void ShowText(int32 x, int32 y, int32 lifetime,int32 fontsize, FString text);
+	void ShowText(FString text, int32 fontsize = 32, float anchorX = 0.5f, float anchorY = 0.5f, int32 lifetime = 2, FLinearColor color = FLinearColor::White);
 private:
-	//UPROPERTY()
-	//TArray<UU
+	
+	UPROPERTY()
+	TArray<FScreenMessage> screenMessages;
 	UPROPERTY()
 	MenuType currentMenu;
 	UPROPERTY()
