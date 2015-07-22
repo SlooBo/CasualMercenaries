@@ -454,6 +454,7 @@ void APlayerCharacter::InputDash()
 	//if (stamina >= 25)
 	{
 		ServerDash(GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"));
+		PlaySound(dashSound);
 	}
 }
 
