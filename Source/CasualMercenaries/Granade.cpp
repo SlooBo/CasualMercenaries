@@ -63,10 +63,6 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	radialForceComponent = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
 	radialForceComponent->ForceStrength = 50000;
 	radialForceComponent->AttachTo(projectileMesh, "ExhaustSocket");
-
-
-	//audioComp->SetSound(audioList[0]);
-	//audioComp->Play();
 }
 
 AGranade::~AGranade()
