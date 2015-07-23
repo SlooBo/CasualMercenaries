@@ -49,7 +49,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	//	CharacterMesh
 	const ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(TEXT("SkeletalMesh'/Game/Game/PlayerCharacters/ver7/Character_updatedanimations.Character_updatedanimations'"));
 	GetMesh()->SetSkeletalMesh(MeshObj.Object);
-	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("Material'/Game/Game/PlayerCharacters/ver7/MAT_PlayerCharacter_updated.MAT_PlayerCharacter_updated'"));
+	const ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> MateriaObj(TEXT("MaterialInstanceConstant'/Game/Game/PlayerCharacters/ver7/MAT_PlayerCharacter_updated_Inst.MAT_PlayerCharacter_updated_Inst'"));
 	GetMesh()->SetMaterial(0, MateriaObj.Object);
 	GetMesh()->SetMaterial(1, MateriaObj.Object);
 	const ConstructorHelpers::FObjectFinder<UAnimBlueprint> AnimBuleprintObj(TEXT("AnimBlueprint'/Game/Game/PlayerCharacters/ver7/apb_test.apb_test'"));
