@@ -83,10 +83,16 @@ public:
 	/************************************************************************/
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Hunt Target"), Category = "Gameplay|Hunt")
-	APawn* GetHuntTarget();
+	AController* GetHuntTarget() { return GetHuntTargetController(); };
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Hunt Target"), Category = "Gameplay|Hunt")
+	AController* GetHuntTargetController();
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Hunt Target Color"), Category = "Gameplay|Hunt")
+	FLinearColor GetHuntTargetColor();
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Set Hunt Target"), Category = "Gameplay|Hunt")
-	void SetHuntTarget(APawn* target);
+	void SetHuntTarget(AController* target, FLinearColor targetColor = FLinearColor::Transparent);
 
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Money"), Category = "Gameplay|Hunt")
 	int32 GetMoney();
@@ -114,7 +120,11 @@ protected:
 	// TODO: move huntTarget to PlayerCharacter in order to prevent cheating (every player can read these)
 	// Hunt Target
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Meta = (DisplayName = "Hunt Target"))
-	APawn* huntTarget;
+	AController* huntTarget;
+
+	// Workaround to pawn playerstate not getting replicated to other clients
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Meta = (DisplayName = "Hunt Target Color"))
+	FLinearColor huntTargetColor;
 
 	// Player Frags
 	UPROPERTY(Replicated, Meta = (DisplayName = "Player Frags"))

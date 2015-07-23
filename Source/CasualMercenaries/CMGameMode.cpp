@@ -339,8 +339,8 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	{
 		ACMPlayerController* killerTarget = NULL;
 
-		if (killerState->GetHuntTarget() != NULL && killerState->GetHuntTarget()->GetNetOwningPlayer() != NULL)
-			killerTarget = Cast<ACMPlayerController>(killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController);
+		if (killerState->GetHuntTarget() != NULL)
+			killerTarget = Cast<ACMPlayerController>(killerState->GetHuntTarget());
 
 		// killer killed their target?
 		if (killerTarget == player)

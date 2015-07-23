@@ -47,14 +47,27 @@ void ACMPlayerState::SetTeam(int32 newTeam)
 	team = newTeam;
 }
 
-void ACMPlayerState::SetHuntTarget(APawn* target)
+void ACMPlayerState::SetHuntTarget(AController* target, FLinearColor targetColor)
 {
+	if (targetColor == FLinearColor::Transparent && target != NULL)
+	{
+		ACMPlayerState* playerState = Cast<ACMPlayerState>(target->PlayerState);
+		if (playerState != NULL)
+			targetColor = playerState->GetColorId();
+	}
+
 	huntTarget = target;
+	huntTargetColor = targetColor;
 }
 
-APawn* ACMPlayerState::GetHuntTarget()
+AController* ACMPlayerState::GetHuntTargetController()
 {
 	return huntTarget;
+}
+
+FLinearColor ACMPlayerState::GetHuntTargetColor()
+{
+	return huntTargetColor;
 }
 
 int32 ACMPlayerState::GetFrags()

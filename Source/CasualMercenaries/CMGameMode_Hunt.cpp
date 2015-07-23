@@ -12,7 +12,7 @@
 ACMGameMode_Hunt::ACMGameMode_Hunt(const FObjectInitializer& objectInitializer)
 	: ACMGameMode(objectInitializer)
 {
-	minPlayersToStart = 1;
+	minPlayersToStart = 3;
 
 	huntRounds = 3;
 	huntIntermissionLength = 10;
@@ -86,11 +86,6 @@ void ACMGameMode_Hunt::SetupNewPlayer(APlayerController* newPlayer)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Error: PlayerController is not CMPlayerController"));
 		return;
 	}
-
-	if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart && inGameState != InGameState::Warmup)
-		SetRandomPlayerHuntTarget(Cast<ACMPlayerController>(newPlayer));
-	else
-		SetPlayerHuntTarget(Cast<ACMPlayerController>(newPlayer), NULL);
 }
 
 void ACMGameMode_Hunt::HuntTickSecond()
@@ -227,10 +222,16 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 {
 	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
-		(*iter)->OnRoundStart();
+		// force respawn player
+		if ((*iter)->GetPawnOrSpectator() == NULL || Cast<AGhostCharacter>((*iter)->GetPawnOrSpectator()) != NULL)
+			RespawnPlayer(*iter);
 
+		SetRandomPlayerHuntTarget(*iter);
+		
 		// deny shop access from players
 		(*iter)->OnShopAccessChanged(false);
+
+		(*iter)->OnRoundStart();
 	}
 
 	// restore destructible objects back to their initial state
@@ -268,31 +269,175 @@ void ACMGameMode_Hunt::OnWarmupStart_Implementation()
 
 void ACMGameMode_Hunt::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer)
 {
-	Super::OnPlayerDeath_Implementation(player, killer);
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
+	ACMPlayerState* killerState = (killer != NULL) ? Cast<ACMPlayerState>(killer->PlayerState) : NULL;
+	ACMPlayerController* playerTarget = GetHuntTarget(player);
+	ACMPlayerController* killerTarget = GetHuntTarget(killer);
 
-	if (Util::GetNumPlayers(GetWorld()) >= minPlayersToStart)
+	if (GetNumPlayers() >= minPlayersToStart)
 	{
-		ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
-		SetRandomPlayerHuntTarget(player);
+		TArray<ACMPlayerController*> playerHunters;
+		for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+		{
+			ACMPlayerController* hunterTarget = GetHuntTarget(*iter);
+			if (hunterTarget == player)
+			{
+				//SetPlayerHuntTarget(*iter, NULL);
+				playerHunters.Add(*iter);
+			}
+		}
 
 		if (killer != NULL)
 		{
-			ACMPlayerState* killerState = Cast<ACMPlayerState>(killer->PlayerState);
-			ACMPlayerController* killerTarget = NULL;
+			// player always starts hunting his killer
+			SetPlayerHuntTarget(player, killer);
 
-			if (killerState->GetHuntTarget() != NULL && killerState->GetHuntTarget()->GetNetOwningPlayer() != NULL)
-				killerTarget = Cast<ACMPlayerController>(killerState->GetHuntTarget()->GetNetOwningPlayer()->PlayerController);
+			// hunter(s) new target
+			if (playerHunters.Num() < 3)
+			{
+				if (playerHunters.Num() == 1)
+				{
+					if (playerTarget != killer)
+					{
+						// the killer receives killed player's old hunt target
+						SetPlayerHuntTarget(killer, playerTarget);
+					}
+				}
+				else if (playerHunters.Num() == 2)
+				{
+					ACMPlayerController* otherHunter = (killer != playerHunters[0]) ? playerHunters[0] : playerHunters[1];
+					if (playerTarget != killer)
+					{
+						// the killer receives killed player's old hunt target
+						SetPlayerHuntTarget(killer, playerTarget);
 
-			// give new target if correct target was killed
-			if (killerTarget == player)
-				SetRandomPlayerHuntTarget(killer);
+						// the other hunter starts hunting the killer
+						SetPlayerHuntTarget(otherHunter, killer);
+					}
+				}
+				else //if (playerHunters.Num == 0)
+				{
+					// killer retains his old target if wrong player was killed
+				}
+				
+				if (playerTarget == killer)
+				{
+					// assign random player as killer's new target, prefering untargeted players
+					ACMPlayerController* randomTarget = GetRandomPlayer(killer, player, true);
+					SetPlayerHuntTarget(killer, randomTarget);
+				}
+			}
+			else
+			{
+				// all hunters starts hunting each other, random targets within the group
+				for (ACMPlayerController* hunter : playerHunters)
+				{
+					TArray<ACMPlayerController*> candidates = playerHunters;
+					candidates.Remove(hunter);
+
+					ACMPlayerController* randomTarget = Util::RandomFromList(candidates);
+					SetPlayerHuntTarget(hunter, randomTarget);
+				}
+			}
+		}
+		else
+		{
+			// player commited suicide
 		}
 
-		// assign new random color for the player
+		// sanity check if all players have a target
+		for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+		{
+			ACMPlayerController* hunterTarget = GetHuntTarget(*iter);
+			if (hunterTarget != NULL)
+				checkf(hunterTarget != NULL, TEXT("Error: Player has no hunter target, blame Ari"));
+		}
+	}
+
+	if (killer != NULL)
+	{
+		// assign new random color for the killed player
 		FLinearColor randomColor = FLinearColor::MakeRandomColor();
 		if (playerState != NULL)
 			playerState->SetColorId(randomColor);
 	}
+
+	Super::OnPlayerDeath_Implementation(player, killer);
+}
+
+ACMPlayerController* ACMGameMode_Hunt::GetHuntTarget(ACMPlayerController* player)
+{
+	if (player == NULL)
+		return NULL;
+
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
+	if (playerState != NULL)
+		return Cast<ACMPlayerController>(playerState->GetHuntTarget());
+
+	return NULL;
+}
+
+int32 ACMGameMode_Hunt::CountPlayerHunters(ACMPlayerController* player)
+{
+	int32 hunters = 0;
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+	{
+		ACMPlayerController* hunterTarget = GetHuntTarget(*iter);
+		if (hunterTarget == player)
+			hunters++;
+	}
+	return hunters;
+}
+
+ACMPlayerController* ACMGameMode_Hunt::GetRandomPlayer(ACMPlayerController* ignoreTarget, bool preferUnTargeted)
+{
+	TArray<ACMPlayerController*> ignoreTargets;
+	if (ignoreTarget != NULL)
+		ignoreTargets.Add(ignoreTarget);
+	return GetRandomPlayer(ignoreTargets, preferUnTargeted);
+}
+
+ACMPlayerController* ACMGameMode_Hunt::GetRandomPlayer(ACMPlayerController* ignoreTarget1, ACMPlayerController* ignoreTarget2, bool preferUnTargeted)
+{
+	TArray<ACMPlayerController*> ignoreTargets;
+	if (ignoreTarget1 != NULL)
+		ignoreTargets.Add(ignoreTarget1);
+	if (ignoreTarget2 != NULL)
+		ignoreTargets.Add(ignoreTarget2);
+	return GetRandomPlayer(ignoreTargets, preferUnTargeted);
+}
+
+ACMPlayerController* ACMGameMode_Hunt::GetRandomPlayer(const TArray<ACMPlayerController*>& ignoreTargets, bool preferUnTargeted)
+{
+	ACMPlayerController* target = NULL;
+	TArray<ACMPlayerController*> targetList;
+
+	if (preferUnTargeted)
+	{
+		for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+		{
+			if (!ignoreTargets.Contains(*iter) && CountPlayerHunters(*iter) == 0)
+				targetList.Add(*iter);
+		}
+	}
+
+	if (targetList.Num() == 0)
+	{
+		for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+			if (!ignoreTargets.Contains(*iter))
+				targetList.Add(*iter);
+	}
+
+	if (targetList.Num() != 0)
+		target = Util::RandomFromList(targetList);
+
+	return target;
+}
+
+void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(ACMPlayerController* player)
+{
+	ACMPlayerController* target = GetRandomPlayer(player);
+	SetPlayerHuntTarget(player, target);
 }
 
 void ACMGameMode_Hunt::SetPlayerHuntTarget(ACMPlayerController* player, ACMPlayerController* killer)
@@ -301,30 +446,8 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(ACMPlayerController* player, ACMPlaye
 
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 	if (playerState != NULL)
-		playerState->SetHuntTarget((killer != NULL) ? killer->GetPawn() : NULL);
+		playerState->SetHuntTarget(killer);
 
-	//FString killerName = (killer != NULL) ? killer->GetName() : TEXT("NULL");
-	//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killerName);
-}
-
-void ACMGameMode_Hunt::SetRandomPlayerHuntTarget(ACMPlayerController* player)
-{
-	if (GetNumPlayers() < 2)
-		return;
-
-	TArray<ACMPlayerController*> players;
-	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
-		players.Add(*iter);
-
-	ACMPlayerController* target = NULL;
-	uint32 targetId = 0;
-
-	// randomize target, but disallow self as target
-	do
-	{
-		int j = FMath::RandRange(0, players.Num() - 1);
-		target = players[j];
-	} while (player == target);
-
-	SetPlayerHuntTarget(player, target);
+	FString killerName = (killer != NULL) ? killer->GetName() : TEXT("NULL");
+	GEngine->AddOnScreenDebugMessage(-1, 12.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killerName);
 }
