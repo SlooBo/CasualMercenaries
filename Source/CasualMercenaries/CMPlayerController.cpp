@@ -626,20 +626,9 @@ void ACMPlayerController::PrintTarget()
 	ACMPlayerState *state = Cast<ACMPlayerState>(this->PlayerState);
 	if (state != nullptr)
 	{
-		ACMPlayerController* target = Cast<ACMPlayerController>(state->GetHuntTarget());
-		if (target != nullptr)
-		{
-			FLinearColor color = FLinearColor::Transparent;
-			if (target->PlayerState != nullptr)
-				color = Cast<ACMPlayerState>(target->PlayerState)->GetColorId();
-			else
-				color = state->GetHuntTargetColor();
-					
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: " + target->GetName());
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt Color: " + color.ToString());
-		}
-		else
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: null");
+		FLinearColor color = state->GetHuntTargetColor();
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt target: " + target->GetName());
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hunt Color: " + color.ToString());
 	}
 }
 void ACMPlayerController::OnPressedEscape()

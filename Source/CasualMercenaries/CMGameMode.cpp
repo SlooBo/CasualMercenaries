@@ -308,14 +308,6 @@ void ACMGameMode::SetupNewPlayer(APlayerController* newPlayer)
 			playerState->SetMoney(playerMaxMoney);
 		else
 			playerState->SetMoney(playerStartMoney);
-
-		// assign random color for the player
-		FLinearColor randomColor = FLinearColor::MakeRandomColor();
-		playerState->SetColorId(randomColor);
-
-		APlayerCharacter* pc = Cast<APlayerCharacter>(newPlayer->GetPawn());
-		if (pc != NULL)
-			pc->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
 	}
 }
 
@@ -324,8 +316,14 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 	ACMPlayerState* killerState = (killer != NULL) ? Cast<ACMPlayerState>(killer->PlayerState) : NULL;
 
-	if (playerState != NULL)
-		playerState->SetAlive(false);
+	if (playerState == NULL)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Error: OnPlayerDeath playerState is null"));
+		return;
+	}
+
+	playerState->SetColorId(FLinearColor::Transparent);
+	playerState->SetAlive(false);
 
 	if (killerState != NULL)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, playerState->PlayerName + TEXT(" killed ") + killerState->PlayerName);
@@ -564,16 +562,74 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 
 	// setup character here
 	ACMPlayerController* player = Cast<ACMPlayerController>(playerCharacter->GetController());
-	if (player != NULL)
-	{
-		ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
-		if (playerState != NULL)
-			playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
-	}
+	if (player == NULL)
+		return;	
+
+	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
+	if (playerState == NULL)
+		return;
 
 	player->ServerInitInventory();
 
-	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
-	if (playerState != NULL)
-		playerState->SetAlive(true);
+	playerState->SetAlive(true);
+
+	// assign random color for the player
+	FLinearColor randomColor = GetRandomPlayerColor();
+
+	playerState->SetColorId(randomColor);
+	playerCharacter->ChangeShirtColor(randomColor);
+
+	// reapply all hunt targets to refresh their target colors
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+	{
+		ACMPlayerState* state = Cast<ACMPlayerState>((*iter)->PlayerState);
+		if (state != NULL)
+			state->SetHuntTarget(state->GetHuntTarget());
+	}
+}
+
+FLinearColor ACMGameMode::GetRandomPlayerColor()
+{
+	static TArray<FLinearColor> colorList;
+	if (colorList.Num() == 0)
+	{
+		// do this once
+		// TODO: better colors
+
+		colorList.Add(FLinearColor(1.f, 0.f, 0.f));
+		colorList.Add(FLinearColor(0.f, 1.f, 0.f));
+		colorList.Add(FLinearColor(0.f, 0.f, 1.f));
+
+		colorList.Add(FLinearColor(1.f, 1.f, 0.f));
+		colorList.Add(FLinearColor(0.f, 1.f, 1.f));
+		colorList.Add(FLinearColor(1.f, 0.f, 1.f));
+
+		colorList.Add(FLinearColor(1.f, 0.5f, 0.f));
+		colorList.Add(FLinearColor(0.f, 1.f, 0.5f));
+		colorList.Add(FLinearColor(0.5f, 0.f, 1.f));
+
+		colorList.Add(FLinearColor(1.f, 0.5f, 0.5f));
+		colorList.Add(FLinearColor(0.5f, 1.f, 0.5f));
+		colorList.Add(FLinearColor(0.5f, 0.5f, 1.f));
+	}
+	
+	TArray<FLinearColor> usedColors;
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+	{
+		ACMPlayerState* state = Cast<ACMPlayerState>((*iter)->PlayerState);
+		if (state != NULL && state->GetColorId() != FLinearColor::Transparent)
+			usedColors.Add(state->GetColorId());
+	}
+
+	// get unique (unused) but random color
+	FLinearColor color = FLinearColor::Transparent;
+	for (int i = 0; i < 100; i++)
+	{
+		color = Util::RandomFromList(colorList);
+		if (usedColors.Contains(color))
+			continue;
+		
+		break;
+	}
+	return color;
 }
