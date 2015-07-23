@@ -223,6 +223,9 @@ void ACMPlayerController::Possess(APawn* inPawn)
 			}
 		}
 		
+		// quick hack to fix weapon position after respawning
+		int32 cw = inventory.currentWeapon;
+		ServerSwitchWeapon(cw, cw);
 	}
 	else if (ghost != NULL)
 	{
