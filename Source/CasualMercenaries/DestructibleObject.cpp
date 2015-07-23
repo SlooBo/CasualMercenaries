@@ -75,7 +75,7 @@ void ADestructibleObject::CheckStatus()
 	}
 }
 
-void ADestructibleObject::Respawn()
+void ADestructibleObject::Respawn_Implementation()
 {
 	meshComponent->SetMaterial(0, normalMaterial);
 	GetWorld()->GetTimerManager().ClearTimer(respawnTimerHandle);
@@ -83,7 +83,7 @@ void ADestructibleObject::Respawn()
 	SetActorEnableCollision(true);
 }
 
-void ADestructibleObject::GoInvisible()
+void ADestructibleObject::GoInvisible_Implementation()
 {
 	meshComponent->SetMaterial(0, invisibleMaterial);
 	SetActorEnableCollision(false);

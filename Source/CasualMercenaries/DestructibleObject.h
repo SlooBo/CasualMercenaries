@@ -46,11 +46,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ObjectCondition")
 	UMaterialInterface* invisibleMaterial;
 
+	UFUNCTION(Reliable, NetMulticast)
 	void Respawn();
+	UFUNCTION(Reliable, NetMulticast)
+	void GoInvisible();
+
 private:
 
 	void CheckStatus();
-	void GoInvisible();
 
 	FTimerHandle respawnTimerHandle;
 	bool timerActive;
