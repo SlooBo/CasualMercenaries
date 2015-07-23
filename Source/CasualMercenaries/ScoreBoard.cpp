@@ -2,7 +2,7 @@
 
 #include "CasualMercenaries.h"
 #include "ScoreBoard.h"
-
+#include "CMPlayerState.h"
 
 
 
@@ -20,7 +20,8 @@ void UScoreBoard::SetUp(UUserWidget *widget, UWorld *world)
 	this->world = world;
 
 	SetValueFromWidget(&names, FString("NameBox"));
-	SetValueFromWidget(&scores, FString("ScoreBox"));
+	SetValueFromWidget(&kills, FString("KillBox"));
+	SetValueFromWidget(&deaths, FString("DeathBox"));
 }
 void UScoreBoard::Update()
 {
@@ -31,20 +32,41 @@ void UScoreBoard::Update()
 		return;
 	if (names == nullptr || !names->IsValidLowLevel())
 		return;
-	if (scores == nullptr || !scores->IsValidLowLevel())
+	if (kills == nullptr || !kills->IsValidLowLevel())
+		return;
+	if (deaths == nullptr || !deaths->IsValidLowLevel())
 		return;
 	names->ClearChildren();
-	scores->ClearChildren();
+	kills->ClearChildren();
+	deaths->ClearChildren();
 	for (int i = 0; i < gameState->PlayerArray.Num(); i++)
 	{
+		ACMPlayerState *playerState = Cast<ACMPlayerState>(gameState->PlayerArray[i]);
+		bool alive = playerState->IsAlive();
 		UTextBlock *nameText = NewObject<UTextBlock>();
-		FString playername = FString(gameState->PlayerArray[i]->PlayerName);
+		FString playername = FString(playerState->PlayerName);
 		nameText->SetText(FText::FromString(playername));
+		nameText->Justification = ETextJustify::Center;
+		if (!alive)
+			nameText->SetColorAndOpacity(FSlateColor(FLinearColor::Gray));
 		names->AddChild(nameText);
 
-		UTextBlock *scoreText = NewObject<UTextBlock>();
-		FString playerscore = FString::FromInt(gameState->PlayerArray[i]->Score);
-		scoreText->SetText(FText::FromString(playerscore));
-		scores->AddChild(scoreText);
+		UTextBlock *killText = NewObject<UTextBlock>();
+		FString playerkills= FString::FromInt(playerState->Score);
+		killText->SetText(FText::FromString(playerkills));
+		killText->Justification = ETextJustify::Center;
+		if (!alive)
+			killText->SetColorAndOpacity(FSlateColor(FLinearColor::Gray));
+		kills->AddChild(killText);
+
+
+		UTextBlock *deathText = NewObject<UTextBlock>();
+		FString deathString = FString::FromInt(playerState->GetDeaths());
+		deathText->SetText(FText::FromString(deathString));
+		deathText->Justification = ETextJustify::Center;
+		if (!alive)
+			deathText->SetColorAndOpacity(FSlateColor(FLinearColor::Gray));
+		deaths->AddChild(deathText);
+
 	}
 }

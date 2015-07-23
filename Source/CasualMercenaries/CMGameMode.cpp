@@ -570,7 +570,7 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 		if (playerState != NULL)
 			playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
 	}
-
+	if (player->GetInventory().weapons.Num() < 1)
 	player->ServerInitInventory();
 
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);

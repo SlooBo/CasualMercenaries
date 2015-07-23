@@ -67,66 +67,71 @@ void FInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
 	}
 	UClass *weaponClass= nullptr;
 	AWeapon* weapon = nullptr;
+	if (owningPlayer == nullptr || !owningPlayer->IsValidLowLevel())
+		return;
+	APlayerCharacter *playerCharacter = Cast<APlayerCharacter>(owningPlayer->GetPawn());
+	if (playerCharacter == nullptr || !playerCharacter->IsValidLowLevel())
+		return;
 	switch (weaponid)
 	{
 		case WEAPONID::GRENADE_LAUNCHER:
 		{
 			weaponClass = APomeGranadeLauncher::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<APomeGranadeLauncher>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<APomeGranadeLauncher>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		case WEAPONID::MASHINE_GUN:
 		{
 			weaponClass = AMashineGun::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<AMashineGun>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<AMashineGun>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		case WEAPONID::MUDBUSTER_GUN:
 		{
 			weaponClass = AMUDbuster::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<AMUDbuster>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<AMUDbuster>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		case WEAPONID::ROCKET_LAUNCHER:
 		{
 			weaponClass = ARocketLauncher::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<ARocketLauncher>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<ARocketLauncher>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		case WEAPONID::WATER_GUN:
 		{
 			weaponClass = AUberWeihmacher::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<AUberWeihmacher>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<AUberWeihmacher>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		case WEAPONID::WASP_GUN:
 		{
 			weaponClass = AWaspNestCudgel::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<AWaspNestCudgel>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<AWaspNestCudgel>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		case WEAPONID::TWISTER_GUN:
 		{
 			weaponClass = ATwisterSister::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<ATwisterSister>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<ATwisterSister>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		case WEAPONID::SHOT_GUN:
 		{
 			weaponClass = AShotgun::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<AShotgun>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<AShotgun>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		case WEAPONID::HOOK:
 		{
 			weaponClass = AHook::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<AHook>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<AHook>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		case WEAPONID::SMOKE_GUN:
 		{
 			weaponClass = ASmokeGun::StaticClass();
-			weapon = owningPlayer->GetWorld()->SpawnActor<ASmokeGun>(weaponClass, owningPlayer->GetActorLocation(), owningPlayer->GetActorRotation());
+			weapon = owningPlayer->GetWorld()->SpawnActor<ASmokeGun>(weaponClass, playerCharacter->GetActorLocation(), playerCharacter->GetActorRotation());
 			break;
 		}
 		default:
@@ -135,7 +140,7 @@ void FInventory::ChangeWeaponAtSlot(uint16 slot, WEAPONID weaponid)
 		}
 	}
 
-	weapon->SetRoot(owningPlayer);
+	weapon->SetRoot(playerCharacter);
 	ChangeWeaponAtSlot(slot, weapon);
 }
 void FInventory::ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon)
@@ -147,8 +152,7 @@ void FInventory::ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon)
 		weapons[slot] = newWeapon;
 	}
 }
-void FInventory::SetPlayer(APlayerCharacter *player)
+void FInventory::SetPlayer(ACMPlayerController *player)
 {
 	owningPlayer = player;
-	currentWeapon = 0;
 }

@@ -20,5 +20,6 @@ public:
 private:
 	UWorld *world;
 	UScrollBox *names;
-	UScrollBox *scores;
+	UScrollBox *kills;
+	UScrollBox *deaths;
 };

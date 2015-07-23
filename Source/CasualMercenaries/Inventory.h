@@ -36,7 +36,7 @@ public:
 	AWeapon* GetWeapon(int number);
 	AWeapon* GetCurrentWeapon();
 
-	void SetPlayer(APlayerCharacter *player);
+	void SetPlayer(ACMPlayerController *player);
 
 	UPROPERTY()
 	TArray<AWeapon*> weapons;
@@ -44,10 +44,11 @@ public:
 	void ChangeWeaponAtSlot(uint16 slot, AWeapon *newWeapon);
 
 	UPROPERTY()
-	class APlayerCharacter *owningPlayer;
+	ACMPlayerController *owningPlayer;
 
 	UPROPERTY()
 	uint16 maxInventorySize;
+	UPROPERTY()
 	int32 currentWeapon;
 
 private:

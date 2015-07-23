@@ -42,8 +42,6 @@ void UCharacterAnimationBase::UpdateWasJustShooting()
 		wasJustShooting = weapon->GetJustFired() && weapon->GetAmmo() != 0;
 	else
 		wasJustShooting = false;
-	if (wasJustShooting)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "WasJustSHooting = true");
 
 }
 WEAPONID UCharacterAnimationBase::GetCurrentWeapon()

@@ -113,8 +113,7 @@ bool ACMPlayerController::ServerInitInventory_Validate()
 }
 void ACMPlayerController::ServerInitInventory_Implementation()
 {
-	APlayerCharacter* playerPawn = Cast<APlayerCharacter>(GetPawn());
-	inventory.SetPlayer(playerPawn);
+	inventory.SetPlayer(this);
 	if (inventory.weapons.Num() < 1)
 	{
 		for (int i = 0; i < 4; i++)
@@ -130,15 +129,22 @@ void ACMPlayerController::OnPlayerDeath()
 		inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
 		inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
 	}
+
 }
 
 void ACMPlayerController::OnPlayerDeathBroadcast_Implementation(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/)
 {
 	if (killed == this)
 	{
+		APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+		if (hud != nullptr)
+		{
+			hud->ShowText("After 5 seconds press R to respawn", 32, 0.5f, 0.2f, 10, FLinearColor::Red);
+			hud->ShowText("Press B to open shop", 32, 0.5f, 0.7f, 10, FLinearColor::Red);
+		}
 		// handle clientside death here
 	}
-	
+
 	// handle kill messages and other death related stuff here
 }
 
