@@ -148,11 +148,11 @@ void ACMPlayerController::OnPlayerDeathBroadcast_Implementation(ACMPlayerControl
 	// handle kill messages and other death related stuff here
 }
 
-void ACMPlayerController::OnAnnouncement_Implementation(const FString& announceText/*, USoundCue* announceSoundCue*/)
+void ACMPlayerController::OnAnnouncement_Implementation(const FString& announceText, int32 fontsize, float anchorX, float anchorY, int32 lifetime, FLinearColor color/*, USoundCue* announceSoundCue*/)
 {
 	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
 	if (hud != nullptr)
-		hud->ShowText(announceText);
+		hud->ShowText(announceText, fontsize, anchorX, anchorY, lifetime, color);
 }
 
 

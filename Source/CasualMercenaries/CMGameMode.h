@@ -85,6 +85,8 @@ public:
 	// Returns random unused color id for player to use
 	FLinearColor GetRandomPlayerColor();
 
+	void SendAnnouncement(const FString& announceText, int32 fontsize = 32, float anchorX = 0.5f, float anchorY = 0.5f, int32 lifetime = 2, FLinearColor color = FLinearColor::White/*, USoundCue* announceSoundCue*/);
+
 	// Event when map time has reached zero
 	UFUNCTION(BlueprintImplementableEvent, Meta = (DisplayName = "On Map Timeout"), Category = "Gameplay|Level")
 	virtual void OnMapTimeout();

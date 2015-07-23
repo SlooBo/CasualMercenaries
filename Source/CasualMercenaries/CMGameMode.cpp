@@ -200,8 +200,8 @@ void ACMGameMode::WaitTickSecond()
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Waiting for more players... ") + FString::FromInt(waitElapsed)
-				+ TEXT(" ( ") + FString::FromInt(numPlayers) + TEXT("/") + FString::FromInt(minPlayersToStart) + TEXT(" )"));
+			SendAnnouncement(TEXT("Waiting for more players... ") + FString::FromInt(waitElapsed)
+				+ TEXT(" ( ") + FString::FromInt(numPlayers) + TEXT("/") + FString::FromInt(minPlayersToStart) + TEXT(" )"), 52, 0.5f, 0.17f, 1, FLinearColor::Red);
 		}
 	}
 
@@ -213,9 +213,9 @@ void ACMGameMode::WaitTickSecond()
 			StartMatch();
 		}
 		else if (inGameState == InGameState::Warmup)
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Warmup, Game starting in... ") + FString::FromInt(warmupTime - waitElapsed));
+			SendAnnouncement(TEXT("Warmup, Game starting in... ") + FString::FromInt(warmupTime - waitElapsed), 52, 0.5f, 0.17f, 1, FLinearColor::Green);
 		else if (inGameState == InGameState::Starting)
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("Game starting in... ") + FString::FromInt(startTime - waitElapsed));
+			SendAnnouncement(TEXT("Game is starting in...") + FString::FromInt(startTime - waitElapsed), 52, 0.5f, 0.17f, 1, FLinearColor::Green);
 	}
 
 	UpdateGameState();
@@ -254,10 +254,10 @@ void ACMGameMode::MapTickSecond()
 	
 	if (mapTimelimit > 0 && inGameState != InGameState::Warmup)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::White, TEXT("Timeleft: ") + FString::FromInt((int32)MapTimeleft()));
+		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::White, TEXT("Timeleft: ") + FString::FromInt((int32)MapTimeleft()));
 		if (mapTimeElapsed >= mapTimelimit)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, TEXT("Map timelimit reached"));
+			SendAnnouncement(TEXT("Map timelimit reached"), 52, 0.5f, 0.17f, 1, FLinearColor::White);
 
 			mapTimeElapsed = 0;
 			OnMapTimeout();
@@ -639,4 +639,12 @@ FLinearColor ACMGameMode::GetRandomPlayerColor()
 		break;
 	}
 	return color;
+}
+
+void ACMGameMode::SendAnnouncement(const FString& announceText, int32 fontsize, float anchorX, float anchorY, int32 lifetime, FLinearColor color/*, USoundCue* announceSoundCue*/)
+{
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+	{
+		(*iter)->OnAnnouncement(announceText, fontsize, anchorX, anchorY, lifetime, color);
+	}
 }

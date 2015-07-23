@@ -110,22 +110,27 @@ void ACMGameMode_Hunt::HuntTickSecond()
 		//OnHuntStart();
 	}
 
-	GEngine->AddOnScreenDebugMessage(6765, 3.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(huntTotalLength) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
+	//GEngine->AddOnScreenDebugMessage(6765, 3.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(huntTotalLength) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
 
 	if (huntState == HuntState::Intermission)
 	{
-		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntIntermissionElapsed) + "s)");
+		//GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntIntermissionElapsed) + "s)");
 		huntIntermissionElapsed++;
+
+		if (GetHuntIntermissionTimeLeft() <= 5)
+			SendAnnouncement("Round is starting in... " + FString::FromInt(GetHuntIntermissionTimeLeft()), 52, 0.5f, 0.17f, 1, FLinearColor::Green);
 	}
 	else if (huntState == HuntState::Freeze)
 	{
-		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntFreezeTimeElapsed) + "s)");
+		//GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntFreezeTimeElapsed) + "s)");
 		huntFreezeTimeElapsed++;
 	}
 	else if (huntState == HuntState::Round)
 	{
-		GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundElapsed) + "s)");
+		//GEngine->AddOnScreenDebugMessage(67652, 3.0f, FColor::Green, TEXT("State: ") + GetHuntStateAsString(huntState) + " (" + FString::FromInt(huntRoundElapsed) + "s)");
 		huntRoundElapsed++;
+		if (GetHuntRoundTimeLeft() == 60 || GetHuntRoundTimeLeft() == 30 || GetHuntRoundTimeLeft() == 10 || GetHuntRoundTimeLeft() <= 5)
+			SendAnnouncement("Round is ending in... " + FString::FromInt(GetHuntRoundTimeLeft()), 52, 0.5f, 0.17f, (GetHuntRoundTimeLeft() <= 5) ? 1 : 5, FLinearColor::Red);
 	}
 
 	HuntState lastState = huntState;
@@ -196,7 +201,7 @@ void ACMGameMode_Hunt::UpdateGameState()
 
 void ACMGameMode_Hunt::OnRoundFreezeStart_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("FREEZE: "));
+	SendAnnouncement("Round is starting...", 52, 0.5f, 0.17f, huntRoundFreezeLength);
 	// freeze players during freeze time
 	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
@@ -208,7 +213,6 @@ void ACMGameMode_Hunt::OnRoundFreezeStart_Implementation()
 
 void ACMGameMode_Hunt::OnRoundFreezeEnd_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("unFREEZE: "));
 	// unfreeze frozen players from frozen state back to unfrozen state
 	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
 	{
@@ -254,6 +258,7 @@ void ACMGameMode_Hunt::OnRoundEnd_Implementation()
 
 void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 {
+	SendAnnouncement("Intermission...", 52, 0.5f, 0.17f, 3);
 }
 
 void ACMGameMode_Hunt::OnWarmupStart_Implementation()
@@ -449,5 +454,5 @@ void ACMGameMode_Hunt::SetPlayerHuntTarget(ACMPlayerController* player, ACMPlaye
 		playerState->SetHuntTarget(killer);
 
 	FString killerName = (killer != NULL) ? killer->GetName() : TEXT("NULL");
-	GEngine->AddOnScreenDebugMessage(-1, 12.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killerName);
+	//GEngine->AddOnScreenDebugMessage(-1, 12.0f, FColor::Red, player->GetName() + TEXT(" Hunts ") + killerName);
 }

@@ -46,7 +46,7 @@ public:
 	void OnPlayerDeathBroadcast(ACMPlayerController* killed, ACMPlayerController* killer/*, AWeapon* weapon*/);
 
 	UFUNCTION(Reliable, Client)
-	void OnAnnouncement(const FString& announceText/*, USoundCue* announceSoundCue*/);
+	void OnAnnouncement(const FString& announceText, int32 fontsize = 32, float anchorX = 0.5f, float anchorY = 0.5f, int32 lifetime = 2, FLinearColor color = FLinearColor::White/*, USoundCue* announceSoundCue*/);
 
 	UFUNCTION(Reliable, Client)
 	void OnMatchStart();
