@@ -423,7 +423,10 @@ void APlayerCharacter::WallCheck()
 
 void APlayerCharacter::WallJump()
 {
-	WallJumpServer();
+	if (stamina >= 25)
+	{
+		WallJumpServer();
+	}
 }
 
 bool APlayerCharacter::WallJumpServer_Validate()
