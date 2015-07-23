@@ -568,18 +568,16 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 	if (playerState == NULL)
 		return;
+
 	if (player != NULL)
 	{
-		ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
 		if (playerState != NULL)
 			playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
 	}
-	if (player->GetInventory().weapons.Num() < 1)
-	player->ServerInitInventory();
 
-	ACMPlayerState* playerState = Cast<ACMPlayerState>(player->PlayerState);
-	if (playerState != NULL)
-		playerState->SetAlive(true);
+	if (player->GetInventory().weapons.Num() < 1)
+		player->ServerInitInventory();
+
 	playerState->SetAlive(true);
 
 	// assign random color for the player
