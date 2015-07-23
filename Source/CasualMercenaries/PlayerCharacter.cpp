@@ -452,10 +452,9 @@ void APlayerCharacter::WallJumpServer_Implementation()
 
 void APlayerCharacter::InputDash()
 {
-	if (stamina >= 25)
+	//if (stamina >= 25)
 	{
 		ServerDash(GetInputAxisValue("MoveForward"), GetInputAxisValue("MoveRight"));
-		PlaySound(dashSound);
 	}
 }
 
@@ -485,24 +484,22 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 	}
 
 	FVector tempActorLocation = this->GetActorLocation();
+	FVector tempLowLine = tempActorLocation + FVector(0, 0, -85);
+	FVector tempHighLine = tempActorLocation + FVector(0, 0, 125);
 
-	const FName traceTag("MyTraceTag");
-
-	GetWorld()->DebugDrawTraceTag = traceTag;
 
 	//https://goo.gl/pN6vYF
 	FCollisionQueryParams  TraceParams = FCollisionQueryParams(FName(TEXT("RV_TRACE")), false, this);
 	TraceParams.bTraceComplex = false;
 	TraceParams.bTraceAsyncScene = false;
 	TraceParams.bReturnPhysicalMaterial = false;
-	TraceParams.TraceTag = traceTag;
 
 	FHitResult RV_Hit(ForceInit);
-	//Forward check
+	//Forward check low
 	GetWorld()->LineTraceSingleByChannel(
 		RV_Hit,//result
-		tempActorLocation,//start of line trace
-		tempActorLocation + tempResult,//end of line trace
+		tempLowLine,//start of line trace
+		tempLowLine + tempResult,//end of line trace
 		ECC_Visibility,//collision channel, maybe wrong
 		TraceParams);
 	if (RV_Hit.bBlockingHit)
@@ -520,8 +517,8 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 		{
 			GetWorld()->LineTraceSingleByChannel(
 				RV_Hit,//result
-				tempActorLocation,//start of line trace
-				tempActorLocation - (tempForward * 650),//end of line trace
+				tempLowLine,//start of line trace
+				tempLowLine - (tempForward * 650),//end of line trace
 				ECC_Visibility,//collision channel, maybe wrong
 				TraceParams);
 			if (RV_Hit.bBlockingHit)
@@ -534,10 +531,43 @@ void APlayerCharacter::ServerDash_Implementation(float _inputForward, float _inp
 				return;
 			}
 
+			GetWorld()->LineTraceSingleByChannel(
+				RV_Hit,//result
+				tempHighLine,//start of line trace
+				tempHighLine - (tempForward * 650),//end of line trace
+				ECC_Visibility,//collision channel, maybe wrong
+				TraceParams);
+			if (RV_Hit.bBlockingHit)
+			{
+				dashing = true;
+				LoseStamina(25.0f);
+				dashEndLocation = RV_Hit.Location;
+				canWalk = false;
+				UE_LOG(LogTemp, Warning, TEXT("Hit wall"));
+				return;
+			}
+
+
 			dashing = true;
 			LoseStamina(25.0f);
 			dashEndLocation = tempActorLocation - (tempForward * 650 );
 			canWalk = false;
+			return;
+		}
+		//Forward high check
+		GetWorld()->LineTraceSingleByChannel(
+			RV_Hit,//result
+			tempHighLine,//start of line trace
+			tempHighLine + tempResult,//end of line trace
+			ECC_Visibility,//collision channel, maybe wrong
+			TraceParams);
+		if (RV_Hit.bBlockingHit)
+		{
+			dashing = true;
+			LoseStamina(25.0f);
+			dashEndLocation = RV_Hit.Location;
+			canWalk = false;
+			UE_LOG(LogTemp, Warning, TEXT("Hit wall"));
 			return;
 		}
 
