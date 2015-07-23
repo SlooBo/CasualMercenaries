@@ -29,7 +29,7 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 
 	passedTimeFiring = 1;
 
-
+	bAlwaysRelevant = true;
 	//Replicates itself overserver
 	bReplicates = true;
 }
