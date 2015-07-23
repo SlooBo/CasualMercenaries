@@ -82,6 +82,9 @@ public:
 
 	virtual void SetupNewPlayer(APlayerController* newPlayer);
 
+	// Returns random unused color id for player to use
+	FLinearColor GetRandomPlayerColor();
+
 	// Event when map time has reached zero
 	UFUNCTION(BlueprintImplementableEvent, Meta = (DisplayName = "On Map Timeout"), Category = "Gameplay|Level")
 	virtual void OnMapTimeout();

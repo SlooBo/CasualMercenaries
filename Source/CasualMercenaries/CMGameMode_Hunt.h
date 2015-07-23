@@ -45,6 +45,11 @@ public:
 
 	virtual void UpdateGameState() override;
 
+	ACMPlayerController* GetHuntTarget(ACMPlayerController* player);
+	int32 ACMGameMode_Hunt::CountPlayerHunters(ACMPlayerController* player);
+	ACMPlayerController* GetRandomPlayer(ACMPlayerController* ignoreTarget, bool preferUnTargeted = false);
+	ACMPlayerController* GetRandomPlayer(ACMPlayerController* ignoreTarget1, ACMPlayerController* ignoreTarget2, bool preferUnTargeted = false);
+	ACMPlayerController* GetRandomPlayer(const TArray<ACMPlayerController*>& ignoreTargets, bool preferUnTargeted = false);
 	void SetRandomPlayerHuntTarget(ACMPlayerController* player);
 	void SetPlayerHuntTarget(ACMPlayerController* player, ACMPlayerController* target);
 

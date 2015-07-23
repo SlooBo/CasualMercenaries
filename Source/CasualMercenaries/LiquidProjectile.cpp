@@ -72,8 +72,7 @@ ALiquidProjectile::~ALiquidProjectile()
 void ALiquidProjectile::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
 	if (!Cast<ALiquidProjectile>(OtherActor))
-		if (!Cast<APlayerCharacter>(OtherActor))
-			Splash();
+		Splash();
 }
 
 void ALiquidProjectile::Tick(float DeltaSeconds)

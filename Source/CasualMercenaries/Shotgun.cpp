@@ -51,9 +51,11 @@ AShotgun::AShotgun(const FObjectInitializer& FOI) : AWeapon(FOI)
 
 
 	//Particles
-	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
+	particleSystem = FOI.CreateDefaultSubobject<UParticleSystemComponent>(this, TEXT("MyParticle"));
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Shotgun_Muzzle.P_Shotgun_Muzzle'"));
 	flavorParticleEffect = ParticleObj.Object;
-
+	particleSystem->Template = ParticleObj.Object;
+	particleSystem->AttachTo(weaponMesh, "exhaustSocket");
 
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Bullet_Trail.P_Bullet_Trail'"));
 	bulletTrail = ParticleObj.Object;
@@ -201,7 +203,9 @@ bool AShotgun::ServerEffect_Validate(UParticleSystem* particle, FVector location
 
 void AShotgun::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
 {
-	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location - FVector(0,0,-5), -this->GetActorRotation(), true);
+	particlen->Activate();
+	//particleSystem->Activate();
 }
 
 

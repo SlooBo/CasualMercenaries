@@ -149,7 +149,7 @@ void ARocketLauncher::Fire()
 	{
 		//spawnparameters for projectile(rocket)
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = controller->GetPawn();
+		SpawnParams.Owner = controller;
 		SpawnParams.Instigator = Instigator;
 		SpawnParams.bNoCollisionFail = true;
 

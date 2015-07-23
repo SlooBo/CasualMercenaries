@@ -115,9 +115,14 @@ void ARocket::Explode()
 
 	audioComp->SetSound(audioList[1]);
 
-
 	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, -0.50f, 0);
 	radialForceComponent->FireImpulse();
+
+	if (Role < ROLE_Authority)
+	{
+		Destroy();
+		return;
+	}
 
 	float ExplosionRadius = 400.0f;
 	float ExplosionDamage = 25.0f;

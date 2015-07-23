@@ -41,4 +41,21 @@ public:
 
 		return FName(*Str);
 	}
+
+	template <typename T>
+	static FORCEINLINE T* RandomFromList(const TArray<T*>& list)
+	{
+		if (list.Num() == 0)
+			return NULL;
+
+		int i = FMath::RandRange(0, list.Num() - 1);
+		return list[i];
+	}
+
+	template <typename T>
+	static FORCEINLINE T RandomFromList(const TArray<T>& list)
+	{
+		int i = FMath::RandRange(0, list.Num() - 1);
+		return list[i];
+	}
 };

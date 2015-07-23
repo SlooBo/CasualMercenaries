@@ -101,7 +101,11 @@ void AMUDbuster::Fire()
 
 	userLoc = weaponMesh->GetSocketLocation("ExhaustSocket");
 
-	FVector cameraLoc = Cast<APlayerCharacter>(GetOwner())->GetCamera()->GetComponentLocation();
+	ACMPlayerController* asd = Cast<ACMPlayerController>(GetOwner());
+
+	APlayerCharacter* pc = Cast<APlayerCharacter>(asd->GetPawn());
+
+	FVector cameraLoc = pc->GetCamera()->GetComponentLocation();
 
 	//muzzleoffset sets where the object spawns
 	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(muzzleOffset);

@@ -52,7 +52,10 @@ AMashineGun::AMashineGun(const FObjectInitializer& FOI) : AWeapon(FOI)
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
 	particleSystem->Template = ParticleObj.Object;
 	particleSystem->AttachTo(weaponMesh, "exhaustSocket");
-					
+	
+	//Particles
+	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_MachineGun_Muzzle.P_MachineGun_Muzzle'"));
+	flavorParticleEffect = ParticleObj2.Object;
 
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj3(TEXT("ParticleSystem'/Game/Game/Particles/P_Bullet_Trail.P_Bullet_Trail'"));
 	bulletTrail = ParticleObj3.Object;
@@ -170,7 +173,6 @@ bool AMashineGun::ServerDrawLine_Validate(FVector begin, FVector end)
 
 void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 {
-	int i =+ 2;
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
 	//DrawDebugLine(GetWorld(), begin, end, FColor(100.0f, 100.0f, 0.f, 1.f), false, 1.f);
@@ -178,6 +180,7 @@ void AMashineGun::ServerDrawLine_Implementation(FVector begin, FVector end)
 	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, bulletTrail, begin, FRotator::ZeroRotator, true);
 	particlen->SetVectorParameter("BulletTrailEnd", end);
 	particlen->SetActorParameter("BulletTrailBegin", this);
+	particlen->Activate();
 }
 
 void AMashineGun::SecondaryFunction(APlayerCharacter* user)
@@ -202,6 +205,7 @@ bool AMashineGun::ServerEffect_Validate(UParticleSystem* particle, FVector locat
 
 void AMashineGun::ServerEffect_Implementation(UParticleSystem* particle, FVector location)
 {
-	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, FRotator::ZeroRotator, true);
+	UParticleSystemComponent *particlen = UGameplayStatics::SpawnEmitterAtLocation(this, particle, location, -this->GetActorRotation(), true);
+	particlen->Activate();
 	particleSystem->Activate();
 }
