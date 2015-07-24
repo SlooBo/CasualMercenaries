@@ -78,12 +78,15 @@ void UHUDLogic::Update()
 	}
 
 	ACMPlayerState *playerState = Cast<ACMPlayerState>(controller->PlayerState);
-	cashText->SetText(FText::FromString(FString::FromInt(playerState->GetMoney()) + " $"));
+	if (playerState != NULL)
+	{
+		cashText->SetText(FText::FromString(FString::FromInt(playerState->GetMoney()) + " $"));
 
-	targetSphere->Brush.TintColor = playerState->GetHuntTargetColor();
+		targetSphere->Brush.TintColor = playerState->GetHuntTargetColor();
 
-	float moneyPercent = playerState->GetMoney() / 5000.0f;
-	cashProgressBar->SetPercent(moneyPercent);
+		float moneyPercent = playerState->GetMoney() / 5000.0f;
+		cashProgressBar->SetPercent(moneyPercent);
+	}
 
 	ACMGameState *gameState = Cast<ACMGameState>(world->GameState);
 	if (gameState != nullptr)
