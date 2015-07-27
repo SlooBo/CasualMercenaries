@@ -43,7 +43,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	audioComp->bAutoDestroy = false;
 	audioComp->AttachParent = GetRootComponent();
 
-	
+	RootComponent = CapsuleComponent;
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 
 	//	CharacterMesh

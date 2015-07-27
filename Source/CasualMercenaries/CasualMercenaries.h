@@ -9,3 +9,5 @@
 #include "Runtime/UMG/Public/Slate/SObjectWidget.h"
 #include "Runtime/UMG/Public/IUMGModule.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+
+#define ECC_Projectile ECollisionChannel::ECC_GameTraceChannel1

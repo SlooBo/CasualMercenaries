@@ -11,14 +11,11 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	//CollisionComponent
 	CollisionComp = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(15.0f);
-	CollisionComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	CollisionComp->SetNotifyRigidBodyCollision(true);
-	CollisionComp->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	CollisionComp->SetCollisionObjectType(ECC_Projectile);
 	CollisionComp->SetCollisionProfileName(TEXT("Projectile"));
+
 	//Set Root component
 	RootComponent = CollisionComp;
-
-
 
 	//MovementComponent  
 	ProjectileMovement = ObjectInitializer.CreateDefaultSubobject<UProjectileMovementComponent>(this, TEXT("ProjectileComp"));
@@ -30,12 +27,11 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	ProjectileMovement->Bounciness = 0.3f;
 	ProjectileMovement->ProjectileGravityScale = 0.1;
 
-
 	lifeTime = 0;
 	deathTime = 300;
+
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 
 	controller = Cast<ACMPlayerController>(GetOwner());
 }

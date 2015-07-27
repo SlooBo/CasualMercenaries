@@ -14,12 +14,8 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	projectileMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("RocketMesh"));
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Weapons/RocketLauncher/Rocket.Rocket'"));
 	projectileMesh->SetStaticMesh(MeshObj.Object);
-	projectileMesh->IgnoreActorWhenMoving(this->GetOwner(), true);
-	
-	//RootComponent = projectileMesh;
+	projectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-
-	CollisionComp->IgnoreActorWhenMoving(this->GetOwner(), true);
 	//Material MISSING!
 
 	//Movement
@@ -28,11 +24,6 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 
 	//Delegate
 	OnActorHit.AddDynamic(this, &ARocket::OnMyActorHit);
-
-	
-
-	//Stuff
-	SetActorEnableCollision(true);
 
 	//Audio
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
@@ -53,6 +44,7 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj(TEXT("ParticleSystem'/Game/Game/Particles/P_Rocket_SmokeTrail.P_Rocket_SmokeTrail'"));
 	particleSystem->Template = ParticleObj.Object;
 	particleSystem->AttachTo(projectileMesh, "ExhaustSocket");
+	particleSystem->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	particleSystem->Activate();
 
 
@@ -69,15 +61,17 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	bReplicates = true;
 	bReplicateMovement = true;
 
-
+	directHitPlayer = false;
 	asd = 0;
 	casd = false;
 }
 
 void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (!Cast<ATwister>(OtherActor))
-		Explode();
+	if (Cast<ATwister>(OtherActor) || Cast<AGhostCharacter>(OtherActor))
+		return;
+
+	Explode();
 }
 
 void ARocket::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
