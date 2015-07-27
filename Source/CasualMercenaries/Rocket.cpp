@@ -61,7 +61,6 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	bReplicates = true;
 	bReplicateMovement = true;
 
-	directHitPlayer = false;
 	asd = 0;
 	casd = false;
 }
@@ -72,7 +71,7 @@ void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Normal
 		return;
 
 	if (Cast<APlayerCharacter>(OtherActor))
-		directHitPlayer = true;
+		directHitPlayer = OtherActor;
 
 	Explode();
 }
@@ -115,57 +114,52 @@ void ARocket::Explode()
 	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, -0.50f, 0);
 	radialForceComponent->FireImpulse();
 
-	if (Role < ROLE_Authority)
+	if (Role >= ROLE_Authority)
 	{
-		Destroy();
-		return;
-	}
+		const float ExplosionRadius = 400.0f;
+		const float ExplosionFullDamageDistance = ExplosionRadius * 0.1f;
+		const float ExplosionDamage = 40.0f;
+		const float ExplosionMinDamage = 15.0f;
 
-	float ExplosionRadius = 400.0f;
-	float ExplosionFullDamageDistance = ExplosionRadius * 0.1f;
-	float ExplosionDamage = 40.0f;
-	float ExplosionMinDamage = 15.0f;
-
-	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
-	{
-		float distance = GetDistanceTo(*aItr);
-
-		if (distance <= ExplosionRadius)
+		for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 		{
-			float damageMultiplier = 1;
-			if (distance > ExplosionFullDamageDistance && !directHitPlayer)
+			float distance = GetDistanceTo(*aItr);
+
+			if (distance <= ExplosionRadius)
 			{
-				float minMulti = ExplosionMinDamage / ExplosionDamage;
-				damageMultiplier = 1 - (distance / ExplosionFullDamageDistance);
-				if (damageMultiplier < minMulti)
-					damageMultiplier = minMulti;
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				if (directHitPlayer == *aItr)
+					multiplier = 1.0f;
+
+				float finalDamage = ExplosionDamage*multiplier;
+
+				UGameplayStatics::ApplyDamage(*aItr, finalDamage, GetInstigatorController(), this, UDamageType::StaticClass());
+				aItr->TakeDamage(finalDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));
 			}
-
-			ExplosionDamage *= damageMultiplier;
-			UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
-
-			aItr->TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));
 		}
-	}
-	for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
-	{
-		float distance = GetDistanceTo(*aItr);
-
-		if (distance <= ExplosionRadius)
+		for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
 		{
-			aItr->TakeDamage(ExplosionDamage * 2);
-		}
-	}
-	for (TActorIterator<ADestructibleObject> aItr(GetWorld()); aItr; ++aItr)
-	{
-		float distance = GetDistanceTo(*aItr);
+			float distance = GetDistanceTo(*aItr);
 
-		if (distance <= ExplosionRadius)
+			if (distance <= ExplosionRadius)
+			{
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float finalDamage = ExplosionDamage*multiplier;
+				aItr->TakeDamage(finalDamage * 2);
+			}
+		}
+		for (TActorIterator<ADestructibleObject> aItr(GetWorld()); aItr; ++aItr)
 		{
-			aItr->TakeDamage(ExplosionDamage * 2);
+			float distance = GetDistanceTo(*aItr);
+
+			if (distance <= ExplosionRadius)
+			{
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float finalDamage = ExplosionDamage*multiplier;
+				aItr->TakeDamage(finalDamage * 2);
+			}
 		}
 	}
-
 
 	Destroy();
 }

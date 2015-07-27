@@ -11,6 +11,8 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	//CollisionComponent
 	CollisionComp = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(15.0f);
+
+	//Collision
 	CollisionComp->SetCollisionObjectType(ECC_Projectile);
 	CollisionComp->SetCollisionProfileName(TEXT("Projectile"));
 
@@ -39,6 +41,12 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 // Called when the game starts or when spawned
 void AProjectile::BeginPlay()
 {
+	if (projectileMesh != NULL)
+	{
+		projectileMesh->SetCollisionObjectType(ECC_Projectile);
+		projectileMesh->SetCollisionProfileName(TEXT("Projectile"));
+	}
+
 	Super::BeginPlay();
 }
 
@@ -72,4 +80,15 @@ void AProjectile::InitVelocity(const FVector& ShootDirection)
 	}
 }
 
-
+float AProjectile::CalculateExplosionDamageMultiplier(float damage, float distance, float minDamage, float fullDamageDistance)
+{
+	float damageMultiplier = 1;
+	if (distance > fullDamageDistance)
+	{
+		float minMulti = minDamage / damage;
+		damageMultiplier = 1 - (distance / fullDamageDistance);
+		if (damageMultiplier < minMulti)
+			damageMultiplier = minMulti;
+	}
+	return damageMultiplier;
+}

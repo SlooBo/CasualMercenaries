@@ -64,6 +64,7 @@ public:
 
 	void SetController(ACMPlayerController *controller){ this->controller = controller; };
 
+	static float CalculateExplosionDamageMultiplier(float damage, float distance, float minDamage, float fullDamageDistance);
 
 protected:
 

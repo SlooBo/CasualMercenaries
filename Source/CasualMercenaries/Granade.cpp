@@ -11,17 +11,19 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	projectileMesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("GranadeMesh"));
 	const ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Props/Firehydrant/firehydrant.firehydrant'"));
 	projectileMesh->SetStaticMesh(MeshObj.Object);
+
 	//Material
 	const ConstructorHelpers::FObjectFinder<UMaterial> MateriaObj(TEXT("Material'/Game/Game/Props/Firehydrant/MAT_firehydrant.MAT_firehydrant'"));
 	projectileMesh->SetMaterial(0, MateriaObj.Object);
+
 	//Scale
 	projectileMesh->SetRelativeScale3D(FVector(.1, .1, .1));
 	projectileMesh->SetSimulatePhysics(true);
 
-
-	this->RootComponent = projectileMesh;
+	RootComponent = projectileMesh;
 
 	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	projectileMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 
 	//Movement
 	ProjectileMovement->ProjectileGravityScale = 1.0;
@@ -91,38 +93,52 @@ void AGranade::Explode_Implementation()
 	UParticleSystemComponent *particle = UGameplayStatics::SpawnEmitterAtLocation(this, flavorParticleEffect, this->GetActorLocation(), FRotator::ZeroRotator, true);
 	particle->SetRelativeScale3D(FVector(2, 2, 2));
 
-	float ExplosionRadius = 400.0f;
-	float ExplosionDamage = 25.0f;
-
 	audioComp->SetSound(audioList[1]);
 	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, 0, 0);
 	radialForceComponent->FireImpulse();
 
-	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
+	if (Role >= ROLE_Authority)
 	{
-		float distance = GetDistanceTo(*aItr);
-		
-		if (distance <= ExplosionRadius)
-		{
-			aItr->TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, controller);
-		}
-	}
-	for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
-	{
-		float distance = GetDistanceTo(*aItr);
+		const float ExplosionRadius = 400.0f;
+		const float ExplosionFullDamageDistance = ExplosionRadius * 0.1f;
+		const float ExplosionDamage = 25.0f;
+		const float ExplosionMinDamage = 25.0f;
 
-		if (distance <= ExplosionRadius)
+		for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 		{
-			aItr->TakeDamage(ExplosionDamage*2);
-		}
-	}
-	for (TActorIterator<ADestructibleObject> aItr(GetWorld()); aItr; ++aItr)
-	{
-		float distance = GetDistanceTo(*aItr);
+			float distance = GetDistanceTo(*aItr);
 
-		if (distance <= ExplosionRadius)
+			if (distance <= ExplosionRadius)
+			{
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				if (directHitPlayer == *aItr)
+					multiplier = 1.0f;
+
+				float finalDamage = ExplosionDamage*multiplier;
+				aItr->TakeDamage(finalDamage, DAMAGE_TYPE::NORMAL, controller);
+			}
+		}
+		for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
 		{
-			aItr->TakeDamage(ExplosionDamage * 2);
+			float distance = GetDistanceTo(*aItr);
+
+			if (distance <= ExplosionRadius)
+			{
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float finalDamage = ExplosionDamage*multiplier;
+				aItr->TakeDamage(finalDamage * 2);
+			}
+		}
+		for (TActorIterator<ADestructibleObject> aItr(GetWorld()); aItr; ++aItr)
+		{
+			float distance = GetDistanceTo(*aItr);
+
+			if (distance <= ExplosionRadius)
+			{
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float finalDamage = ExplosionDamage*multiplier;
+				aItr->TakeDamage(finalDamage * 2);
+			}
 		}
 	}
 
@@ -136,7 +152,8 @@ void AGranade::BeginPlay()
 
 void AGranade::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit)
 {
-	APlayerCharacter* pc = Cast<APlayerCharacter>(OtherActor);
-	if (pc != nullptr && Cast<AGhostCharacter>(OtherActor) == nullptr)
-		Explode();
+	if (Cast<APlayerCharacter>(OtherActor))
+		directHitPlayer = OtherActor;
+
+	Explode();
 }
