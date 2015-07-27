@@ -94,6 +94,8 @@ public:
 	void WeaponSlot3();
 	void WeaponSlot4();
 
+	FVector GetMuzzleLocation(AWeapon* weapon);
+	FVector GetWeaponAimDirection(AWeapon* weapon);
 
 	void SwitchWeapon(int32 newWeapon);
 

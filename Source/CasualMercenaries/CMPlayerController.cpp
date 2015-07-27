@@ -118,6 +118,8 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 	{
 		for (int i = 0; i < 4; i++)
 			inventory.AddWeaponToInventory(nullptr);
+
+		inventory.ChangeWeaponAtSlot(0, WEAPONID::ROCKET_LAUNCHER);
 	}
 }
 
@@ -529,6 +531,65 @@ void ACMPlayerController::WeaponSlot3()
 void ACMPlayerController::WeaponSlot4()
 {
 	SwitchWeapon(3);
+}
+
+FVector ACMPlayerController::GetMuzzleLocation(AWeapon* weapon)
+{
+	if (weapon == NULL)
+		return FVector::ZeroVector;
+
+	FVector userLoc;
+	FRotator cameraRot;
+	GetPawn()->GetActorEyesViewPoint(userLoc, cameraRot);
+
+	//muzzleoffset sets where the object spawns
+	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(weapon->muzzleOffset);
+	return MuzzleLocation;
+}
+
+FVector ACMPlayerController::GetWeaponAimDirection(AWeapon* weapon)
+{
+	if (GetPawn() == NULL)
+		return FVector::ZeroVector;
+
+	FVector userLoc;
+	FRotator cameraRot;
+	GetPawn()->GetActorEyesViewPoint(userLoc, cameraRot);
+
+	FVector cameraLoc = Cast<APlayerCharacter>(GetPawn())->GetCamera()->GetComponentLocation();
+	FVector shootDir = cameraRot.Vector();
+	userLoc = weapon->weaponMesh->GetSocketLocation("ExhaustSocket");// controller->GetPawn()->GetActorLocation();
+
+	//LineTrace
+	const FVector startTrace = userLoc;
+	const FVector endTrace = startTrace + shootDir * 20000;
+
+	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
+	traceParams.bTraceAsyncScene = true;
+	traceParams.bReturnPhysicalMaterial = true;
+	traceParams.AddIgnoredActor(GetPawn());
+
+	FHitResult hit(ForceInit);
+
+	GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECC_Projectile, traceParams);
+
+	FVector midle = hit.ImpactPoint;
+
+	FVector tardines = (midle - startTrace);
+	FVector sardines = startTrace + tardines;
+
+	float asd1 = FVector::Dist(hit.Location, cameraLoc);
+	float asd2 = FVector::Dist(userLoc, cameraLoc);
+	if (asd1 < asd2 && hit.bBlockingHit > 0)
+	{
+		traceParams.AddIgnoredActor(hit.GetActor());
+		traceParams.AddIgnoredActor(hit.GetActor());
+		GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECC_Projectile, traceParams);
+	}
+	else if (hit.bBlockingHit == 0)
+		tardines = shootDir;
+
+	return tardines.GetSafeNormal();
 }
 
 void ACMPlayerController::SwitchWeapon(int32 newWeapon)

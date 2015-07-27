@@ -94,52 +94,6 @@ void ARocketLauncher::Fire()
 	//one less bullet
 	ammo--;
 	
-	FVector userLoc;
-	FRotator cameraRot;
-
-	this->GetOwner()->GetActorEyesViewPoint(userLoc, cameraRot);
-
-	userLoc = weaponMesh->GetSocketLocation("ExhaustSocket");// controller->GetPawn()->GetActorLocation();
-
-	FVector cameraLoc = Cast<APlayerCharacter>(GetOwner())->GetCamera()->GetComponentLocation();
-
-	//muzzleoffset sets where the object spawns
-	FVector const MuzzleLocation = userLoc + FTransform(cameraRot).TransformVector(muzzleOffset);
-	
-	FVector shootDir = cameraRot.Vector();
-
-
-	//LineTrace
-	const FVector startTrace = userLoc;
-	const FVector endTrace = startTrace + shootDir * 20000;
-
-	FCollisionQueryParams traceParams(FName(TEXT("WeaponTrace")), true, this);
-	traceParams.bTraceAsyncScene = true;
-	traceParams.bReturnPhysicalMaterial = true;
-	traceParams.AddIgnoredActor(controller->GetPawn());
-
-	FHitResult hit(ForceInit);
-
-	GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
-
-
-	FVector midle = hit.ImpactPoint;
-
-	FVector tardines = (midle - startTrace);
-	FVector sardines = startTrace + tardines;
-
-	float asd1 = FVector::Dist(hit.Location, cameraLoc);
-	float asd2 = FVector::Dist(userLoc, cameraLoc);
-	if (asd1 < asd2)
-	{
-		traceParams.AddIgnoredActor(hit.GetActor());
-		traceParams.AddIgnoredActor(hit.GetActor());
-		GetWorld()->LineTraceSingleByChannel(hit, cameraLoc, endTrace, ECollisionChannel::ECC_Destructible, traceParams);
-	}
-
-	GetWorld()->LineTraceSingleByChannel(hit, startTrace, sardines, ECollisionChannel::ECC_Destructible, traceParams);
-
-
 	//Play effect
 	ServerEffect(flavorParticleEffect, weaponMesh->GetSocketLocation("ExhaustSocket"));
 
@@ -153,6 +107,9 @@ void ARocketLauncher::Fire()
 		SpawnParams.Instigator = Instigator;
 		SpawnParams.bNoCollisionFail = true;
 
+		APlayerCharacter* character = Cast<APlayerCharacter>(GetOwner());
+		ACMPlayerController* pc = Cast<ACMPlayerController>(character != NULL ? character->GetController() : GetOwner());
+		FVector MuzzleLocation = pc != NULL ? pc->GetMuzzleLocation(this) : FVector::ZeroVector;
 
 		// spawn the projectile at the muzzle
 		ARocket* const projectile = World->SpawnActor<ARocket>(ARocket::StaticClass(), MuzzleLocation, FRotator::ZeroRotator, SpawnParams);
@@ -163,8 +120,9 @@ void ARocketLauncher::Fire()
 			projectile->SetController(controller);
 
 			//gives to the spawned projectile launch velocity
-
-			projectile->InitVelocity(tardines.GetSafeNormal());
+			
+			FVector direction = pc != NULL ? pc->GetWeaponAimDirection(this) : FVector::ZeroVector;
+			projectile->InitVelocity(direction);
 
 		}
 	}
