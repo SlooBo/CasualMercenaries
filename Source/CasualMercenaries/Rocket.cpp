@@ -71,6 +71,9 @@ void ARocket::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Normal
 	if (Cast<ATwister>(OtherActor) || Cast<AGhostCharacter>(OtherActor))
 		return;
 
+	if (Cast<APlayerCharacter>(OtherActor))
+		directHitPlayer = true;
+
 	Explode();
 }
 
@@ -119,7 +122,9 @@ void ARocket::Explode()
 	}
 
 	float ExplosionRadius = 400.0f;
-	float ExplosionDamage = 25.0f;
+	float ExplosionFullDamageDistance = ExplosionRadius * 0.1f;
+	float ExplosionDamage = 40.0f;
+	float ExplosionMinDamage = 15.0f;
 
 	for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 	{
@@ -127,13 +132,16 @@ void ARocket::Explode()
 
 		if (distance <= ExplosionRadius)
 		{
-			float x = 1;
-			if (distance <= (ExplosionRadius / 2))
-				;
-			else
-				x = 1 - (0.8 * (distance / ExplosionRadius));
+			float damageMultiplier = 1;
+			if (distance > ExplosionFullDamageDistance && !directHitPlayer)
+			{
+				float minMulti = ExplosionMinDamage / ExplosionDamage;
+				damageMultiplier = 1 - (distance / ExplosionFullDamageDistance);
+				if (damageMultiplier < minMulti)
+					damageMultiplier = minMulti;
+			}
 
-			ExplosionDamage *= x;
+			ExplosionDamage *= damageMultiplier;
 			UGameplayStatics::ApplyDamage(*aItr, ExplosionDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 
 			aItr->TakeDamage(ExplosionDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));

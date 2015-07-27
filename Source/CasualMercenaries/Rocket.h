@@ -52,6 +52,7 @@ private:
 
 	URadialForceComponent *radialForceComponent;
 
+	bool directHitPlayer;
 	bool casd;
 	float asd;
 
