@@ -115,15 +115,9 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 		}
 	}
 
-
-
 	ACMPlayerController *controller = Cast<ACMPlayerController>(world->GetFirstPlayerController());
 	if (controller == nullptr)
 		return;
-	APlayerCharacter *player = Cast<APlayerCharacter>(controller->GetPawn());
-	if (player == nullptr)
-		return;
-	player->SetState(CHARACTER_STATE::SHOPPING);
 	OnClickedWeaponSlot(controller->GetInventory().currentWeapon);
 }
 void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
@@ -246,11 +240,7 @@ void UShopLogic::OnClickedQuit()
 		Cast<APlayerHud>(controller->GetHUD())->changeUIElement(MenuType::GAME_UI);
 		//Cast<controller->GetPawn()
 		//SetInputMode_GameOnly();
-		APlayerCharacter *player= Cast<APlayerCharacter>(controller->GetPawn());
-		if (player != nullptr)
-		player->RestoreActivity();
 	}
-
 }
 void UShopLogic::OnClickedBuyButton()
 {

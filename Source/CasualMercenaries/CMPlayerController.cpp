@@ -41,6 +41,8 @@ ACMPlayerController::ACMPlayerController(const FObjectInitializer& objectInitial
 	//loading of an audiosnippet
 	static ConstructorHelpers::FObjectFinder<USoundWave> audio1(TEXT("SoundWave'/Game/Game/Audio/NotDash.NotDash'"));
 	audioComp->SetSound(audio1.Object);
+
+	canShoot = true;
 }
 
 void ACMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -49,6 +51,8 @@ void ACMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 	DOREPLIFETIME(ACMPlayerController, inventory);
 	DOREPLIFETIME(ACMPlayerController, canShop);
+	DOREPLIFETIME(ACMPlayerController, canShoot);
+	DOREPLIFETIME(ACMPlayerController, isShopping);
 }
 
 void ACMPlayerController::BeginPlay()
@@ -377,14 +381,16 @@ void ACMPlayerController::OpenShop()
 	APlayerHud *playerHud = Cast<APlayerHud>(GetHUD());
 
 	if (playerHud->GetCurrentUI() == MenuType::SHOP)
-	{
-		APlayerCharacter *player = Cast<APlayerCharacter>(GetPawn());
-		if (player != nullptr)
-		player->RestoreActivity();
 		playerHud->changeUIElement(MenuType::GAME_UI);
-	}
 	else
 		playerHud->changeUIElement(MenuType::SHOP);
+
+	isShopping = playerHud->GetCurrentUI() == MenuType::SHOP;
+	canShoot = playerHud->GetCurrentUI() != MenuType::SHOP;
+
+	APlayerCharacter* pc = Cast<APlayerCharacter>(GetPawn());
+	if (pc != NULL)
+		pc->SetShopping(isShopping);
 }
 
 void ACMPlayerController::OpenAllChat()
@@ -429,6 +435,13 @@ void ACMPlayerController::ServerAddWeapon_Implementation(AWeapon* _weapon)
 
 void ACMPlayerController::UseWeapon1()
 {
+	APlayerCharacter* pc = Cast<APlayerCharacter>(GetPawn());
+	if (pc == NULL)
+		return;
+
+	if (!canShoot || isShopping)
+		return;
+
 	ServerUseWeapon1();
 }
 
@@ -440,6 +453,13 @@ bool ACMPlayerController::ServerUseWeapon1_Validate()
 void ACMPlayerController::ServerUseWeapon1_Implementation()
 {
 	if (!IsAlive())
+		return;
+
+	APlayerCharacter* pc = Cast<APlayerCharacter>(GetPawn());
+	if (pc == NULL)
+		return;
+
+	if (!canShoot || isShopping)
 		return;
 
 	if (inventory.GetCurrentWeapon() != nullptr)
@@ -711,11 +731,24 @@ void ACMPlayerController::OnPressedEscape()
 }
 void ACMPlayerController::PressedOpenScore()
 {
-		APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
 	hud->changeUIElement(MenuType::SCOREBOARD);
 }
 void ACMPlayerController::PressedCloseScore()
 {
 	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
 	hud->changeUIElement(MenuType::GAME_UI);
+}
+
+bool ACMPlayerController::AllowShooting_Validate(bool shootingAllowed)
+{
+	return true;
+}
+
+void ACMPlayerController::AllowShooting_Implementation(bool shootingAllowed)
+{
+	canShoot = shootingAllowed;
+
+	if (!canShoot && inventory.GetCurrentWeapon() != NULL)
+		inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
 } 

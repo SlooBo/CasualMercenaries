@@ -20,7 +20,6 @@ enum class CHARACTER_STATE : uint8
 	ROOTED UMETA(DisplayName = "Rooted"),
 	POISONED UMETA(DisplayName = "Poisoned"),
 	FROZEN UMETA(DisplayName = "Frozen"),
-	SHOPPING UMETA(DisplayName = "Shopping")
 };
 
 UCLASS()

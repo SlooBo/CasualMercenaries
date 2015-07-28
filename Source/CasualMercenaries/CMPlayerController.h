@@ -72,6 +72,9 @@ public:
 
 	bool IsAlive();
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void AllowShooting(bool shootingAllowed);
+
 	/************************************************************************/
 	/* Weapons                                                              */
 	/************************************************************************/
@@ -130,6 +133,12 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool canShop;
+
+	UPROPERTY(Replicated)
+	bool canShoot;
+
+	UPROPERTY(Replicated)
+	bool isShopping;
 
 	UPROPERTY(Replicated)
 	FInventory inventory;

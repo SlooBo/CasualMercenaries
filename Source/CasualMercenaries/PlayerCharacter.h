@@ -114,10 +114,13 @@ public:
 	void RestoreActivity();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player actions")
-		bool dashing;
+	bool dashing;
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void UpdateDash();
+
+	UFUNCTION(Reliable, NetMulticast)
+	void SetShopping(bool shopping);
 
 private:
 
@@ -146,7 +149,7 @@ private:
 	bool canLook;
 	FTimerHandle rootTimerHandle;
 	bool canWalk;
-
+	bool isShopping;
 
 	UPROPERTY(Replicated)
 	FLinearColor shirtColor;

@@ -87,6 +87,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	rounds = 0;
 	canLook = true;
 	canWalk = true;
+	isShopping = false;
 
 	bReplicates = true;
 	/// pleasant surprise 
@@ -236,6 +237,8 @@ void APlayerCharacter::SetState_Implementation(CHARACTER_STATE _state)
 	{
 	case CHARACTER_STATE::STUNNED:
 		canLook = false;
+		if (pc != NULL)
+			pc->AllowShooting(false);
 		springArmComp->bUsePawnControlRotation = false;
 		GetWorld()->GetTimerManager().SetTimer(stunTimerHandle, this, &APlayerCharacter::RestoreActivity, 3.0f, false);
 		break;
@@ -250,22 +253,17 @@ void APlayerCharacter::SetState_Implementation(CHARACTER_STATE _state)
 			pc->SetIgnoreMoveInput(true);
 		canWalk = false;
 		canLook = false;
-		break;
-	case CHARACTER_STATE::SHOPPING:
-	{
 		if (pc != NULL)
-		{
-			pc->SetIgnoreMoveInput(true);
-			canLook = false;
-			canWalk = false;
-		}
+			pc->AllowShooting(false);
 		break;
-	}
+		break;
 	default:
 		if (pc != NULL)
 			pc->SetIgnoreMoveInput(false);
 		canLook = true;
 		canWalk = true;
+		if (pc != NULL)
+			pc->AllowShooting(true);
 		break;
 	}
 
@@ -305,7 +303,7 @@ void APlayerCharacter::ServerOnDeath_Implementation(ACMPlayerController* killer)
 
 void APlayerCharacter::MoveForward(float _val)
 {
-	if (canLook && canWalk)
+	if (canLook && canWalk && !isShopping)
 	{
 		if (Controller && _val != 0.0f)
 		{
@@ -318,7 +316,7 @@ void APlayerCharacter::MoveForward(float _val)
 
 void APlayerCharacter::MoveRight(float _val)
 {
-	if (canLook && canWalk)
+	if (canLook && canWalk && !isShopping)
 	{
 		if (_val != 0.0f)
 		{
@@ -667,4 +665,9 @@ bool APlayerCharacter::IsNetRelevantFor(const AActor* realViewer, const AActor* 
 void APlayerCharacter::SetStaminaRate(float rate)
 {
 	staminaIncrease = rate;
+}
+
+void APlayerCharacter::SetShopping_Implementation(bool shopping)
+{
+	isShopping = shopping;
 }

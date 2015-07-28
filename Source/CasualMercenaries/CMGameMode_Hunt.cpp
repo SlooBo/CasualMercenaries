@@ -107,7 +107,7 @@ void ACMGameMode_Hunt::HuntTickSecond()
 	if (huntState == HuntState::Start)
 	{
 		huntState = HuntState::Intermission;
-		//OnHuntStart();
+		OnIntermissionStart();
 	}
 
 	//GEngine->AddOnScreenDebugMessage(6765, 3.0f, FColor::Red, FString::FromInt(huntElapsed) + TEXT("/") + FString::FromInt(huntTotalLength) + TEXT(": ") + TEXT("State: ") + GetHuntStateAsString(huntState));
@@ -230,6 +230,13 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 		if ((*iter)->GetPawnOrSpectator() == NULL || Cast<AGhostCharacter>((*iter)->GetPawnOrSpectator()) != NULL)
 			RespawnPlayer(*iter);
 
+		// restore lost health and allow shooting again
+		APlayerCharacter* pc = Cast<APlayerCharacter>((*iter)->GetPawn());
+		if (pc != NULL)
+		{
+			(*iter)->AllowShooting(true);
+		}
+
 		SetRandomPlayerHuntTarget(*iter);
 		
 		// deny shop access from players
@@ -259,6 +266,20 @@ void ACMGameMode_Hunt::OnRoundEnd_Implementation()
 void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 {
 	SendAnnouncement("Intermission...", 52, 0.5f, 0.17f, 3);
+
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+	{
+		// force respawn player
+		if ((*iter)->GetPawnOrSpectator() == NULL || Cast<AGhostCharacter>((*iter)->GetPawnOrSpectator()) != NULL)
+			RespawnPlayer(*iter);
+
+		// prevent shooting during intermission
+		APlayerCharacter* pc = Cast<APlayerCharacter>((*iter)->GetPawn());
+		if (pc != NULL)
+		{
+			(*iter)->AllowShooting(false);
+		}
+	}
 }
 
 void ACMGameMode_Hunt::OnWarmupStart_Implementation()

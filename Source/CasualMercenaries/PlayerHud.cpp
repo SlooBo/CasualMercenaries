@@ -111,6 +111,9 @@ void APlayerHud::changeUIElement(MenuType menu)
 		UHUDLogic* hudLogic = NewObject<UHUDLogic>();
 		hudLogic->SetUp(widget, GetWorld());
 		logicClasses.Add(hudLogic);
+
+		FInputModeGameOnly InputMode;
+		GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
 		break;
 	}
 	case MenuType::SERVER_BROWSER:
@@ -138,6 +141,10 @@ void APlayerHud::changeUIElement(MenuType menu)
 		UShopLogic* shopLogic = NewObject<UShopLogic>();
 		shopLogic->SetUp(tempWidget, GetWorld());
 		logicClasses.Add(shopLogic);
+
+		FInputModeGameAndUI InputMode;
+		InputMode.SetWidgetToFocus(tempWidget->TakeWidget());
+		GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
 		break;
 	}
 	case MenuType::PAUSE_MENU:
