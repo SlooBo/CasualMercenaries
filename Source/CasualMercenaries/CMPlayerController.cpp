@@ -127,6 +127,10 @@ void ACMPlayerController::ServerInitInventory_Implementation()
 			inventory.AddWeaponToInventory(nullptr);
 
 		inventory.ChangeWeaponAtSlot(0, WEAPONID::ROCKET_LAUNCHER);
+
+		// quick hack to fix weapon position after joining
+		int32 cw = inventory.currentWeapon;
+		ServerSwitchWeapon(cw, cw);
 	}
 }
 
