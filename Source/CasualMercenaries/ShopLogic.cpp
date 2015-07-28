@@ -124,7 +124,7 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 	if (player == nullptr)
 		return;
 	player->SetState(CHARACTER_STATE::SHOPPING);
-	
+	OnClickedWeaponSlot(controller->GetInventory().currentWeapon);
 }
 void UShopLogic::OnClickedWeaponSlot(uint32 slotIndex)
 {
