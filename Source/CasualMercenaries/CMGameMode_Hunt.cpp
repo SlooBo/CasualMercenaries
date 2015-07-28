@@ -396,7 +396,9 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(ACMPlayerController* player,
 		{
 			ACMPlayerController* hunterTarget = GetHuntTarget(*iter);
 			if (hunterTarget != NULL)
+			{
 				checkf(hunterTarget != NULL, TEXT("Error: Player has no hunter target, blame Ari"));
+			}
 		}
 	}
 
