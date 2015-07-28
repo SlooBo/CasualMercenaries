@@ -67,7 +67,7 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 		SetValueFromWidget<UButton>(&tempShopButton, shopItemName);
 		if (tempShopButton == nullptr)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Not enough shop buttons!");
+		//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Not enough shop buttons!");
 			continue;
 		}
 		UShopSlot* shopSlot = NewObject<UShopSlot>();
