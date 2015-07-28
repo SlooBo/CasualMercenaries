@@ -54,7 +54,7 @@ void UScoreBoard::Update()
 		names->AddChild(nameText);
 
 		UTextBlock *scoreText = NewObject<UTextBlock>();
-		FString playerScore = FString::FromInt(playerState->Score);
+		FString playerScore = FString::FromInt(playerState->GetScore());
 		scoreText->SetText(FText::FromString(playerScore));
 		scoreText->Justification = ETextJustify::Center;
 		if (!alive)
