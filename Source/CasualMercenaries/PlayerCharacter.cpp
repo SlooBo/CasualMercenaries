@@ -100,6 +100,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	if (!HasAuthority())
 		return;
 	StaminaRegenServer(DeltaTime); 
+	CheckStatus();
 	WallCheck();
 	UpdateDash();
 }
@@ -151,6 +152,17 @@ void APlayerCharacter::StaminaRegenServer(float DeltaTime)
 		stamina = 100.0f;
 }
 
+void APlayerCharacter::CheckStatus()
+{
+	if (!canLook)
+	{
+		springArmComp->bUsePawnControlRotation = false;
+	}
+	else
+	{
+		springArmComp->bUsePawnControlRotation = true;
+	}
+}
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

@@ -161,6 +161,8 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player actions")
 	FVector wallJumpNormal;
 
+	void CheckStatus();
+
 	void WallCheck();
 	void InputDash();
 

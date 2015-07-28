@@ -6,8 +6,6 @@
 #include "PlayerCharacter.h"
 
 
-
-
 AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 {
 	//skeletalMesh
@@ -25,6 +23,11 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	ammoInClip = 10;
 	price = 1200;
 
+	// floats
+	firingInterval = .75;
+	reloadTime = 0.5;
+	passedTimeReloading = 0;
+
 	//Audio
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	audioComp->SetVolumeMultiplier(0.125f);
@@ -41,11 +44,6 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	static ConstructorHelpers::FObjectFinder<USoundWave> audio3(TEXT("SoundWave'/Game/Game/Audio/Grenadelauncher_Shoot.Grenadelauncher_Shoot'"));
 	if (audio3.Object)
 		audioList.Add(audio3.Object);
-
-	// floats
-	firingInterval = .75;
-	reloadTime = 0.5;
-	passedTimeReloading = 0;
 
 	//ID
 	id = WEAPONID::MUDBUSTER_GUN;
@@ -101,7 +99,7 @@ void AMUDbuster::Fire()
 
 	userLoc = weaponMesh->GetSocketLocation("ExhaustSocket");
 
-	ACMPlayerController* asd = Cast<ACMPlayerController>(GetOwner());
+	ACMPlayerController* asd = controller;
 
 	APlayerCharacter* pc = Cast<APlayerCharacter>(asd->GetPawn());
 
