@@ -247,6 +247,7 @@ void APlayerCharacter::SetState_Implementation(CHARACTER_STATE _state)
 			canLook = false;
 			canWalk = false;
 		}
+		break;
 	}
 	default:
 		if (pc != NULL)

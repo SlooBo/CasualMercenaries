@@ -7,6 +7,8 @@
 #include "HUDLogic.h"
 #include "ScoreBoard.h"
 #include "Util.h"
+#include "CMPlayerController.h"
+#include "PlayerCharacter.h"
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
 	currentMenu = MenuType::NO_UI;
@@ -81,6 +83,16 @@ void APlayerHud::changeUIElement(MenuType menu)
 	logicClasses.Empty();
 	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	ClearAllWidgets();
+
+	//Give player input back if closing shop
+	if (GetCurrentUI() == MenuType::SHOP)
+	{
+		ACMPlayerController *controller = Cast<ACMPlayerController>(GetWorld()->GetFirstPlayerController());
+		APlayerCharacter *player = Cast<APlayerCharacter>(controller->GetPawn());
+		if (player != nullptr)
+			player->RestoreActivity();
+	}
+
 	switch (menu)
 	{
 	case MenuType::MAIN_MENU:

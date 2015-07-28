@@ -58,6 +58,9 @@ void ACMPlayerController::BeginPlay()
 	// only play music for clients
 	if (GetNetMode() != NM_DedicatedServer)
  		MusicPlay();
+	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+	if (hud != nullptr)
+		hud->changeUIElement(MenuType::GAME_UI);
 }
 
 void ACMPlayerController::EndPlay(const EEndPlayReason::Type endPlayReason)
@@ -715,4 +718,4 @@ void ACMPlayerController::PressedCloseScore()
 {
 	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
 	hud->changeUIElement(MenuType::GAME_UI);
-}
+} 

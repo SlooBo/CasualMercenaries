@@ -26,9 +26,6 @@ void UServerBrowserLogic::SetUp(UUserWidget *widget,UWorld *world)
 	findSessionsButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::FindSessions);
 
 
-	UButton *tempDestroyButton = nullptr;
-	SetValueFromWidget(&tempDestroyButton, "DestroyWorld");
-	tempDestroyButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::ForceGarbageCollector);
 
 	SetValueFromWidget(&connectButton, "ConnectButton");
 	connectButton->OnClicked.AddDynamic(this, &UServerBrowserLogic::ConnectSessionWithIP);
@@ -157,10 +154,7 @@ void UServerBrowserLogic::AddSessionToGUI(int32 searchIndex)
 
 	}
 }
-void UServerBrowserLogic::ForceGarbageCollector()
-{
-	world->ForceGarbageCollection(true);
-}
+
 void UServerBrowserLogic::ConnectSessionWithIP()
 {
 	if (ipTextBox == nullptr)

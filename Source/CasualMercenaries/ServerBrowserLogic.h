@@ -63,8 +63,6 @@ private:
 	FOnFindSessionsComplete FindSessionsCompleteEvent;
 	UPROPERTY()
 	TArray<class UServerInfo*> buttonServerInfos;
-	UFUNCTION()
-		void ForceGarbageCollector();
 
 };
 UCLASS()
