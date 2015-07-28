@@ -148,6 +148,13 @@ void APlayerHud::changeUIElement(MenuType menu)
 	}
 	case MenuType::SCOREBOARD:
 	{
+		UUserWidget *gameWidget = nullptr;
+		gameWidget = changeUIElement(gameUIClass);
+		UHUDLogic* hudLogic = NewObject<UHUDLogic>();
+		hudLogic->SetUp(gameWidget, GetWorld());
+		logicClasses.Add(hudLogic);
+
+
 		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 		UClass *scoreboardClass = Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/ScoreBoard.ScoreBoard_C'"));
 		UUserWidget *widget = changeUIElement(scoreboardClass);

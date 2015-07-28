@@ -20,6 +20,7 @@ void UScoreBoard::SetUp(UUserWidget *widget, UWorld *world)
 	this->world = world;
 
 	SetValueFromWidget(&names, FString("NameBox"));
+	SetValueFromWidget(&scores, FString("ScoreBox"));
 	SetValueFromWidget(&kills, FString("KillBox"));
 	SetValueFromWidget(&deaths, FString("DeathBox"));
 }
@@ -39,6 +40,7 @@ void UScoreBoard::Update()
 	names->ClearChildren();
 	kills->ClearChildren();
 	deaths->ClearChildren();
+	scores->ClearChildren();
 	for (int i = 0; i < gameState->PlayerArray.Num(); i++)
 	{
 		ACMPlayerState *playerState = Cast<ACMPlayerState>(gameState->PlayerArray[i]);
@@ -51,8 +53,17 @@ void UScoreBoard::Update()
 			nameText->SetColorAndOpacity(FSlateColor(FLinearColor::Gray));
 		names->AddChild(nameText);
 
+		UTextBlock *scoreText = NewObject<UTextBlock>();
+		FString playerScore = FString::FromInt(playerState->Score);
+		scoreText->SetText(FText::FromString(playerScore));
+		scoreText->Justification = ETextJustify::Center;
+		if (!alive)
+			scoreText->SetColorAndOpacity(FSlateColor(FLinearColor::Gray));
+		scores->AddChild(scoreText);
+
+
 		UTextBlock *killText = NewObject<UTextBlock>();
-		FString playerkills= FString::FromInt(playerState->Score);
+		FString playerkills= FString::FromInt(playerState->GetFrags());
 		killText->SetText(FText::FromString(playerkills));
 		killText->Justification = ETextJustify::Center;
 		if (!alive)
