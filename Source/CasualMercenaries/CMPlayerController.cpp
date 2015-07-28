@@ -345,8 +345,15 @@ void ACMPlayerController::OpenShop()
 	else
 		playerHud->changeUIElement(MenuType::SHOP);
 
-	isShopping = playerHud->GetCurrentUI() == MenuType::SHOP;
-	canShoot = playerHud->GetCurrentUI() != MenuType::SHOP;
+	UpdateMenuStatus();
+}
+
+void ACMPlayerController::UpdateMenuStatus_Implementation()
+{
+	APlayerHud *playerHud = Cast<APlayerHud>(GetHUD());
+
+	isShopping = playerHud->GetCurrentUI() != MenuType::GAME_UI && playerHud->GetCurrentUI() != MenuType::SCOREBOARD;
+	canShoot = playerHud->GetCurrentUI() == MenuType::GAME_UI;
 
 	APlayerCharacter* pc = Cast<APlayerCharacter>(GetPawn());
 	if (pc != NULL)
@@ -684,17 +691,35 @@ void ACMPlayerController::PrintTarget()
 void ACMPlayerController::OnPressedEscape()
 {
 	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
-	hud->changeUIElement(MenuType::PAUSE_MENU);
+
+	if (hud->GetCurrentUI() == MenuType::GAME_UI)
+		hud->changeUIElement(MenuType::PAUSE_MENU);
+	else
+		hud->changeUIElement(MenuType::GAME_UI);
+
+	UpdateMenuStatus();
 }
 void ACMPlayerController::PressedOpenScore()
 {
 	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+
+	if (hud->GetCurrentUI() != MenuType::GAME_UI)
+		return;
+
 	hud->changeUIElement(MenuType::SCOREBOARD);
+
+	UpdateMenuStatus();
 }
 void ACMPlayerController::PressedCloseScore()
 {
 	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
+
+	if (hud->GetCurrentUI() != MenuType::SCOREBOARD)
+		return;
+	
 	hud->changeUIElement(MenuType::GAME_UI);
+
+	UpdateMenuStatus();
 }
 
 bool ACMPlayerController::AllowShooting_Validate(bool shootingAllowed)

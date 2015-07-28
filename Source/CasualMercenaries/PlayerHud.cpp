@@ -84,8 +84,16 @@ void APlayerHud::changeUIElement(MenuType menu)
 		logicClasses[i] = NULL;
 	}
 	logicClasses.Empty();
-	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+
+	ACMPlayerController* controller = Cast<ACMPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	controller->bShowMouseCursor = false;
 	ClearAllWidgets();
+
+	if (controller == NULL)
+		return;
+
+	controller->UpdateMenuStatus();
 
 	switch (menu)
 	{
@@ -102,7 +110,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 	}
 	case MenuType::GAME_UI:
 	{
-		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+		controller->bShowMouseCursor = false;
 		//this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 		UUserWidget* widget;
 
@@ -112,12 +120,13 @@ void APlayerHud::changeUIElement(MenuType menu)
 		logicClasses.Add(hudLogic);
 
 		FInputModeGameOnly InputMode;
-		GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
+		controller->SetInputMode(InputMode);
+
 		break;
 	}
 	case MenuType::SERVER_BROWSER:
 	{
-		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+		controller->bShowMouseCursor = true;
 		UUserWidget* widget;
 		widget = changeUIElement(serverBrowserClass);
 		UServerBrowserLogic* serverBrowser = NewObject<UServerBrowserLogic>();
@@ -136,20 +145,24 @@ void APlayerHud::changeUIElement(MenuType menu)
 		logicClasses.Add(hudLogic);
 
 		UUserWidget* tempWidget = changeUIElement(shopClass);
-		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
+		controller->bShowMouseCursor = true;
 		UShopLogic* shopLogic = NewObject<UShopLogic>();
 		shopLogic->SetUp(tempWidget, GetWorld());
 		logicClasses.Add(shopLogic);
 
 		FInputModeGameAndUI InputMode;
 		InputMode.SetWidgetToFocus(tempWidget->TakeWidget());
-		GetWorld()->GetFirstPlayerController()->SetInputMode(InputMode);
+		controller->SetInputMode(InputMode);
 		break;
 	}
 	case MenuType::PAUSE_MENU:
 	{
-		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
-		changeUIElement(pauseClass);
+		controller->bShowMouseCursor = true;
+		UUserWidget* widget = changeUIElement(pauseClass);
+
+		FInputModeGameAndUI InputMode;
+		InputMode.SetWidgetToFocus(widget->TakeWidget());
+		controller->SetInputMode(InputMode);
 		break;
 	}
 	case MenuType::SCOREBOARD:
@@ -161,7 +174,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 		logicClasses.Add(hudLogic);
 
 
-		this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
+		controller->bShowMouseCursor = false;
 		UClass *scoreboardClass = Util::LoadObjFromPath<UClass>(TEXT("'/Game/Game/UI/ScoreBoard.ScoreBoard_C'"));
 		UUserWidget *widget = changeUIElement(scoreboardClass);
 		UScoreBoard *scoreboard = NewObject<UScoreBoard>();

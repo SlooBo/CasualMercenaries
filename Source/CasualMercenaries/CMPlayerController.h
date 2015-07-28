@@ -125,6 +125,10 @@ public:
 
 	void PressedOpenScore();
 	void PressedCloseScore();
+
+	UFUNCTION(Reliable, Client)
+	void UpdateMenuStatus();
+
 protected:
 	void OnPressedEscape();
 	const USkeletalMeshSocket* gunSocket;
