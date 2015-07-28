@@ -102,6 +102,13 @@ bool ABaseCharacter::IsAlive() const
 	return health > 0;
 }
 
+void ABaseCharacter::RestoreStats()
+{
+	health = health_Max;
+	armor = armor_Max;
+	stamina = stamina_Max;
+}
+
 void ABaseCharacter::AddHealth(float _health)
 {
 	if (health + _health >= health_Max)

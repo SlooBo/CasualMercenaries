@@ -234,6 +234,7 @@ void ACMGameMode_Hunt::OnRoundStart_Implementation()
 		APlayerCharacter* pc = Cast<APlayerCharacter>((*iter)->GetPawn());
 		if (pc != NULL)
 		{
+			pc->RestoreStats();
 			(*iter)->AllowShooting(true);
 		}
 
@@ -277,6 +278,7 @@ void ACMGameMode_Hunt::OnIntermissionStart_Implementation()
 		APlayerCharacter* pc = Cast<APlayerCharacter>((*iter)->GetPawn());
 		if (pc != NULL)
 		{
+			pc->RestoreStats();
 			(*iter)->AllowShooting(false);
 		}
 	}

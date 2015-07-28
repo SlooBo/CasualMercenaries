@@ -65,6 +65,9 @@ public:
 		bool IsAlive() const;
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
+		void RestoreStats();
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		void AddHealth(float _health);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
