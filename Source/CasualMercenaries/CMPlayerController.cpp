@@ -72,6 +72,8 @@ void ACMPlayerController::EndPlay(const EEndPlayReason::Type endPlayReason)
 	musicComponent->OnAudioFinished.RemoveDynamic(this, &ACMPlayerController::MusicPlay);
 	musicComponent->Stop();
 
+	inventory.ClearInventory();
+
 	Super::EndPlay(endPlayReason);
 }
 
