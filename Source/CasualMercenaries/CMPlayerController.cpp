@@ -295,65 +295,21 @@ void ACMPlayerController::BuyWeapon_Implementation(uint8 weaponIndex, WEAPONID w
 	if ((uint32)playerState->GetMoney() >= weaponStruct->buyPrice)
 	{
 		if (previousWeaponStruct != nullptr)
-		{
 			playerState->AddMoney((int32)previousWeaponStruct->buyPrice / 2);
-		}
+		
 		playerState->AddMoney(-(int32)weaponStruct->buyPrice);
 	
 		inventory.ChangeWeaponAtSlot(weaponIndex, weaponid);
 		inventory.GetWeapon(weaponIndex)->SetActorHiddenInGame(false);
 
-		//////////////////////////////Stuff////////////////////////////
 		APlayerCharacter* character = Cast<APlayerCharacter>(GetPawn());
 		AWeapon* newWeapon = inventory.GetWeapon(weaponIndex);
 
-		if (newWeapon != nullptr)
-		{
-			USkeletalMeshComponent* mesh = character->GetMesh();
-
-			//switch case caseroll for Miika to enjoy
-			switch (newWeapon->GetID())
-			{
-			case WEAPONID::SHOT_GUN:
-				newWeapon->weaponMesh->AttachTo(mesh, "ShotGunSocket", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			case WEAPONID::GRENADE_LAUNCHER:
-				newWeapon->weaponMesh->AttachTo(mesh, "GrenadeLauncherSocket", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			case WEAPONID::MASHINE_GUN:
-				newWeapon->weaponMesh->AttachTo(mesh, "MashineGunSocket", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			case WEAPONID::MUDBUSTER_GUN:
-				newWeapon->weaponMesh->AttachTo(mesh, "MudBusterSocket", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			case WEAPONID::TWISTER_GUN:
-				newWeapon->weaponMesh->AttachTo(mesh, "TwisterTorpedoGunSocket", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			case WEAPONID::ROCKET_LAUNCHER:
-				newWeapon->weaponMesh->AttachTo(mesh, "RocketLauncherSocket", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			case WEAPONID::WASP_GUN:
-				newWeapon->weaponMesh->AttachTo(mesh, "WaspGunSocket_R", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			case WEAPONID::WATER_GUN:
-				newWeapon->weaponMesh->AttachTo(mesh, "WaterGunSocket", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			case WEAPONID::HOOK:
-				newWeapon->weaponMesh->AttachTo(mesh, "ShotGunSocket", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			case WEAPONID::SMOKE_GUN:
-				newWeapon->weaponMesh->AttachTo(mesh, "MashineGunSocket", EAttachLocation::SnapToTargetIncludingScale);
-				break;
-			default:
-				gunSocket = mesh->GetSocketByName("GunSocket_null");
-				break;
-			}
-		}
-			////////////////////////EndStuff////////////////////////
+		ServerSwitchWeapon(weaponIndex, inventory.currentWeapon);
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Nut enuff cash!");
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Nut enuff cash!");
 	}
 }
 
@@ -702,17 +658,14 @@ void ACMPlayerController::ServerSwitchWeapon_Implementation(int32 cw, int32 pw)
 			//newWeapon->SetActorLocation(gunSocket->GetSocketLocation(character->GetMesh()));
 			newWeapon->weaponMesh->AttachTo(mesh, "ShotgunSocket", EAttachLocation::SnapToTargetIncludingScale);
 		}
-		else
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "GunSocket not found pls fix");
+		//else
+			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "GunSocket not found pls fix");
 
 		newWeapon->SetOwner(character);
 		newWeapon->SetActorHiddenInGame(false);
 
-
 		audioComp->Play();
-
 	}
-
 }
 void ACMPlayerController::PrintTarget()
 {

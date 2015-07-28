@@ -310,6 +310,13 @@ void ACMGameMode::SetupNewPlayer(APlayerController* newPlayer)
 		else
 			playerState->SetMoney(playerStartMoney);
 	}
+
+	ACMPlayerController* pc = Cast<ACMPlayerController>(newPlayer);
+	if (pc == NULL)
+		return;
+
+	if (pc->GetInventory().weapons.Num() < 1)
+		pc->ServerInitInventory();
 }
 
 void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMPlayerController* killer)
@@ -564,9 +571,6 @@ void ACMGameMode::SetPlayerDefaults(APawn* playerPawn)
 		if (playerState != NULL)
 			playerCharacter->ChangeShirtColor(playerState->GetColor(PlayerColor::Shirt));
 	}
-
-	if (player->GetInventory().weapons.Num() < 1)
-		player->ServerInitInventory();
 
 	playerState->SetAlive(true);
 
