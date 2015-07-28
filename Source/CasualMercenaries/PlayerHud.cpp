@@ -84,15 +84,6 @@ void APlayerHud::changeUIElement(MenuType menu)
 	this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = false;
 	ClearAllWidgets();
 
-	//Give player input back if closing shop
-	if (GetCurrentUI() == MenuType::SHOP)
-	{
-		ACMPlayerController *controller = Cast<ACMPlayerController>(GetWorld()->GetFirstPlayerController());
-		APlayerCharacter *player = Cast<APlayerCharacter>(controller->GetPawn());
-		if (player != nullptr)
-			player->RestoreActivity();
-	}
-
 	switch (menu)
 	{
 	case MenuType::MAIN_MENU:
