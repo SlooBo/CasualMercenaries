@@ -5,10 +5,13 @@
 #include "ServerBrowserLogic.h"
 #include "ShopLogic.h"
 #include "HUDLogic.h"
+#include "MainMenuLogic.h"
 #include "ScoreBoard.h"
 #include "Util.h"
 #include "CMPlayerController.h"
 #include "PlayerCharacter.h"
+
+
 APlayerHud::APlayerHud(const FObjectInitializer& PCIP) :Super()
 {
 	currentMenu = MenuType::NO_UI;
@@ -88,7 +91,12 @@ void APlayerHud::changeUIElement(MenuType menu)
 	{
 	case MenuType::MAIN_MENU:
 	{
-		changeUIElement(mainMenuClass);
+		UUserWidget* widget = changeUIElement(mainMenuClass);
+
+		UMainMenuLogic* mainMenuLogic = NewObject<UMainMenuLogic>();
+		mainMenuLogic->SetUp(widget, GetWorld());
+		logicClasses.Add(mainMenuLogic);
+
 		//this->GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
 		break;
 	}
