@@ -59,10 +59,12 @@ void UShopLogic::SetUp(UUserWidget *shopWidget,UWorld *world)
 		weaponSlotButtons.Add(tempWeaponButton);
 		weaponSlots.Add(weaponSlot);
 	}
-	UButton *tempShopButton = nullptr;
+
 	for (int i = 0; i < (uint32)WEAPONID::NO_WEAPON; i++)
 	{
-		SetValueFromWidget<UButton>(&tempShopButton, "ShopItem" + FString::FromInt(i));
+		UButton *tempShopButton = nullptr;
+		FString shopItemName = "ShopItem" + FString::FromInt(i);
+		SetValueFromWidget<UButton>(&tempShopButton, shopItemName);
 		if (tempShopButton == nullptr)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Not enough shop buttons!");

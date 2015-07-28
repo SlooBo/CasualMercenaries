@@ -144,8 +144,8 @@ void ACMPlayerController::OnPlayerDeathBroadcast_Implementation(ACMPlayerControl
 		APlayerHud *hud = Cast<APlayerHud>(GetHUD());
 		if (hud != nullptr)
 		{
-			hud->ShowText("After 5 seconds press R to respawn", 32, 0.5f, 0.2f, 10, FLinearColor::Red);
-			hud->ShowText("Press B to open shop", 32, 0.5f, 0.7f, 10, FLinearColor::Red);
+			hud->ShowText("After 5 seconds press R to respawn", 32, 0.5f, 0.05f, 10, FLinearColor::Red);
+			hud->ShowText("Press B to open shop", 32, 0.5f, 0.95f, 10, FLinearColor::Red);
 		}
 		// handle clientside death here
 	}

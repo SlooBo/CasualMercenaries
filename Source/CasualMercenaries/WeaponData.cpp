@@ -33,7 +33,7 @@ void WeaponData::Initialize()
 		800, 800, 600,
 		"Grenade Launcher 'Pomegranade launcher'",
 		"Contrary to popular beliefs it does not shoot pomegranates. It shoots fire hydrants",
-		"Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
+		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/Shotgun.Shotgun'");
 	weaponData.Add(WEAPONID::GRENADE_LAUNCHER, grenadeLauncher);
 
 	FWeaponStruct mashineGun = FWeaponStruct(
@@ -69,7 +69,7 @@ void WeaponData::Initialize()
 		700, 200, 9000,
 		"Twister Torpedo 'Twisted Twister Sisters'",
 		"Fling your enemies and their weapons with power of the wind",
-		"Texture2D'/Game/Game/UI/Textures/ShotgunPic.ShotgunPic'");
+		"Texture2D'/Game/Game/UI/Textures/WeaponIcons/Shotgun.Shotgun'");
 	weaponData.Add(WEAPONID::TWISTER_GUN, twisterGun);
 
 	FWeaponStruct shotGun = FWeaponStruct(
@@ -100,7 +100,7 @@ void WeaponData::Initialize()
 	weaponData.Add(WEAPONID::SMOKE_GUN, smokeGun);
 
 
-	FWeaponStruct noWeapon = FWeaponStruct(0, 0, 0, 0, ERANGE_TYPE::CLOSE_RANGE, 0, 0, 0, "fud", "fudud", "Texture2D'/Game/Game/UI/Textures/No_Weapon.No_Weapon'");
+	FWeaponStruct noWeapon = FWeaponStruct(0, 0, 0, 0, ERANGE_TYPE::CLOSE_RANGE, 0, 0, 0, "fud", "fudud", "Texture2D'/Game/Game/UI/Textures/WeaponIcons/no_weapon_icon.no_weapon_icon'");
 	weaponData.Add(WEAPONID::NO_WEAPON, noWeapon);
 }
 FWeaponStruct *WeaponData::GetWeaponData(WEAPONID weaponId)
