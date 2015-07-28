@@ -51,6 +51,12 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Add Frags"), Category = "Gameplay")
 	void AddFrags(int32 num);
 
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Score"), Category = "Gameplay")
+	int32 GetScore();
+
+	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Add Score"), Category = "Gameplay")
+	void AddScore(int32 num);
+
 	UFUNCTION(BlueprintCallable, Meta = (DisplayName = "Get Deaths"), Category = "Gameplay")
 	int32 GetDeaths();
 
@@ -129,6 +135,10 @@ protected:
 	// Player Frags
 	UPROPERTY(Replicated, Meta = (DisplayName = "Player Frags"))
 	int32 frags;
+
+	// Player Score
+	UPROPERTY(Replicated, Meta = (DisplayName = "Player Score"))
+	int32 realScore;
 
 	// Player Deaths
 	UPROPERTY(Replicated, Meta = (DisplayName = "Player Deaths", ClampMin = "0"))

@@ -200,8 +200,7 @@ void ACMGameMode::WaitTickSecond()
 		}
 		else
 		{
-			SendAnnouncement(TEXT("Waiting for more players... ") + FString::FromInt(waitElapsed)
-				+ TEXT(" ( ") + FString::FromInt(numPlayers) + TEXT("/") + FString::FromInt(minPlayersToStart) + TEXT(" )"), 52, 0.5f, 0.17f, 1, FLinearColor::Red);
+			SendAnnouncement(TEXT("Waiting for more players... ( ") + FString::FromInt(numPlayers) + TEXT("/") + FString::FromInt(minPlayersToStart) + TEXT(" )"), 38, 0.5f, 0.1f, 1, FLinearColor::Red);
 		}
 	}
 
@@ -213,9 +212,9 @@ void ACMGameMode::WaitTickSecond()
 			StartMatch();
 		}
 		else if (inGameState == InGameState::Warmup)
-			SendAnnouncement(TEXT("Warmup, Game starting in... ") + FString::FromInt(warmupTime - waitElapsed), 52, 0.5f, 0.17f, 1, FLinearColor::Green);
+			SendAnnouncement(TEXT("Warmup, Game starting in... ") + FString::FromInt(warmupTime - waitElapsed), 38, 0.5f, 0.1f, 1, FLinearColor::Green);
 		else if (inGameState == InGameState::Starting)
-			SendAnnouncement(TEXT("Game is starting in...") + FString::FromInt(startTime - waitElapsed), 52, 0.5f, 0.17f, 1, FLinearColor::Green);
+			SendAnnouncement(TEXT("Game is starting in...") + FString::FromInt(startTime - waitElapsed), 38, 0.5f, 0.1f, 1, FLinearColor::Green);
 	}
 
 	UpdateGameState();
@@ -227,10 +226,15 @@ void ACMGameMode::UpdateGameState()
 	if (gameState != NULL)
 	{
 		gameState->inGameState = inGameState;
+		gameState->gameTimeElapsed = mapTimeElapsed;
+		gameState->gameTimeLength = mapTimelimit;
+
 		if (inGameState == InGameState::Warmup || inGameState == InGameState::WarmupStarting)
 		{
 			gameState->stateTimeElapsed = waitElapsed;
-			gameState->stateTimeLength = warmupTime;
+			gameState->stateTimeLength = waitElapsed;
+			gameState->gameTimeElapsed = waitElapsed;
+			gameState->gameTimeLength = warmupTime;
 		}
 		else if (inGameState == InGameState::Starting)
 		{
@@ -242,9 +246,6 @@ void ACMGameMode::UpdateGameState()
 			gameState->stateTimeElapsed = mapTimeElapsed;
 			gameState->stateTimeLength = mapTimelimit;
 		}
-		
-		gameState->gameTimeElapsed = mapTimeElapsed;
-		gameState->gameTimeLength = mapTimelimit;
 	}
 }
 
@@ -335,17 +336,6 @@ void ACMGameMode::OnPlayerDeath_Implementation(ACMPlayerController* player, ACMP
 	// adjust scores and money
 	if (killerState != NULL)
 	{
-		ACMPlayerController* killerTarget = NULL;
-
-		if (killerState->GetHuntTarget() != NULL)
-			killerTarget = Cast<ACMPlayerController>(killerState->GetHuntTarget());
-
-		// killer killed their target?
-		if (killerTarget == player)
-			killerState->AddMoney(playerKillRewardTarget);	
-		else if (killerTarget != NULL)
-			killerState->AddMoney(playerKillRewardWrong);
-
 		// negative frag for suicide
 		if (killer == player)
 			killerState->AddFrags(-1);

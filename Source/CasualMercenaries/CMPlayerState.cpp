@@ -28,6 +28,7 @@ void ACMPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ACMPlayerState, frags);
 	DOREPLIFETIME(ACMPlayerState, deaths);
 	DOREPLIFETIME(ACMPlayerState, money);
+	DOREPLIFETIME(ACMPlayerState, realScore);
 };
 
 void ACMPlayerState::ResetStats()
@@ -36,6 +37,7 @@ void ACMPlayerState::ResetStats()
 	deaths = 0;
 	huntTarget = NULL;
 	money = 0;
+	realScore = 0;
 }
 
 int32 ACMPlayerState::GetTeam()
@@ -79,6 +81,16 @@ int32 ACMPlayerState::GetFrags()
 void ACMPlayerState::AddFrags(int32 num)
 {
 	frags += num;
+}
+
+int32 ACMPlayerState::GetScore()
+{
+	return realScore;
+}
+
+void ACMPlayerState::AddScore(int32 num)
+{
+	realScore += num;
 }
 
 int32 ACMPlayerState::GetDeaths()

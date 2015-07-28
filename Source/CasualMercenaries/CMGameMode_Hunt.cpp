@@ -176,6 +176,11 @@ void ACMGameMode_Hunt::UpdateGameState()
 	if (gameState != NULL)
 	{
 		gameState->huntGameState = huntState;
+		gameState->gameTimeElapsed = huntElapsed;
+		gameState->gameTimeLength = huntTotalLength;
+		gameState->huntTotalRounds = huntRounds;
+		gameState->huntCurrentRound = huntCurrentRound;
+
 		if (huntState == HuntState::Freeze)
 		{
 			gameState->stateTimeElapsed = huntFreezeTimeElapsed;
@@ -192,10 +197,11 @@ void ACMGameMode_Hunt::UpdateGameState()
 			gameState->stateTimeLength = huntRoundLength;
 		}
 
-		gameState->gameTimeElapsed = huntElapsed;
-		gameState->gameTimeLength = huntTotalLength;
-		gameState->huntTotalRounds = huntRounds;
-		gameState->huntCurrentRound = huntCurrentRound;
+		if (inGameState != InGameState::Running)
+		{
+			gameState->stateTimeLength = waitElapsed;
+			gameState->huntCurrentRound = 0;
+		}
 	}
 }
 
@@ -367,9 +373,21 @@ void ACMGameMode_Hunt::OnPlayerDeath_Implementation(ACMPlayerController* player,
 					SetPlayerHuntTarget(hunter, randomTarget);
 				}
 			}
+
+			if (killerTarget == player || playerTarget == killer)
+			{
+				killerState->AddScore(1);
+				killerState->AddMoney(playerKillRewardTarget);
+			}
+			else
+			{
+				killerState->AddScore(-1);
+				killerState->AddMoney(playerKillRewardWrong);
+			}
 		}
 		else
 		{
+			playerState->AddScore(-1);
 			// player commited suicide
 		}
 
