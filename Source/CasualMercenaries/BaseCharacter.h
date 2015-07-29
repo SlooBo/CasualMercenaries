@@ -77,7 +77,7 @@ public:
 		void AddStamina(float _stamina);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
-		void LoseStamina(float _fatigue);
+		virtual void LoseStamina(float _fatigue);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCondition")
 		void AddArmor(float _armor);

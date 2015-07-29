@@ -83,3 +83,7 @@ void AGhostCharacter::FellOutOfWorld(const class UDamageType& DmgType)
 	if (gameMode != NULL && playerController != NULL)
 		gameMode->SpectatePlayer(playerController);
 }
+
+void AGhostCharacter::LoseStamina(float _fatigue)
+{
+}
