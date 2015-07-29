@@ -35,7 +35,7 @@ public:
 
 	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void OnMatchStart_Implementation() override;
-
+	virtual void Logout(AController* exiting) override;
 	virtual void SetupNewPlayer(APlayerController* newPlayer) override;
 
 	// Event when player dies or is killed by other player

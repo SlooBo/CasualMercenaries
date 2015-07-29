@@ -77,6 +77,27 @@ void ACMGameMode_Hunt::OnMatchStart_Implementation()
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("GameMode: Hunt"));
 }
 
+void ACMGameMode_Hunt::Logout(AController* exiting)
+{
+	ACMPlayerController* pc = Cast<ACMPlayerController>(exiting);
+
+	// reassign hunt targets when the target left the server
+	for (TActorIterator<ACMPlayerController> iter(GetWorld()); iter; ++iter)
+	{
+		if (*iter == pc)
+			continue;
+
+		ACMPlayerState* playerState = Cast<ACMPlayerState>((*iter)->PlayerState);
+		if (playerState->GetHuntTarget() == pc)
+		{
+			ACMPlayerController* randomTarget = GetRandomPlayer(pc, *iter, true);
+			SetPlayerHuntTarget(*iter, randomTarget);
+		}
+	}
+
+	Super::Logout(exiting);
+}
+
 void ACMGameMode_Hunt::SetupNewPlayer(APlayerController* newPlayer)
 {
 	Super::SetupNewPlayer(newPlayer);
