@@ -5,7 +5,7 @@
 #include "PlayerCharacter.h"
 #include "Twister.h"
 #include "DestructibleObject.h"
-
+#include "Util.h"
 
 
 ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
@@ -123,11 +123,11 @@ void ARocket::Explode()
 
 		for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 		{
-			float distance = GetDistanceTo(*aItr);
+			float distance = Util::GetDistanceToPlayer(this, *aItr);
 
 			if (distance <= ExplosionRadius)
 			{
-				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionRadius, ExplosionMinDamage, ExplosionFullDamageDistance);
 				if (directHitPlayer == *aItr)
 					multiplier = 1.0f;
 
@@ -143,7 +143,7 @@ void ARocket::Explode()
 
 			if (distance <= ExplosionRadius)
 			{
-				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionRadius, ExplosionMinDamage, ExplosionFullDamageDistance);
 				float finalDamage = ExplosionDamage*multiplier;
 				aItr->TakeDamage(finalDamage * 2);
 			}
@@ -154,7 +154,7 @@ void ARocket::Explode()
 
 			if (distance <= ExplosionRadius)
 			{
-				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionRadius, ExplosionMinDamage, ExplosionFullDamageDistance);
 				float finalDamage = ExplosionDamage*multiplier;
 				aItr->TakeDamage(finalDamage * 2);
 			}

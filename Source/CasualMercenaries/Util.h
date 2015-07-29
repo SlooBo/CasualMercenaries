@@ -58,4 +58,7 @@ public:
 		int i = FMath::RandRange(0, list.Num() - 1);
 		return list[i];
 	}
+
+	// Distance to player's capsule component
+	static float GetDistanceToPlayer(const AActor* object, const class APlayerCharacter* player);
 };

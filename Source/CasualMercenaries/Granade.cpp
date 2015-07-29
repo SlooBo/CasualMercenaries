@@ -3,7 +3,7 @@
 #include "CasualMercenaries.h"
 #include "Granade.h"
 #include "PlayerCharacter.h"
-
+#include "Util.h"
 
 AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
 {
@@ -106,11 +106,11 @@ void AGranade::Explode_Implementation()
 
 		for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 		{
-			float distance = GetDistanceTo(*aItr);
+			float distance = Util::GetDistanceToPlayer(this, *aItr);
 
 			if (distance <= ExplosionRadius)
 			{
-				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionRadius, ExplosionMinDamage, ExplosionFullDamageDistance);
 				if (directHitPlayer == *aItr)
 					multiplier = 1.0f;
 
@@ -124,7 +124,7 @@ void AGranade::Explode_Implementation()
 
 			if (distance <= ExplosionRadius)
 			{
-				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionRadius, ExplosionMinDamage, ExplosionFullDamageDistance);
 				float finalDamage = ExplosionDamage*multiplier;
 				aItr->TakeDamage(finalDamage * 2);
 			}
@@ -135,7 +135,7 @@ void AGranade::Explode_Implementation()
 
 			if (distance <= ExplosionRadius)
 			{
-				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionMinDamage, ExplosionFullDamageDistance);
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionRadius, ExplosionMinDamage, ExplosionFullDamageDistance);
 				float finalDamage = ExplosionDamage*multiplier;
 				aItr->TakeDamage(finalDamage * 2);
 			}

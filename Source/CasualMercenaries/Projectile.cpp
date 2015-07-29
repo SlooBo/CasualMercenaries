@@ -80,15 +80,15 @@ void AProjectile::InitVelocity(const FVector& ShootDirection)
 	}
 }
 
-float AProjectile::CalculateExplosionDamageMultiplier(float damage, float distance, float minDamage, float fullDamageDistance)
+float AProjectile::CalculateExplosionDamageMultiplier(float damage, float distance, float maxDistance, float minDamage, float fullDamageDistance)
 {
 	float damageMultiplier = 1;
-	if (distance > fullDamageDistance)
-	{
-		float minMulti = minDamage / damage;
-		damageMultiplier = 1 - (distance / fullDamageDistance);
-		if (damageMultiplier < minMulti)
-			damageMultiplier = minMulti;
-	}
+	if (distance <= fullDamageDistance)
+		return damageMultiplier;
+
+	float minMulti = minDamage / damage;
+
+	damageMultiplier = 1 - ((distance-fullDamageDistance) / maxDistance);
+	damageMultiplier = minMulti + ((1-minMulti)*damageMultiplier);
 	return damageMultiplier;
 }
