@@ -50,8 +50,6 @@ private:
 	/* Values				                                                */
 	/************************************************************************/
 
-	URadialForceComponent *radialForceComponent;
-
 	AActor* directHitPlayer;
 	bool casd;
 	float asd;

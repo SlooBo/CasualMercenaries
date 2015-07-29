@@ -49,7 +49,5 @@ private:
 
 	float lifeTime, livedTime;
 
-	URadialForceComponent *radialForceComponent;
-
 	AActor* directHitPlayer;
 };

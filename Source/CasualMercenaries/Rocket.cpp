@@ -52,11 +52,6 @@ ARocket::ARocket(const FObjectInitializer& ObjectInitializer) : AProjectile(Obje
 	const ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleObj2(TEXT("ParticleSystem'/Game/Game/Particles/P_Explosion.P_Explosion'"));
 	flavorParticleEffect = ParticleObj2.Object;
 
-	//radial force
-	radialForceComponent = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
-	radialForceComponent->ForceStrength = 50000;
-	radialForceComponent->AttachTo(projectileMesh, "ExhaustSocket");
-
 	//Replication
 	bReplicates = true;
 	bReplicateMovement = true;
@@ -112,11 +107,11 @@ void ARocket::Explode()
 	audioComp->SetSound(audioList[1]);
 
 	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, -0.50f, 0);
-	radialForceComponent->FireImpulse();
 
 	if (Role >= ROLE_Authority)
 	{
 		const float ExplosionRadius = 400.0f;
+		const float ExplosionForce = 1500.0f;
 		const float ExplosionFullDamageDistance = ExplosionRadius * 0.1f;
 		const float ExplosionDamage = 40.0f;
 		const float ExplosionMinDamage = 15.0f;
@@ -130,11 +125,17 @@ void ARocket::Explode()
 				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(ExplosionDamage, distance, ExplosionRadius, ExplosionMinDamage, ExplosionFullDamageDistance);
 				if (directHitPlayer == *aItr)
 					multiplier = 1.0f;
+				
+				// reduced self damage
+				if (controller != NULL && controller->GetPawn() == *aItr)
+					multiplier *= 0.5;
 
 				float finalDamage = ExplosionDamage*multiplier;
 
 				UGameplayStatics::ApplyDamage(*aItr, finalDamage, GetInstigatorController(), this, UDamageType::StaticClass());
 				aItr->TakeDamage(finalDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));
+
+				aItr->GetMovementComponent()->AddRadialImpulse(GetActorLocation(), ExplosionRadius*3, ExplosionForce, ERadialImpulseFalloff::RIF_Linear, true);
 			}
 		}
 		for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)

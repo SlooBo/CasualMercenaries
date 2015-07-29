@@ -60,11 +60,6 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 	//Replication
 	bReplicates = true;
 	bReplicateMovement = true;
-
-	//radial force
-	radialForceComponent = CreateDefaultSubobject<URadialForceComponent>(TEXT("RadialForceComponent"));
-	radialForceComponent->ForceStrength = 50000;
-	radialForceComponent->AttachTo(projectileMesh, "ExhaustSocket");
 }
 
 AGranade::~AGranade()
@@ -75,12 +70,12 @@ AGranade::~AGranade()
 void AGranade::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	if (!HasAuthority())
+		return;
+
 	livedTime += DeltaSeconds;
 	if (livedTime >= lifeTime)
-	{
-		if (HasAuthority())
 		Explode();
-	}
 }
 
 bool AGranade::Explode_Validate()
@@ -95,11 +90,11 @@ void AGranade::Explode_Implementation()
 
 	audioComp->SetSound(audioList[1]);
 	UGameplayStatics::PlaySoundAtLocation(this, audioComp->Sound, this->GetActorLocation(), 1, 1, 0, 0);
-	radialForceComponent->FireImpulse();
 
 	if (Role >= ROLE_Authority)
 	{
 		const float ExplosionRadius = 400.0f;
+		const float ExplosionForce = 1200.0f;
 		const float ExplosionFullDamageDistance = ExplosionRadius * 0.1f;
 		const float ExplosionDamage = 25.0f;
 		const float ExplosionMinDamage = 25.0f;
@@ -114,8 +109,14 @@ void AGranade::Explode_Implementation()
 				if (directHitPlayer == *aItr)
 					multiplier = 1.0f;
 
+				// reduced self damage
+				if (controller != NULL && controller->GetPawn() == *aItr)
+					multiplier *= 0.5;
+
 				float finalDamage = ExplosionDamage*multiplier;
 				aItr->TakeDamage(finalDamage, DAMAGE_TYPE::NORMAL, controller);
+
+				aItr->GetMovementComponent()->AddRadialImpulse(GetActorLocation(), ExplosionRadius * 3, ExplosionForce, ERadialImpulseFalloff::RIF_Linear, true);
 			}
 		}
 		for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
