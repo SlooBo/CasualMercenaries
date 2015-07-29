@@ -84,8 +84,9 @@ void ARocketLauncher::PrimaryFunctionReleased(APlayerCharacter* user)
 {
 	firing = false;
 }
-void ARocketLauncher::Reload()
+void ARocketLauncher::Reload(bool instantReload)
 {
+	Super::Reload(instantReload);
 	reloading = true;
 }
 

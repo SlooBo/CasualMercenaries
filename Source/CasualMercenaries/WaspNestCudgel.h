@@ -32,7 +32,7 @@ public:
 
 	void SecondaryFunction(APlayerCharacter* user);
 
-	void Reload();
+	virtual void Reload(bool instantReload = false) override;
 
 private:
 

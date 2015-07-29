@@ -82,8 +82,9 @@ void ATwisterSister::SecondaryFunction(APlayerCharacter* user)
 
 }
 
-void ATwisterSister::Reload()
+void ATwisterSister::Reload(bool instantReload)
 {
+	Super::Reload(instantReload);
 	//Play reload sound
 	audioComp->SetSound(audioList[1]);
 	audioComp->Play();

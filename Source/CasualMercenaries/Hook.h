@@ -33,7 +33,7 @@ public:
 	void Tick(float DeltaTime);
 	void PrimaryFunction(APlayerCharacter* user);
 	void PrimaryFunctionReleased(APlayerCharacter* user);
-	void Reload();
+	virtual void Reload(bool instantReload = false) override;
 	void Fire();
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Cable")
 		UCableComponent *cableComponent;

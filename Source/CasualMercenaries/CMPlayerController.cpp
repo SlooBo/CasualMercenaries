@@ -62,6 +62,7 @@ void ACMPlayerController::BeginPlay()
 	// only play music for clients
 	if (GetNetMode() != NM_DedicatedServer)
  		MusicPlay();
+
 	APlayerHud *hud = Cast<APlayerHud>(GetHUD());
 	if (hud != nullptr)
 		hud->changeUIElement(MenuType::GAME_UI);
@@ -143,6 +144,14 @@ void ACMPlayerController::OnPlayerDeath()
 	{
 		inventory.GetCurrentWeapon()->PrimaryFunctionReleased(Cast<APlayerCharacter>(this->GetPawn()));
 		inventory.GetCurrentWeapon()->SetActorHiddenInGame(true);
+	}
+
+	// reset all ammo
+	for (int i = 0; i < inventory.weapons.Num(); i++)
+	{
+		AWeapon* weapon = inventory.GetWeapon(i);
+		if (weapon != NULL)
+			weapon->Reload(true);
 	}
 
 }

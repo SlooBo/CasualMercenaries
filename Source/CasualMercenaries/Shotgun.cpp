@@ -186,10 +186,11 @@ void AShotgun::SecondaryFunction(APlayerCharacter* user)
 
 }
 
-void AShotgun::Reload()
+void AShotgun::Reload(bool instantReload)
 {
 	if (clips > 0)
 	{
+		Super::Reload(instantReload);
 		reloading = true;
 		audioComp->SetSound(audioList[1]);
 		audioComp->Play();

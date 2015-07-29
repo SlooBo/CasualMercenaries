@@ -35,7 +35,7 @@ class CASUALMERCENARIES_API AShotgun : public AWeapon
 
 	void SecondaryFunction(APlayerCharacter* user);
 
-	void Reload();
+	virtual void Reload(bool instantReload = false) override;
 
 private:
 

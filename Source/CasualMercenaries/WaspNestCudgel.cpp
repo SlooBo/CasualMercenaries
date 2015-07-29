@@ -104,12 +104,13 @@ void AWaspNestCudgel::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AWaspNestCudgel::Reload()
+void AWaspNestCudgel::Reload(bool instantReload)
 {
 	// Play sound
 	audioComp->SetSound(audioList[1]);
 	audioComp->Play();
 
+	Super::Reload(instantReload);
 	reloading = true;
 }
 

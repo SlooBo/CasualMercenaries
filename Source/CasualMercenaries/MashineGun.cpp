@@ -188,10 +188,11 @@ void AMashineGun::SecondaryFunction(APlayerCharacter* user)
 
 }
 
-void AMashineGun::Reload()
+void AMashineGun::Reload(bool instantReload)
 {
 	if (clips > 0)
 	{
+		Super::Reload(instantReload);
 		reloading = true;
 		audioComp->SetSound(audioList[1]);
 		audioComp->Play();

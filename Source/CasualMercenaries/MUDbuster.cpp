@@ -73,8 +73,9 @@ void AMUDbuster::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AMUDbuster::Reload()
+void AMUDbuster::Reload(bool instantReload)
 {
+	Super::Reload(instantReload);
 	reloading = true;
 	audioComp->SetSound(audioList[1]);
 	audioComp->Play();

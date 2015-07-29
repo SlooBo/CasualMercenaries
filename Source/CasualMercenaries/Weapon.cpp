@@ -106,9 +106,10 @@ void AWeapon::SecondaryFunction(APlayerCharacter* user)
 {
 }
 
-void AWeapon::Reload()
+void AWeapon::Reload(bool instantReload)
 {
-
+	if (instantReload)
+		passedTimeReloading = reloadTime;
 }
 // Old method that was used to child weapons to PlayerCharacter parents
 void AWeapon::SetRoot(APlayerCharacter* user)

@@ -94,8 +94,9 @@ void AHook::PrimaryFunctionReleased(APlayerCharacter* user)
 {
 	firing = false;
 }
-void AHook::Reload()
+void AHook::Reload(bool instantReload)
 {
+	Super::Reload(instantReload);
 	reloading = true;
 }
 

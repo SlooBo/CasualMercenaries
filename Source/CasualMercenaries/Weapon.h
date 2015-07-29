@@ -79,7 +79,7 @@ public:
 
 	virtual void SecondaryFunctionReleased(APlayerCharacter* user){};
 
-	virtual void Reload();
+	virtual void Reload(bool instantReload = false);
 
 	virtual void Fire(){};
 
