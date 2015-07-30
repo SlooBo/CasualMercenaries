@@ -22,12 +22,12 @@ ATwisterSister::ATwisterSister(const FObjectInitializer& FOI) : AWeapon(FOI)
 	clips = 999;
 	ammo = 4;
 	ammoInClip = 4;
-	price = 600;
+	price = 4000;
 
 	//float values
 	passedTimeReloading = 0;
 	reloadTime = 5;
-	firingInterval = 1;
+	firingInterval = 2;
 
 	//Audio
 	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
@@ -88,11 +88,13 @@ void ATwisterSister::Reload(bool instantReload)
 	//Play reload sound
 	audioComp->SetSound(audioList[1]);
 	audioComp->Play();
+	reloading = true;
 }
 
 void ATwisterSister::Fire()
 {
 	//play firing sound
+	ammo--;
 	audioComp->SetSound(audioList[0]);
 	audioComp->Play();
 

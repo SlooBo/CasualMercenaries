@@ -3,6 +3,7 @@
 #include "CasualMercenaries.h"
 #include "Twister.h"
 #include "PlayerCharacter.h"
+#include "Util.h"
 
 
 ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
@@ -75,27 +76,29 @@ void ATwister::Tick(float DeltaSeconds)
 	if (HasAuthority())
 	if (timer > .25)
 	{
-		float radius = 300;
-		float damage = 10;
+		const float radius = 300;
+		const float damage = 10;
+		const float mindamage = 2;
+		const float force = 2750;
+
 		for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 		{
-			float distance = GetDistanceTo(*aItr);
+			float distance = Util::GetDistanceToPlayer(this, *aItr);
 
 			if (distance <= radius)
 			{
-				float x = 1;
-				if (distance <= (radius / 2))
-					;
-				else
-					x = 1 - (0.8 * (distance / radius));
+				float multiplier = AProjectile::CalculateExplosionDamageMultiplier(damage, distance, radius, mindamage, 0.0f);
+				float finalDamage = damage*multiplier;
 
-				damage *= x;
-				aItr->Jump();
-				UGameplayStatics::ApplyDamage(*aItr, damage, GetInstigatorController(), this, UDamageType::StaticClass());
-				FVector tempActorLocVector = aItr->GetActorLocation();
-				tempActorLocVector.Z += 100;
-				aItr->SetActorLocation(tempActorLocVector);
-				aItr->TakeDamage(damage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));
+				UGameplayStatics::ApplyDamage(*aItr, finalDamage, GetInstigatorController(), this, UDamageType::StaticClass());
+				aItr->TakeDamage(finalDamage, DAMAGE_TYPE::NORMAL, Cast<class ACMPlayerController>(controller));
+
+				// apply some lift off for the player to get them off the ground
+				FVector liftoffLoc = aItr->GetActorLocation();
+				liftoffLoc.Z -= aItr->GetCapsuleComponent()->GetScaledCapsuleHalfHeight() + 15.0f;
+				aItr->GetMovementComponent()->AddRadialImpulse(liftoffLoc, radius*0.6f, force*0.3f, ERadialImpulseFalloff::RIF_Linear, true);
+
+				aItr->GetMovementComponent()->AddRadialImpulse(GetActorLocation(), radius, force, ERadialImpulseFalloff::RIF_Linear, true);
 
 				timer = 0;
 			}
