@@ -31,7 +31,7 @@ AMudBall::AMudBall(const FObjectInitializer& ObjectInitializer) : Super(ObjectIn
 
 
 	//Integers
-	health = 100;
+	health = 50;
 	size = 0.2;
 
 	//Scale

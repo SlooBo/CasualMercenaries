@@ -27,7 +27,7 @@ AGranade::AGranade(const FObjectInitializer& ObjectInitializer) : AProjectile(Ob
 
 	//Movement
 	ProjectileMovement->ProjectileGravityScale = 1.0;
-	ProjectileMovement->InitialSpeed = 2000.f;
+	ProjectileMovement->InitialSpeed = 2500.f;
 
 
 	//Delegate
@@ -93,11 +93,11 @@ void AGranade::Explode_Implementation()
 
 	if (Role >= ROLE_Authority)
 	{
-		const float ExplosionRadius = 400.0f;
+		const float ExplosionRadius = 300.0f;
 		const float ExplosionForce = 1200.0f;
 		const float ExplosionFullDamageDistance = ExplosionRadius * 0.1f;
 		const float ExplosionDamage = 25.0f;
-		const float ExplosionMinDamage = 25.0f;
+		const float ExplosionMinDamage = 17.0f;
 
 		for (TActorIterator<APlayerCharacter> aItr(GetWorld()); aItr; ++aItr)
 		{
@@ -111,7 +111,7 @@ void AGranade::Explode_Implementation()
 
 				// reduced self damage
 				if (controller != NULL && controller->GetPawn() == *aItr)
-					multiplier *= 0.5;
+					multiplier *= 0.6;
 
 				float finalDamage = ExplosionDamage*multiplier;
 				aItr->TakeDamage(finalDamage, DAMAGE_TYPE::NORMAL, controller);

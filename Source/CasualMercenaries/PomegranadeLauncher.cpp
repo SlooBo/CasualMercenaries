@@ -45,7 +45,7 @@ APomeGranadeLauncher::APomeGranadeLauncher(const FObjectInitializer& FOI) : AWea
 
 	//floats
 	reloadTime = 2;
-	firingInterval = 0.40;
+	firingInterval = 0.60;
 
 	//ID
 	id = WEAPONID::GRENADE_LAUNCHER;

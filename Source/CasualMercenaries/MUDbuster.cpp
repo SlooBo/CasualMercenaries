@@ -24,8 +24,8 @@ AMUDbuster::AMUDbuster(const FObjectInitializer& FOI) : Super(FOI)
 	price = 1200;
 
 	// floats
-	firingInterval = .75;
-	reloadTime = 0.5;
+	firingInterval = 1.0;
+	reloadTime = 2.0;
 	passedTimeReloading = 0;
 
 	//Audio
