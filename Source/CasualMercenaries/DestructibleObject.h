@@ -19,23 +19,12 @@ public:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
-	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
 
 	//Called when game ends
 	virtual void EndPlay(const EEndPlayReason::Type _endPlayReason) override;
 
 	UFUNCTION(BlueprintCallable, Category = "ObjectCondition")
 		virtual void TakeDamage(float _damage);
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
-
-	UPROPERTY(EditAnywhere, Replicated, Category = "ObjectCondition")
-		float health;
-	
-	UPROPERTY(EditAnywhere, Replicated, Category = "ObjectCondition")
-		float healthMax;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "ObjectCondition")
 	UStaticMeshComponent* meshComponent;
@@ -58,4 +47,6 @@ private:
 	FTimerHandle respawnTimerHandle;
 	bool timerActive;
 
+	float health;
+	float healthMax;
 };

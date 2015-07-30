@@ -7,9 +7,6 @@
 // Sets default values
 ADestructibleObject::ADestructibleObject(const FObjectInitializer& FOI) : AActor(FOI)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	healthMax = 100;
 	health = healthMax;
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshObj(TEXT("StaticMesh'/Game/Game/Props/Firehydrant/firehydrant.firehydrant'"));
@@ -21,22 +18,13 @@ ADestructibleObject::ADestructibleObject(const FObjectInitializer& FOI) : AActor
 	}
 
 	timerActive = false;
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
 void ADestructibleObject::BeginPlay()
 {
 	Super::BeginPlay();
-	//health = 0;
-
-}
-
-// Called every frame
-void ADestructibleObject::Tick( float DeltaTime )
-{
-	Super::Tick( DeltaTime );
-
-	CheckStatus();
 }
 
 void ADestructibleObject::EndPlay(const EEndPlayReason::Type _endPlayReason)
@@ -46,22 +34,14 @@ void ADestructibleObject::EndPlay(const EEndPlayReason::Type _endPlayReason)
 
 void ADestructibleObject::TakeDamage(float _damage)
 {
+	if (Role < ROLE_Authority)
+		return;
+
 	if (!timerActive)
 	{
 		health = health - _damage;
+		CheckStatus();
 	}
-}
-
-void ADestructibleObject::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	// Value is already updated locally, skip in replication step
-	//DOREPLIFETIME_CONDITION(APlayerCharacter, value, COND_SkipOwner);
-
-	//Replicated to every client, no special condition required
-	//DOREPLIFETIME(APlayerCharacter, value);
-	DOREPLIFETIME(ADestructibleObject, health);
 }
 
 void ADestructibleObject::CheckStatus()
