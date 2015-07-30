@@ -4,7 +4,7 @@
 #include "Twister.h"
 #include "PlayerCharacter.h"
 #include "Util.h"
-
+#include "Granade.h"
 
 ATwister::ATwister(const FObjectInitializer& ObjectInitializer) : AProjectile(ObjectInitializer)
 {
@@ -72,8 +72,11 @@ void ATwister::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if (!HasAuthority())
+		return;
+
 	timer += DeltaSeconds;
-	if (HasAuthority())
+
 	if (timer > .25)
 	{
 		const float radius = 300;
@@ -100,12 +103,29 @@ void ATwister::Tick(float DeltaSeconds)
 
 				aItr->GetMovementComponent()->AddRadialImpulse(GetActorLocation(), radius, force, ERadialImpulseFalloff::RIF_Linear, true);
 
-				timer = 0;
+				
 			}
 
 		}
 
-		radialForceComponent->FireImpulse();
+		// throws other colliding projectiles around 
+		for (TActorIterator<AProjectile> aItr(GetWorld()); aItr; ++aItr)
+		{
+			if (Cast<ATwister>(*aItr) != NULL)
+				continue;
+
+			float distance = GetDistanceTo(*aItr);
+			if (distance <= radius)
+			{
+				FVector velocity((FMath::FRand()*2)-1, (FMath::FRand()*2)-1, (FMath::FRand()*2)-1);
+				velocity = velocity.GetSafeNormal();
+
+				aItr->InitVelocity(velocity);
+			}
+		}
+
+		//radialForceComponent->FireImpulse();
+		timer = 0;
 	}
 
 
@@ -123,20 +143,8 @@ void ATwister::OnMyActorHit(AActor* SelfActor, AActor* OtherActor, FVector Norma
 
 void ATwister::OnOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// throws other colliding projectiles around 
-	AProjectile* projectile = Cast<AProjectile>(OtherActor);
-	if (projectile)
-	{
-		float random1 = FMath::FRand() * 2 - 1;
-		float random2 = FMath::FRand() * 2 - 1;
-		float random3 = FMath::FRand() * 2 - 1;
-
-		FVector velocity = projectile->GetVelocity();
-		velocity.X *= random1;
-		velocity.Y *= random2;
-		velocity.Z *= random3;
-		projectile->InitVelocity(FVector(random1, random2, random3));
-	}
+	
+	
 }
 void ATwister::FlipShitUp()
 {
