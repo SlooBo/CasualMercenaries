@@ -85,7 +85,7 @@ void APlayerHud::changeUIElement(MenuType menu)
 	}
 	logicClasses.Empty();
 
-	ACMPlayerController* controller = Cast<ACMPlayerController>(GetWorld()->GetFirstPlayerController());
+	APlayerController* controller = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
 
 	controller->bShowMouseCursor = false;
 	ClearAllWidgets();
@@ -93,7 +93,6 @@ void APlayerHud::changeUIElement(MenuType menu)
 	if (controller == NULL)
 		return;
 
-	controller->UpdateMenuStatus();
 
 	switch (menu)
 	{
