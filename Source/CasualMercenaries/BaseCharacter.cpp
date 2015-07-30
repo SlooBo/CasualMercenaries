@@ -99,7 +99,7 @@ CHARACTER_STATE ABaseCharacter::GetState() const
 
 bool ABaseCharacter::IsAlive() const
 {
-	return health > 0;
+	return health >= 1;
 }
 
 void ABaseCharacter::RestoreStats()
